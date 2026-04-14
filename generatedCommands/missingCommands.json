@@ -1,0 +1,5294 @@
+[
+  {
+    "category": "Server",
+    "command": "autoresponder role add list",
+    "parts": [
+      "autoresponder",
+      "role",
+      "add",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder role remove list",
+    "parts": [
+      "autoresponder",
+      "role",
+      "remove",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke ban dm view",
+    "parts": [
+      "invoke",
+      "ban",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke ban message view",
+    "parts": [
+      "invoke",
+      "ban",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke hardban message view",
+    "parts": [
+      "invoke",
+      "hardban",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke imute message view",
+    "parts": [
+      "invoke",
+      "imute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke iunmute message view",
+    "parts": [
+      "invoke",
+      "iunmute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke mute dm view",
+    "parts": [
+      "invoke",
+      "mute",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke mute message view",
+    "parts": [
+      "invoke",
+      "mute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke rmute message view",
+    "parts": [
+      "invoke",
+      "rmute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke runmute message view",
+    "parts": [
+      "invoke",
+      "runmute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke softban dm view",
+    "parts": [
+      "invoke",
+      "softban",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke softban message view",
+    "parts": [
+      "invoke",
+      "softban",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke tempban dm view",
+    "parts": [
+      "invoke",
+      "tempban",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke tempban message view",
+    "parts": [
+      "invoke",
+      "tempban",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke timeout dm view",
+    "parts": [
+      "invoke",
+      "timeout",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke timeout message view",
+    "parts": [
+      "invoke",
+      "timeout",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unban dm view",
+    "parts": [
+      "invoke",
+      "unban",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unban message view",
+    "parts": [
+      "invoke",
+      "unban",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unmute dm view",
+    "parts": [
+      "invoke",
+      "unmute",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unmute message view",
+    "parts": [
+      "invoke",
+      "unmute",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke untimeout dm view",
+    "parts": [
+      "invoke",
+      "untimeout",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke untimeout message view",
+    "parts": [
+      "invoke",
+      "untimeout",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke warn dm view",
+    "parts": [
+      "invoke",
+      "warn",
+      "dm",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke warn message view",
+    "parts": [
+      "invoke",
+      "warn",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder list tickets",
+    "parts": [
+      "autoresponder",
+      "list",
+      "tickets"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder role add",
+    "parts": [
+      "autoresponder",
+      "role",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder role remove",
+    "parts": [
+      "autoresponder",
+      "role",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge message view",
+    "parts": [
+      "badge",
+      "message",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge role add",
+    "parts": [
+      "badge",
+      "role",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge role list",
+    "parts": [
+      "badge",
+      "role",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge role remove",
+    "parts": [
+      "badge",
+      "role",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday celebrate list",
+    "parts": [
+      "birthday",
+      "celebrate",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole award unset",
+    "parts": [
+      "boosterrole",
+      "award",
+      "unset"
+    ],
+    "aliases": [
+      "delete",
+      "remove"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole award view",
+    "parts": [
+      "boosterrole",
+      "award",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole filter list",
+    "parts": [
+      "boosterrole",
+      "filter",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole share limit",
+    "parts": [
+      "boosterrole",
+      "share",
+      "limit"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole share list",
+    "parts": [
+      "boosterrole",
+      "share",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole share remove",
+    "parts": [
+      "boosterrole",
+      "share",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder message view",
+    "parts": [
+      "bumpreminder",
+      "message",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder thankyou view",
+    "parts": [
+      "bumpreminder",
+      "thankyou",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "clownboard",
+    "command": "clownboard ignore list",
+    "parts": [
+      "clownboard",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "filter links whitelist",
+    "parts": [
+      "filter",
+      "links",
+      "whitelist"
+    ],
+    "aliases": [
+      "wl"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit age",
+    "parts": [
+      "giveaways",
+      "edit",
+      "age"
+    ],
+    "aliases": [
+      "accountage"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit color",
+    "parts": [
+      "giveaways",
+      "edit",
+      "color"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit description",
+    "parts": [
+      "giveaways",
+      "edit",
+      "description"
+    ],
+    "aliases": [
+      "desc"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit duration",
+    "parts": [
+      "giveaways",
+      "edit",
+      "duration"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit host",
+    "parts": [
+      "giveaways",
+      "edit",
+      "host"
+    ],
+    "aliases": [
+      "hosts"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit image",
+    "parts": [
+      "giveaways",
+      "edit",
+      "image"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit minlevel",
+    "parts": [
+      "giveaways",
+      "edit",
+      "minlevel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit prize",
+    "parts": [
+      "giveaways",
+      "edit",
+      "prize"
+    ],
+    "aliases": [
+      "name",
+      "rename",
+      "title"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit requiredroles",
+    "parts": [
+      "giveaways",
+      "edit",
+      "requiredroles"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit roles",
+    "parts": [
+      "giveaways",
+      "edit",
+      "roles"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit stay",
+    "parts": [
+      "giveaways",
+      "edit",
+      "stay"
+    ],
+    "aliases": [
+      "minimumstay"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit winners",
+    "parts": [
+      "giveaways",
+      "edit",
+      "winners"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "highlight ignore list",
+    "parts": [
+      "highlight",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke ban dm",
+    "parts": [
+      "invoke",
+      "ban",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke ban message",
+    "parts": [
+      "invoke",
+      "ban",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke hardban message",
+    "parts": [
+      "invoke",
+      "hardban",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke imute message",
+    "parts": [
+      "invoke",
+      "imute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke iunmute message",
+    "parts": [
+      "invoke",
+      "iunmute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke mute dm",
+    "parts": [
+      "invoke",
+      "mute",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke mute message",
+    "parts": [
+      "invoke",
+      "mute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke rmute message",
+    "parts": [
+      "invoke",
+      "rmute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke runmute message",
+    "parts": [
+      "invoke",
+      "runmute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke softban dm",
+    "parts": [
+      "invoke",
+      "softban",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke softban message",
+    "parts": [
+      "invoke",
+      "softban",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke tempban dm",
+    "parts": [
+      "invoke",
+      "tempban",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke tempban message",
+    "parts": [
+      "invoke",
+      "tempban",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke timeout dm",
+    "parts": [
+      "invoke",
+      "timeout",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke timeout message",
+    "parts": [
+      "invoke",
+      "timeout",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke unban dm",
+    "parts": [
+      "invoke",
+      "unban",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unban message",
+    "parts": [
+      "invoke",
+      "unban",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke unmute dm",
+    "parts": [
+      "invoke",
+      "unmute",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unmute message",
+    "parts": [
+      "invoke",
+      "unmute",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke untimeout dm",
+    "parts": [
+      "invoke",
+      "untimeout",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke untimeout message",
+    "parts": [
+      "invoke",
+      "untimeout",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke warn dm",
+    "parts": [
+      "invoke",
+      "warn",
+      "dm"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke warn message",
+    "parts": [
+      "invoke",
+      "warn",
+      "message"
+    ],
+    "aliases": [
+      "msg"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels leaderboard rename",
+    "parts": [
+      "levels",
+      "leaderboard",
+      "rename"
+    ],
+    "aliases": [
+      "name"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels message view",
+    "parts": [
+      "levels",
+      "message",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown ignore add",
+    "parts": [
+      "lockdown",
+      "ignore",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown ignore list",
+    "parts": [
+      "lockdown",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown ignore remove",
+    "parts": [
+      "lockdown",
+      "ignore",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "logs",
+    "command": "log color list",
+    "parts": [
+      "log",
+      "color",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "logs",
+    "command": "log ignore list",
+    "parts": [
+      "log",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "noselfreact emoji list",
+    "parts": [
+      "noselfreact",
+      "emoji",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "reaction messages list",
+    "parts": [
+      "reaction",
+      "messages",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role bots remove",
+    "parts": [
+      "role",
+      "bots",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role color gradient",
+    "parts": [
+      "role",
+      "color",
+      "gradient"
+    ],
+    "aliases": [
+      "g",
+      "grad"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role has remove",
+    "parts": [
+      "role",
+      "has",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role humans remove",
+    "parts": [
+      "role",
+      "humans",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "settings staff list",
+    "parts": [
+      "settings",
+      "staff",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "starboard",
+    "command": "starboard ignore list",
+    "parts": [
+      "starboard",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest ignore list",
+    "parts": [
+      "suggest",
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest review channel",
+    "parts": [
+      "suggest",
+      "review",
+      "channel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "thread watch list",
+    "parts": [
+      "thread",
+      "watch",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster category private",
+    "parts": [
+      "voicemaster",
+      "category",
+      "private"
+    ],
+    "aliases": [
+      "priv"
+    ]
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster join role",
+    "parts": [
+      "voicemaster",
+      "join",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "afk mentions",
+    "parts": [
+      "afk",
+      "mentions"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "alias add",
+    "parts": [
+      "alias",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "alias list",
+    "parts": [
+      "alias",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "alias remove",
+    "parts": [
+      "alias",
+      "remove"
+    ],
+    "aliases": [
+      "del",
+      "delete"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "alias removeall",
+    "parts": [
+      "alias",
+      "removeall"
+    ],
+    "aliases": [
+      "delall",
+      "deleteeall"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "alias reset",
+    "parts": [
+      "alias",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke ban",
+    "parts": [
+      "antinuke",
+      "ban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke botadd",
+    "parts": [
+      "antinuke",
+      "botadd"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke channel",
+    "parts": [
+      "antinuke",
+      "channel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke emoji",
+    "parts": [
+      "antinuke",
+      "emoji"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke permissions",
+    "parts": [
+      "antinuke",
+      "permissions"
+    ],
+    "aliases": [
+      "perms"
+    ]
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke role",
+    "parts": [
+      "antinuke",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke vanity",
+    "parts": [
+      "antinuke",
+      "vanity"
+    ],
+    "aliases": [
+      "vanityurl"
+    ]
+  },
+  {
+    "category": "Antinuke",
+    "command": "antinuke webhook",
+    "parts": [
+      "antinuke",
+      "webhook"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder role",
+    "parts": [
+      "autoresponder",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "autoresponder update",
+    "parts": [
+      "autoresponder",
+      "update"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "autorole",
+    "command": "autorole add",
+    "parts": [
+      "autorole",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "autorole list",
+    "parts": [
+      "autorole",
+      "list"
+    ],
+    "aliases": [
+      "all"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "autorole remove",
+    "parts": [
+      "autorole",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "autorole reset",
+    "parts": [
+      "autorole",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "badge channel",
+    "parts": [
+      "badge",
+      "channel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge message",
+    "parts": [
+      "badge",
+      "message"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge role",
+    "parts": [
+      "badge",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "badge sync",
+    "parts": [
+      "badge",
+      "sync"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "ban purge",
+    "parts": [
+      "ban",
+      "purge"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "ban recent",
+    "parts": [
+      "ban",
+      "recent"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday celebrate",
+    "parts": [
+      "birthday",
+      "celebrate"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday channel",
+    "parts": [
+      "birthday",
+      "channel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday config",
+    "parts": [
+      "birthday",
+      "config"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday lock",
+    "parts": [
+      "birthday",
+      "lock"
+    ],
+    "aliases": [
+      "disable",
+      "off"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "birthday role",
+    "parts": [
+      "birthday",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "birthday unlock",
+    "parts": [
+      "birthday",
+      "unlock"
+    ],
+    "aliases": [
+      "enable",
+      "on"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "blacktea end",
+    "parts": [
+      "blacktea",
+      "end"
+    ],
+    "aliases": [
+      "quit",
+      "stop",
+      "cancel"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole award",
+    "parts": [
+      "boosterrole",
+      "award"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole base",
+    "parts": [
+      "boosterrole",
+      "base"
+    ],
+    "aliases": [
+      "baseid"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole cleanup",
+    "parts": [
+      "boosterrole",
+      "cleanup"
+    ],
+    "aliases": [
+      "purge",
+      "truncate"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole dominant",
+    "parts": [
+      "boosterrole",
+      "dominant"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole filter",
+    "parts": [
+      "boosterrole",
+      "filter"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole limit",
+    "parts": [
+      "boosterrole",
+      "limit"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole link",
+    "parts": [
+      "boosterrole",
+      "link"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole list",
+    "parts": [
+      "boosterrole",
+      "list"
+    ],
+    "aliases": [
+      "view"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole remove",
+    "parts": [
+      "boosterrole",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole rename",
+    "parts": [
+      "boosterrole",
+      "rename"
+    ],
+    "aliases": [
+      "name"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosterrole share",
+    "parts": [
+      "boosterrole",
+      "share"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "boosters lost",
+    "parts": [
+      "boosters",
+      "lost"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosts add",
+    "parts": [
+      "boosts",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosts list",
+    "parts": [
+      "boosts",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "boosts remove",
+    "parts": [
+      "boosts",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosts view",
+    "parts": [
+      "boosts",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder autoclean",
+    "parts": [
+      "bumpreminder",
+      "autoclean"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder autolock",
+    "parts": [
+      "bumpreminder",
+      "autolock"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder channel",
+    "parts": [
+      "bumpreminder",
+      "channel"
+    ],
+    "aliases": [
+      "set"
+    ]
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder message",
+    "parts": [
+      "bumpreminder",
+      "message"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Bump Reminder",
+    "command": "bumpreminder thankyou",
+    "parts": [
+      "bumpreminder",
+      "thankyou"
+    ],
+    "aliases": [
+      "ty"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "buttonrole removeall",
+    "parts": [
+      "buttonrole",
+      "removeall"
+    ],
+    "aliases": [
+      "deleteall",
+      "delall"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "buttonrole reset",
+    "parts": [
+      "buttonrole",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "customize avatar",
+    "parts": [
+      "customize",
+      "avatar"
+    ],
+    "aliases": [
+      "pfp",
+      "av"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "customize banner",
+    "parts": [
+      "customize",
+      "banner"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "customize bio",
+    "parts": [
+      "customize",
+      "bio"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disablecommand all",
+    "parts": [
+      "disablecommand",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disablecommand list",
+    "parts": [
+      "disablecommand",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disableevent all",
+    "parts": [
+      "disableevent",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disableevent list",
+    "parts": [
+      "disableevent",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disablemodule all",
+    "parts": [
+      "disablemodule",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "disablemodule list",
+    "parts": [
+      "disablemodule",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "embed copy",
+    "parts": [
+      "embed",
+      "copy"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "embed create",
+    "parts": [
+      "embed",
+      "create"
+    ],
+    "aliases": [
+      "c",
+      "edit"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "embed delete",
+    "parts": [
+      "embed",
+      "delete"
+    ],
+    "aliases": [
+      "del"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "embed list",
+    "parts": [
+      "embed",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "embed preview",
+    "parts": [
+      "embed",
+      "preview"
+    ],
+    "aliases": [
+      "view"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emoji addmany",
+    "parts": [
+      "emoji",
+      "addmany"
+    ],
+    "aliases": [
+      "am"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emoji information",
+    "parts": [
+      "emoji",
+      "information"
+    ],
+    "aliases": [
+      "info"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emoji removeduplicates",
+    "parts": [
+      "emoji",
+      "removeduplicates"
+    ],
+    "aliases": [
+      "rmdups"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emoji removemany",
+    "parts": [
+      "emoji",
+      "removemany"
+    ],
+    "aliases": [
+      "rm",
+      "deletemany",
+      "dm"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emoji stats",
+    "parts": [
+      "emoji",
+      "stats"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "enablecommand all",
+    "parts": [
+      "enablecommand",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "enableevent all",
+    "parts": [
+      "enableevent",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "enablemodule all",
+    "parts": [
+      "enablemodule",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "filter snipe",
+    "parts": [
+      "filter",
+      "snipe"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "filter spam",
+    "parts": [
+      "filter",
+      "spam"
+    ],
+    "aliases": [
+      "antispam"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "filter wordmigrate",
+    "parts": [
+      "filter",
+      "wordmigrate"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "forcenickname list",
+    "parts": [
+      "forcenickname",
+      "list"
+    ],
+    "aliases": [
+      "view"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways cancel",
+    "parts": [
+      "giveaways",
+      "cancel"
+    ],
+    "aliases": [
+      "delete"
+    ]
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways edit",
+    "parts": [
+      "giveaways",
+      "edit"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways end",
+    "parts": [
+      "giveaways",
+      "end"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways list",
+    "parts": [
+      "giveaways",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways reroll",
+    "parts": [
+      "giveaways",
+      "reroll"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "giveaways",
+    "command": "giveaways start",
+    "parts": [
+      "giveaways",
+      "start"
+    ],
+    "aliases": [
+      "s"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "goodbye list",
+    "parts": [
+      "goodbye",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "goodbye view",
+    "parts": [
+      "goodbye",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "hardban list",
+    "parts": [
+      "hardban",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "highlight add",
+    "parts": [
+      "highlight",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "highlight ignore",
+    "parts": [
+      "highlight",
+      "ignore"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "highlight list",
+    "parts": [
+      "highlight",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "highlight remove",
+    "parts": [
+      "highlight",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "highlight reset",
+    "parts": [
+      "highlight",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "history remove",
+    "parts": [
+      "history",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "history removeall",
+    "parts": [
+      "history",
+      "removeall"
+    ],
+    "aliases": [
+      "deleteall",
+      "delall"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "history view",
+    "parts": [
+      "history",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "ignore add",
+    "parts": [
+      "ignore",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "ignore list",
+    "parts": [
+      "ignore",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "ignore remove",
+    "parts": [
+      "ignore",
+      "remove"
+    ],
+    "aliases": [
+      "del",
+      "delete"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "imgonly add",
+    "parts": [
+      "imgonly",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "imgonly list",
+    "parts": [
+      "imgonly",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "imgonly remove",
+    "parts": [
+      "imgonly",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "invoke ban",
+    "parts": [
+      "invoke",
+      "ban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke hardban",
+    "parts": [
+      "invoke",
+      "hardban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke imute",
+    "parts": [
+      "invoke",
+      "imute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke iunmute",
+    "parts": [
+      "invoke",
+      "iunmute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke mute",
+    "parts": [
+      "invoke",
+      "mute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke rmute",
+    "parts": [
+      "invoke",
+      "rmute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke runmute",
+    "parts": [
+      "invoke",
+      "runmute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke softban",
+    "parts": [
+      "invoke",
+      "softban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke tempban",
+    "parts": [
+      "invoke",
+      "tempban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke timeout",
+    "parts": [
+      "invoke",
+      "timeout"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unban",
+    "parts": [
+      "invoke",
+      "unban"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke unmute",
+    "parts": [
+      "invoke",
+      "unmute"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke untimeout",
+    "parts": [
+      "invoke",
+      "untimeout"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "invoke warn",
+    "parts": [
+      "invoke",
+      "warn"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul flavor",
+    "parts": [
+      "juul",
+      "flavor"
+    ],
+    "aliases": [
+      "pod"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "juul hit",
+    "parts": [
+      "juul",
+      "hit"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul pass",
+    "parts": [
+      "juul",
+      "pass"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul stats",
+    "parts": [
+      "juul",
+      "stats"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul steal",
+    "parts": [
+      "juul",
+      "steal"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul toggle",
+    "parts": [
+      "juul",
+      "toggle"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels add",
+    "parts": [
+      "levels",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels cleanup",
+    "parts": [
+      "levels",
+      "cleanup"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels leaderboard",
+    "parts": [
+      "levels",
+      "leaderboard"
+    ],
+    "aliases": [
+      "top"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels list",
+    "parts": [
+      "levels",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels lock",
+    "parts": [
+      "levels",
+      "lock"
+    ],
+    "aliases": [
+      "off",
+      "disable"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels message",
+    "parts": [
+      "levels",
+      "message"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels messagemode",
+    "parts": [
+      "levels",
+      "messagemode"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels messages",
+    "parts": [
+      "levels",
+      "messages"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels remove",
+    "parts": [
+      "levels",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels stackroles",
+    "parts": [
+      "levels",
+      "stackroles"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels sync",
+    "parts": [
+      "levels",
+      "sync"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "levels",
+    "command": "levels unlock",
+    "parts": [
+      "levels",
+      "unlock"
+    ],
+    "aliases": [
+      "on",
+      "enable"
+    ]
+  },
+  {
+    "category": "levels",
+    "command": "levels update",
+    "parts": [
+      "levels",
+      "update"
+    ],
+    "aliases": [
+      "updaterole"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown all",
+    "parts": [
+      "lockdown",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown ignore",
+    "parts": [
+      "lockdown",
+      "ignore"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "lockdown role",
+    "parts": [
+      "lockdown",
+      "role"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "logs",
+    "command": "log add",
+    "parts": [
+      "log",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "logs",
+    "command": "log color",
+    "parts": [
+      "log",
+      "color"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "logs",
+    "command": "log ignore",
+    "parts": [
+      "log",
+      "ignore"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "logs",
+    "command": "log remove",
+    "parts": [
+      "log",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media billboard",
+    "parts": [
+      "media",
+      "billboard"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media bloom",
+    "parts": [
+      "media",
+      "bloom"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media blur",
+    "parts": [
+      "media",
+      "blur"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media book",
+    "parts": [
+      "media",
+      "book"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media caption",
+    "parts": [
+      "media",
+      "caption"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media circuitboard",
+    "parts": [
+      "media",
+      "circuitboard"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media deepfry",
+    "parts": [
+      "media",
+      "deepfry"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media fisheye",
+    "parts": [
+      "media",
+      "fisheye"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media flag",
+    "parts": [
+      "media",
+      "flag"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media flag2",
+    "parts": [
+      "media",
+      "flag2"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media fortune",
+    "parts": [
+      "media",
+      "fortune"
+    ],
+    "aliases": [
+      "fortunecookie"
+    ]
+  },
+  {
+    "category": "manipulation",
+    "command": "media grayscale",
+    "parts": [
+      "media",
+      "grayscale"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media heart",
+    "parts": [
+      "media",
+      "heart"
+    ],
+    "aliases": [
+      "heartlocket"
+    ]
+  },
+  {
+    "category": "manipulation",
+    "command": "media invert",
+    "parts": [
+      "media",
+      "invert"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media magik",
+    "parts": [
+      "media",
+      "magik"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media meme",
+    "parts": [
+      "media",
+      "meme"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media motivate",
+    "parts": [
+      "media",
+      "motivate"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media neon",
+    "parts": [
+      "media",
+      "neon"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media reverse",
+    "parts": [
+      "media",
+      "reverse"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media rubiks",
+    "parts": [
+      "media",
+      "rubiks"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media scramble",
+    "parts": [
+      "media",
+      "scramble"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media speechbubble",
+    "parts": [
+      "media",
+      "speechbubble"
+    ],
+    "aliases": [
+      "speech",
+      "bubble"
+    ]
+  },
+  {
+    "category": "manipulation",
+    "command": "media speed",
+    "parts": [
+      "media",
+      "speed"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media spin",
+    "parts": [
+      "media",
+      "spin"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media spread",
+    "parts": [
+      "media",
+      "spread"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media swirl",
+    "parts": [
+      "media",
+      "swirl"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media tattoo",
+    "parts": [
+      "media",
+      "tattoo"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media toaster",
+    "parts": [
+      "media",
+      "toaster"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media valentine",
+    "parts": [
+      "media",
+      "valentine"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media wormhole",
+    "parts": [
+      "media",
+      "wormhole"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media zoom",
+    "parts": [
+      "media",
+      "zoom"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "manipulation",
+    "command": "media zoomblur",
+    "parts": [
+      "media",
+      "zoomblur"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "noselfreact bypass",
+    "parts": [
+      "noselfreact",
+      "bypass"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "noselfreact emoji",
+    "parts": [
+      "noselfreact",
+      "emoji"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "noselfreact punishment",
+    "parts": [
+      "noselfreact",
+      "punishment"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "noselfreact toggle",
+    "parts": [
+      "noselfreact",
+      "toggle"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "notes add",
+    "parts": [
+      "notes",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "notes clear",
+    "parts": [
+      "notes",
+      "clear"
+    ],
+    "aliases": [
+      "cl"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "notes remove",
+    "parts": [
+      "notes",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "nuke add",
+    "parts": [
+      "nuke",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "nuke archive",
+    "parts": [
+      "nuke",
+      "archive"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "nuke list",
+    "parts": [
+      "nuke",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "nuke remove",
+    "parts": [
+      "nuke",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "nuke view",
+    "parts": [
+      "nuke",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pagination add",
+    "parts": [
+      "pagination",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pagination delete",
+    "parts": [
+      "pagination",
+      "delete"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pagination remove",
+    "parts": [
+      "pagination",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins archive",
+    "parts": [
+      "pins",
+      "archive"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins channel",
+    "parts": [
+      "pins",
+      "channel"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins config",
+    "parts": [
+      "pins",
+      "config"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins reset",
+    "parts": [
+      "pins",
+      "reset"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins set",
+    "parts": [
+      "pins",
+      "set"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pins unpin",
+    "parts": [
+      "pins",
+      "unpin"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact add",
+    "parts": [
+      "previousreact",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact clear",
+    "parts": [
+      "previousreact",
+      "clear"
+    ],
+    "aliases": [
+      "reset"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact delete",
+    "parts": [
+      "previousreact",
+      "delete"
+    ],
+    "aliases": [
+      "remove",
+      "del"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact deleteall",
+    "parts": [
+      "previousreact",
+      "deleteall"
+    ],
+    "aliases": [
+      "removeall",
+      "delall"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact list",
+    "parts": [
+      "previousreact",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "previousreact owner",
+    "parts": [
+      "previousreact",
+      "owner"
+    ],
+    "aliases": [
+      "author",
+      "creator"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "proof add",
+    "parts": [
+      "proof",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "proof list",
+    "parts": [
+      "proof",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "proof remove",
+    "parts": [
+      "proof",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "proof set",
+    "parts": [
+      "proof",
+      "set"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "proof view",
+    "parts": [
+      "proof",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge activity",
+    "parts": [
+      "purge",
+      "activity"
+    ],
+    "aliases": [
+      "activities"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "purge after",
+    "parts": [
+      "purge",
+      "after"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge before",
+    "parts": [
+      "purge",
+      "before"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge between",
+    "parts": [
+      "purge",
+      "between"
+    ],
+    "aliases": [
+      "bt"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "purge bots",
+    "parts": [
+      "purge",
+      "bots"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge embeds",
+    "parts": [
+      "purge",
+      "embeds"
+    ],
+    "aliases": [
+      "embed"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "purge emoji",
+    "parts": [
+      "purge",
+      "emoji"
+    ],
+    "aliases": [
+      "emojis"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "purge emotes",
+    "parts": [
+      "purge",
+      "emotes"
+    ],
+    "aliases": [
+      "emote"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "purge endswith",
+    "parts": [
+      "purge",
+      "endswith"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge files",
+    "parts": [
+      "purge",
+      "files"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge humans",
+    "parts": [
+      "purge",
+      "humans"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge images",
+    "parts": [
+      "purge",
+      "images"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge mentions",
+    "parts": [
+      "purge",
+      "mentions"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge reactions",
+    "parts": [
+      "purge",
+      "reactions"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge startswith",
+    "parts": [
+      "purge",
+      "startswith"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge stickers",
+    "parts": [
+      "purge",
+      "stickers"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge upto",
+    "parts": [
+      "purge",
+      "upto"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "purge webhooks",
+    "parts": [
+      "purge",
+      "webhooks"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "reaction",
+    "command": "reaction clear",
+    "parts": [
+      "reaction",
+      "clear"
+    ],
+    "aliases": [
+      "reset"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "reaction delete",
+    "parts": [
+      "reaction",
+      "delete"
+    ],
+    "aliases": [
+      "remove",
+      "del"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "reaction deleteall",
+    "parts": [
+      "reaction",
+      "deleteall"
+    ],
+    "aliases": [
+      "removeall",
+      "delall"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "reaction messages",
+    "parts": [
+      "reaction",
+      "messages"
+    ],
+    "aliases": [
+      "message",
+      "msg"
+    ]
+  },
+  {
+    "category": "reaction",
+    "command": "reaction owner",
+    "parts": [
+      "reaction",
+      "owner"
+    ],
+    "aliases": [
+      "author",
+      "creator"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "reactionrole removeall",
+    "parts": [
+      "reactionrole",
+      "removeall"
+    ],
+    "aliases": [
+      "deleteall",
+      "delall"
+    ]
+  },
+  {
+    "category": "autorole",
+    "command": "reactionrole restore",
+    "parts": [
+      "reactionrole",
+      "restore"
+    ],
+    "aliases": [
+      "rejoin"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "remind list",
+    "parts": [
+      "remind",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "remind remove",
+    "parts": [
+      "remind",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "reposter delete",
+    "parts": [
+      "reposter",
+      "delete"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "reposter embed",
+    "parts": [
+      "reposter",
+      "embed"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "reposter strict",
+    "parts": [
+      "reposter",
+      "strict"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "reposter suppress",
+    "parts": [
+      "reposter",
+      "suppress"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "restrictcommand list",
+    "parts": [
+      "restrictcommand",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "restrictcommand reset",
+    "parts": [
+      "restrictcommand",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "revokefiles off",
+    "parts": [
+      "revokefiles",
+      "off"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "revokefiles on",
+    "parts": [
+      "revokefiles",
+      "on"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role add",
+    "parts": [
+      "role",
+      "add"
+    ],
+    "aliases": [
+      "set",
+      "give"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role bots",
+    "parts": [
+      "role",
+      "bots"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role cancel",
+    "parts": [
+      "role",
+      "cancel"
+    ],
+    "aliases": [
+      "kill"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role color",
+    "parts": [
+      "role",
+      "color"
+    ],
+    "aliases": [
+      "colour"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role create",
+    "parts": [
+      "role",
+      "create"
+    ],
+    "aliases": [
+      "make"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role delete",
+    "parts": [
+      "role",
+      "delete"
+    ],
+    "aliases": [
+      "del"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role edit",
+    "parts": [
+      "role",
+      "edit"
+    ],
+    "aliases": [
+      "editname",
+      "rename"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role has",
+    "parts": [
+      "role",
+      "has"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role hoist",
+    "parts": [
+      "role",
+      "hoist"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role humans",
+    "parts": [
+      "role",
+      "humans"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role icon",
+    "parts": [
+      "role",
+      "icon"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role mentionable",
+    "parts": [
+      "role",
+      "mentionable"
+    ],
+    "aliases": [
+      "mention"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role remove",
+    "parts": [
+      "role",
+      "remove"
+    ],
+    "aliases": [
+      "rmv",
+      "take"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "role restore",
+    "parts": [
+      "role",
+      "restore"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "role topcolor",
+    "parts": [
+      "role",
+      "topcolor"
+    ],
+    "aliases": [
+      "topcolour",
+      "tc"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings autonick",
+    "parts": [
+      "settings",
+      "autonick"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "settings autoplay",
+    "parts": [
+      "settings",
+      "autoplay"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "settings baserole",
+    "parts": [
+      "settings",
+      "baserole"
+    ],
+    "aliases": [
+      "baseid"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings config",
+    "parts": [
+      "settings",
+      "config"
+    ],
+    "aliases": [
+      "list",
+      "configuration"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings dj",
+    "parts": [
+      "settings",
+      "dj"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "settings imuted",
+    "parts": [
+      "settings",
+      "imuted"
+    ],
+    "aliases": [
+      "imute"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings joinlogs",
+    "parts": [
+      "settings",
+      "joinlogs"
+    ],
+    "aliases": [
+      "joinlog",
+      "jl"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings modlog",
+    "parts": [
+      "settings",
+      "modlog"
+    ],
+    "aliases": [
+      "jaillog"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings muted",
+    "parts": [
+      "settings",
+      "muted"
+    ],
+    "aliases": [
+      "textmute",
+      "mute"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings premiumrole",
+    "parts": [
+      "settings",
+      "premiumrole"
+    ],
+    "aliases": [
+      "premiumid",
+      "pr"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings reset",
+    "parts": [
+      "settings",
+      "reset"
+    ],
+    "aliases": [
+      "clear"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings rmuted",
+    "parts": [
+      "settings",
+      "rmuted"
+    ],
+    "aliases": [
+      "rmute"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings staff",
+    "parts": [
+      "settings",
+      "staff"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "slowmode off",
+    "parts": [
+      "slowmode",
+      "off"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "slowmode on",
+    "parts": [
+      "slowmode",
+      "on"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "sticker cleanup",
+    "parts": [
+      "sticker",
+      "cleanup"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "sticker rename",
+    "parts": [
+      "sticker",
+      "rename"
+    ],
+    "aliases": [
+      "editname"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "sticker tag",
+    "parts": [
+      "sticker",
+      "tag"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "stickymessage add",
+    "parts": [
+      "stickymessage",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "stickymessage view",
+    "parts": [
+      "stickymessage",
+      "view"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "stickyrole add",
+    "parts": [
+      "stickyrole",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "stickyrole list",
+    "parts": [
+      "stickyrole",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "stickyrole remove",
+    "parts": [
+      "stickyrole",
+      "remove"
+    ],
+    "aliases": [
+      "del",
+      "clear"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest approve",
+    "parts": [
+      "suggest",
+      "approve"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest config",
+    "parts": [
+      "suggest",
+      "config"
+    ],
+    "aliases": [
+      "configuration"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest consider",
+    "parts": [
+      "suggest",
+      "consider"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest deny",
+    "parts": [
+      "suggest",
+      "deny"
+    ],
+    "aliases": [
+      "decline"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest ignore",
+    "parts": [
+      "suggest",
+      "ignore"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest lock",
+    "parts": [
+      "suggest",
+      "lock"
+    ],
+    "aliases": [
+      "disable",
+      "off"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest progress",
+    "parts": [
+      "suggest",
+      "progress"
+    ],
+    "aliases": [
+      "working"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest reactions",
+    "parts": [
+      "suggest",
+      "reactions"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest reply",
+    "parts": [
+      "suggest",
+      "reply"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest reset",
+    "parts": [
+      "suggest",
+      "reset"
+    ],
+    "aliases": [
+      "pending"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest review",
+    "parts": [
+      "suggest",
+      "review"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "suggest set",
+    "parts": [
+      "suggest",
+      "set"
+    ],
+    "aliases": [
+      "channel"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest threads",
+    "parts": [
+      "suggest",
+      "threads"
+    ],
+    "aliases": [
+      "thread"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest unlock",
+    "parts": [
+      "suggest",
+      "unlock"
+    ],
+    "aliases": [
+      "enable",
+      "on"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags add",
+    "parts": [
+      "tags",
+      "add"
+    ],
+    "aliases": [
+      "create"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags author",
+    "parts": [
+      "tags",
+      "author"
+    ],
+    "aliases": [
+      "owner",
+      "creator"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags edit",
+    "parts": [
+      "tags",
+      "edit"
+    ],
+    "aliases": [
+      "change",
+      "update"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags list",
+    "parts": [
+      "tags",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "tags random",
+    "parts": [
+      "tags",
+      "random"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "tags remove",
+    "parts": [
+      "tags",
+      "remove"
+    ],
+    "aliases": [
+      "del",
+      "delete"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags rename",
+    "parts": [
+      "tags",
+      "rename"
+    ],
+    "aliases": [
+      "editname"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags reset",
+    "parts": [
+      "tags",
+      "reset"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "temprole list",
+    "parts": [
+      "temprole",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "thread add",
+    "parts": [
+      "thread",
+      "add"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "thread remove",
+    "parts": [
+      "thread",
+      "remove"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "thread rename",
+    "parts": [
+      "thread",
+      "rename"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "thread watch",
+    "parts": [
+      "thread",
+      "watch"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "tickets",
+    "command": "tickets allow",
+    "parts": [
+      "tickets",
+      "allow"
+    ],
+    "aliases": [
+      "add"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets blacklist",
+    "parts": [
+      "tickets",
+      "blacklist"
+    ],
+    "aliases": [
+      "bl",
+      "block"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets close",
+    "parts": [
+      "tickets",
+      "close"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "tickets",
+    "command": "tickets delete",
+    "parts": [
+      "tickets",
+      "delete"
+    ],
+    "aliases": [
+      "del"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets deny",
+    "parts": [
+      "tickets",
+      "deny"
+    ],
+    "aliases": [
+      "remove"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets forms",
+    "parts": [
+      "tickets",
+      "forms"
+    ],
+    "aliases": [
+      "form",
+      "frm",
+      "f"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets list",
+    "parts": [
+      "tickets",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "tickets",
+    "command": "tickets move",
+    "parts": [
+      "tickets",
+      "move"
+    ],
+    "aliases": [
+      "migrate"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets options",
+    "parts": [
+      "tickets",
+      "options"
+    ],
+    "aliases": [
+      "option",
+      "opts",
+      "opt",
+      "o"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets panels",
+    "parts": [
+      "tickets",
+      "panels"
+    ],
+    "aliases": [
+      "panel",
+      "pan",
+      "pnl",
+      "p"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets profiles",
+    "parts": [
+      "tickets",
+      "profiles"
+    ],
+    "aliases": [
+      "profileadmin",
+      "ticketprofiles"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets reason",
+    "parts": [
+      "tickets",
+      "reason"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "tickets",
+    "command": "tickets rename",
+    "parts": [
+      "tickets",
+      "rename"
+    ],
+    "aliases": [
+      "name"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets reopen",
+    "parts": [
+      "tickets",
+      "reopen"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "tickets",
+    "command": "tickets resend",
+    "parts": [
+      "tickets",
+      "resend"
+    ],
+    "aliases": [
+      "res",
+      "refresh",
+      "send",
+      "update"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets stats",
+    "parts": [
+      "tickets",
+      "stats"
+    ],
+    "aliases": [
+      "counts",
+      "count"
+    ]
+  },
+  {
+    "category": "tickets",
+    "command": "tickets transcript",
+    "parts": [
+      "tickets",
+      "transcript"
+    ],
+    "aliases": [
+      "trans"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tictactoe leaderboard",
+    "parts": [
+      "tictactoe",
+      "leaderboard"
+    ],
+    "aliases": [
+      "lb"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tictactoe statistics",
+    "parts": [
+      "tictactoe",
+      "statistics"
+    ],
+    "aliases": [
+      "stats"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "timeout list",
+    "parts": [
+      "timeout",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "timers",
+    "command": "timer activity",
+    "parts": [
+      "timer",
+      "activity"
+    ],
+    "aliases": [
+      "ignoreactivity"
+    ]
+  },
+  {
+    "category": "timers",
+    "command": "timer add",
+    "parts": [
+      "timer",
+      "add"
+    ],
+    "aliases": [
+      "create",
+      "send"
+    ]
+  },
+  {
+    "category": "timers",
+    "command": "timer list",
+    "parts": [
+      "timer",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "timers",
+    "command": "timer remove",
+    "parts": [
+      "timer",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "timers",
+    "command": "timer view",
+    "parts": [
+      "timer",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "unbanall cancel",
+    "parts": [
+      "unbanall",
+      "cancel"
+    ],
+    "aliases": [
+      "kill"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "unlock all",
+    "parts": [
+      "unlock",
+      "all"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster configuration",
+    "parts": [
+      "voicemaster",
+      "configuration"
+    ],
+    "aliases": [
+      "show",
+      "view",
+      "config",
+      "info"
+    ]
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster default",
+    "parts": [
+      "voicemaster",
+      "default"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster ghost",
+    "parts": [
+      "voicemaster",
+      "ghost"
+    ],
+    "aliases": [
+      "hide"
+    ]
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster join",
+    "parts": [
+      "voicemaster",
+      "join"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster music",
+    "parts": [
+      "voicemaster",
+      "music"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster name",
+    "parts": [
+      "voicemaster",
+      "name"
+    ],
+    "aliases": [
+      "rename"
+    ]
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster role",
+    "parts": [
+      "voicemaster",
+      "role"
+    ],
+    "aliases": [
+      "roles"
+    ]
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster transfer",
+    "parts": [
+      "voicemaster",
+      "transfer"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "voicemaster",
+    "command": "voicemaster unghost",
+    "parts": [
+      "voicemaster",
+      "unghost"
+    ],
+    "aliases": [
+      "unhide"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "webhook lock",
+    "parts": [
+      "webhook",
+      "lock"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "webhook unlock",
+    "parts": [
+      "webhook",
+      "unlock"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "welcome add",
+    "parts": [
+      "welcome",
+      "add"
+    ],
+    "aliases": [
+      "create",
+      "set"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "welcome list",
+    "parts": [
+      "welcome",
+      "list"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "welcome remove",
+    "parts": [
+      "welcome",
+      "remove"
+    ],
+    "aliases": [
+      "delete",
+      "del"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "welcome view",
+    "parts": [
+      "welcome",
+      "view"
+    ],
+    "aliases": [
+      "check"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "addemote",
+    "parts": [
+      "addemote"
+    ],
+    "aliases": [
+      "adde"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "alias",
+    "parts": [
+      "alias"
+    ],
+    "aliases": [
+      "shortcut"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "badge",
+    "parts": [
+      "badge"
+    ],
+    "aliases": [
+      "gt"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "banner",
+    "parts": [
+      "banner"
+    ],
+    "aliases": [
+      "userbanner"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "book",
+    "parts": [
+      "book"
+    ],
+    "aliases": [
+      "goodreads"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "boosts",
+    "parts": [
+      "boosts"
+    ],
+    "aliases": [
+      "boost"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "bots",
+    "parts": [
+      "bots"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "caselog",
+    "parts": [
+      "caselog"
+    ],
+    "aliases": [
+      "case"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "charinfo",
+    "parts": [
+      "charinfo"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "cleargnames",
+    "parts": [
+      "cleargnames"
+    ],
+    "aliases": [
+      "clearguildnames"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "compress",
+    "parts": [
+      "compress"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "copydisabled",
+    "parts": [
+      "copydisabled"
+    ],
+    "aliases": [
+      "cd"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "customize",
+    "parts": [
+      "customize"
+    ],
+    "aliases": [
+      "customization"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "drag",
+    "parts": [
+      "drag"
+    ],
+    "aliases": [
+      "d"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "duckduckgo",
+    "parts": [
+      "duckduckgo"
+    ],
+    "aliases": [
+      "ddg"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "duckduckgoimage",
+    "parts": [
+      "duckduckgoimage"
+    ],
+    "aliases": [
+      "ddgim",
+      "ddgimg"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "dump",
+    "parts": [
+      "dump"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "editembed",
+    "parts": [
+      "editembed"
+    ],
+    "aliases": [
+      "edite"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "emotes",
+    "parts": [
+      "emotes"
+    ],
+    "aliases": [
+      "emojis"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "futbol",
+    "parts": [
+      "futbol"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "game",
+    "parts": [
+      "game"
+    ],
+    "aliases": [
+      "gamesearch"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "giphy",
+    "parts": [
+      "giphy"
+    ],
+    "aliases": [
+      "gif"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "gnames",
+    "parts": [
+      "gnames"
+    ],
+    "aliases": [
+      "guildnames",
+      "servernames",
+      "snames"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "imgonly",
+    "parts": [
+      "imgonly"
+    ],
+    "aliases": [
+      "gallery",
+      "imageonly"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "invert",
+    "parts": [
+      "invert"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "juul",
+    "parts": [
+      "juul"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "lego",
+    "parts": [
+      "lego"
+    ],
+    "aliases": [
+      "legoify",
+      "legofy"
+    ]
+  },
+  {
+    "category": "logs",
+    "command": "log",
+    "parts": [
+      "log"
+    ],
+    "aliases": [
+      "logging",
+      "logger",
+      "logs"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "makegif",
+    "parts": [
+      "makegif"
+    ],
+    "aliases": [
+      "m2g"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "makemp3",
+    "parts": [
+      "makemp3"
+    ],
+    "aliases": [
+      "mp3"
+    ]
+  },
+  {
+    "category": "manipulation",
+    "command": "media",
+    "parts": [
+      "media"
+    ],
+    "aliases": [
+      "m"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "mlb",
+    "parts": [
+      "mlb"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "moderationhistory",
+    "parts": [
+      "moderationhistory"
+    ],
+    "aliases": [
+      "modhistory",
+      "mhistory"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "modstats",
+    "parts": [
+      "modstats"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "moveall",
+    "parts": [
+      "moveall"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "naughty",
+    "parts": [
+      "naughty"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "nba",
+    "parts": [
+      "nba"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "newmembers",
+    "parts": [
+      "newmembers"
+    ],
+    "aliases": [
+      "newusers"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "nfl",
+    "parts": [
+      "nfl"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "nhl",
+    "parts": [
+      "nhl"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "notes",
+    "parts": [
+      "notes"
+    ],
+    "aliases": [
+      "note"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "osu",
+    "parts": [
+      "osu"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "pagination",
+    "parts": [
+      "pagination"
+    ],
+    "aliases": [
+      "pn",
+      "pages"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "pins",
+    "parts": [
+      "pins"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "proof",
+    "parts": [
+      "proof"
+    ],
+    "aliases": [
+      "evidence"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "quickpoll",
+    "parts": [
+      "quickpoll"
+    ],
+    "aliases": [
+      "qp"
+    ]
+  },
+  {
+    "category": "Snipe",
+    "command": "reactionhistory",
+    "parts": [
+      "reactionhistory"
+    ],
+    "aliases": [
+      "rh"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "recentban",
+    "parts": [
+      "recentban"
+    ],
+    "aliases": [
+      "chunkban"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "reminders",
+    "parts": [
+      "reminders"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Server",
+    "command": "reposter",
+    "parts": [
+      "reposter"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "revokefiles",
+    "parts": [
+      "revokefiles"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "rotate",
+    "parts": [
+      "rotate"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "run",
+    "parts": [
+      "run"
+    ],
+    "aliases": [
+      "compile",
+      "exec"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "screenshot",
+    "parts": [
+      "screenshot"
+    ],
+    "aliases": [
+      "ss"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "seen",
+    "parts": [
+      "seen"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "serveravatar",
+    "parts": [
+      "serveravatar"
+    ],
+    "aliases": [
+      "sav",
+      "savi",
+      "spfp",
+      "serverav",
+      "gav",
+      "guildav"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "setsplashbackground",
+    "parts": [
+      "setsplashbackground"
+    ],
+    "aliases": [
+      "setsplash"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "settings",
+    "parts": [
+      "settings"
+    ],
+    "aliases": [
+      "bind"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "shazam",
+    "parts": [
+      "shazam"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "snapchat",
+    "parts": [
+      "snapchat"
+    ],
+    "aliases": [
+      "snap"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "snapchatstory",
+    "parts": [
+      "snapchatstory"
+    ],
+    "aliases": [
+      "snapstory"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "soccer",
+    "parts": [
+      "soccer"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "information",
+    "command": "splash",
+    "parts": [
+      "splash"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "steal",
+    "parts": [
+      "steal"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "moderation",
+    "command": "stickyrole",
+    "parts": [
+      "stickyrole"
+    ],
+    "aliases": [
+      "sr"
+    ]
+  },
+  {
+    "category": "Server",
+    "command": "suggest",
+    "parts": [
+      "suggest"
+    ],
+    "aliases": [
+      "suggestions",
+      "suggestion"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tags",
+    "parts": [
+      "tags"
+    ],
+    "aliases": [
+      "tag",
+      "t"
+    ]
+  },
+  {
+    "category": "information",
+    "command": "telegram",
+    "parts": [
+      "telegram"
+    ],
+    "aliases": [
+      "tele"
+    ]
+  },
+  {
+    "category": "moderation",
+    "command": "temprole",
+    "parts": [
+      "temprole"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "tenor",
+    "parts": [
+      "tenor"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "timediff",
+    "parts": [
+      "timediff"
+    ],
+    "aliases": [
+      "timedifference",
+      "tdiff",
+      "diff",
+      "td"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "topcommands",
+    "parts": [
+      "topcommands"
+    ],
+    "aliases": []
+  },
+  {
+    "category": "fun",
+    "command": "transparent",
+    "parts": [
+      "transparent"
+    ],
+    "aliases": [
+      "tp"
+    ]
+  },
+  {
+    "category": "fun",
+    "command": "tvshow",
+    "parts": [
+      "tvshow"
+    ],
+    "aliases": [
+      "show"
+    ]
+  },
+  {
+    "category": "Miscellaneous",
+    "command": "wikihow",
+    "parts": [
+      "wikihow"
+    ],
+    "aliases": [
+      "whow"
+    ]
+  }
+]

@@ -1,2 +1,1 @@
-# drown
-drown discord bot
+# Discord Bot
