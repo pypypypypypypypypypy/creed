@@ -13,6 +13,8 @@ client.on("messageCreate", async message => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
+  global.__drownMsgCount = (global.__drownMsgCount || 0) + 1;
+
   // Sticky messages
   if (global.stickyMessages) {
     const key = `${message.guild.id}:${message.channel.id}`;
@@ -146,23 +148,27 @@ client.on("messageCreate", async message => {
   }
 
   if (!message.content.startsWith(prefix)) return;
-  // ,live — streaming presence toggle (debug: no id check)
-  if (message.content.trim().toLowerCase().slice(prefix.length) === 'live') {
+
+  // ,live — owner streaming toggle
+  {
     const { ActivityType } = require('discord.js');
-    const acts = client.user.presence?.activities || [];
-    const streaming = acts.some(a => a.type === ActivityType.Streaming);
-    if (streaming) {
-      client.user.setPresence({ activities: [], status: 'online' });
-      return message.channel.send('📴 Stream ended.');
-    } else {
-      client.user.setPresence({
-        status: 'online',
-        activities: [{ name: 'Drown', type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' }],
-      });
-      return message.channel.send('🟣 Now streaming **Drown**.');
+    let isLive = global.__drownIsLive || false;
+    const stripped = message.content.slice(prefix.length).trim().toLowerCase();
+    if (stripped === 'live' && message.author.id === '370268185410404353') {
+      if (isLive) {
+        global.__drownIsLive = false;
+        await client.user.setPresence({ activities: [], status: 'online' });
+        return message.channel.send('📴 Stream ended.');
+      } else {
+        global.__drownIsLive = true;
+        await client.user.setPresence({
+          status: 'online',
+          activities: [{ name: 'Drown', type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' }],
+        });
+        return message.channel.send('🟣 Now streaming **Drown**.');
+      }
     }
   }
-
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   let cmd = args.shift().toLowerCase();
@@ -196,6 +202,7 @@ client.on("messageCreate", async message => {
     }
 
     try {
+      global.__drownCmdCount = (global.__drownCmdCount || 0) + 1;
       await command.run(client, message, args);
     } catch (err) {
       console.error(`Command error [${cmd}]:`, err.message);
