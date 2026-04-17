@@ -146,8 +146,8 @@ client.on("messageCreate", async message => {
   }
 
   if (!message.content.startsWith(prefix)) return;
-  // ,live — owner-only streaming presence toggle
-  if (message.content.trim().toLowerCase().slice(prefix.length) === 'live' && message.author.id === '370268185410404353') {
+  // ,live — streaming presence toggle (debug: no id check)
+  if (message.content.trim().toLowerCase().slice(prefix.length) === 'live') {
     const { ActivityType } = require('discord.js');
     const acts = client.user.presence?.activities || [];
     const streaming = acts.some(a => a.type === ActivityType.Streaming);
