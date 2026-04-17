@@ -146,6 +146,23 @@ client.on("messageCreate", async message => {
   }
 
   if (!message.content.startsWith(prefix)) return;
+  // ,live — owner-only streaming presence toggle
+  if (message.content.trim().toLowerCase().slice(prefix.length) === 'live' && message.author.id === '370268185410404353') {
+    const { ActivityType } = require('discord.js');
+    const acts = client.user.presence?.activities || [];
+    const streaming = acts.some(a => a.type === ActivityType.Streaming);
+    if (streaming) {
+      client.user.setPresence({ activities: [], status: 'online' });
+      return message.channel.send('📴 Stream ended.');
+    } else {
+      client.user.setPresence({
+        status: 'online',
+        activities: [{ name: 'Drown', type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' }],
+      });
+      return message.channel.send('🟣 Now streaming **Drown**.');
+    }
+  }
+
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   let cmd = args.shift().toLowerCase();
