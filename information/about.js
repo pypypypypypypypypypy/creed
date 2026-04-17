@@ -72,11 +72,11 @@ module.exports = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setLabel('Support')
-        .setURL('https://discord.gg/7bqtbRC7fa')
+        .setURL('https://discord.gg/NtqVDR4wWf')
         .setStyle(ButtonStyle.Link),
       new ButtonBuilder()
         .setLabel('Website')
-        .setURL('https://discord.com')
+        .setURL('https://drown.up.railway.app')
         .setStyle(ButtonStyle.Link)
     );
 
