@@ -14,6 +14,8 @@ client.on("messageCreate", async message => {
   if (!message.guild) return;
 
   global.__drownMsgCount = (global.__drownMsgCount || 0) + 1;
+  if (!global.__drownUsers) global.__drownUsers = new Set();
+  global.__drownUsers.add(message.author.id);
 
   // Sticky messages
   if (global.stickyMessages) {
