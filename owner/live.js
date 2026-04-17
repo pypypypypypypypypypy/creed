@@ -1,15 +1,17 @@
 const { ActivityType } = require('discord.js');
 const { isOwner } = require('../utils/owners');
 
+let isLive = false;
+
 module.exports = {
   name: 'live',
-  aliases: ['golive', 'stream'],
+  aliases: ['golive'],
   category: 'owner',
   help: [
     {
       name: 'live',
       description: "Toggle the bot's streaming presence (purple ring + Live indicator)",
-      aliases: 'golive, stream',
+      aliases: 'golive',
       parameters: 'n/a',
       information: 'BOT_OWNER',
       usage: 'live',
@@ -20,15 +22,14 @@ module.exports = {
   run: async (client, message, args) => {
     if (!isOwner(message.author.id)) return;
 
-    const current = client.user.presence?.activities?.[0];
-    const isStreaming = current?.type === ActivityType.Streaming;
-
-    if (isStreaming) {
-      client.user.setPresence({ activities: [], status: 'online' });
-      return message.channel.send('📴 Stream ended. Bot is back to normal.');
+    if (isLive) {
+      isLive = false;
+      await client.user.setPresence({ activities: [], status: 'online' });
+      return message.channel.send('📴 Stream ended.');
     }
 
-    client.user.setPresence({
+    isLive = true;
+    await client.user.setPresence({
       status: 'online',
       activities: [
         {
@@ -39,6 +40,6 @@ module.exports = {
       ],
     });
 
-    return message.channel.send('🟣 Now streaming **Drown** — bot is live with a purple ring.');
+    return message.channel.send('🟣 Now live — streaming **Drown**.');
   },
 };
