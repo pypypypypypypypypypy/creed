@@ -25,16 +25,16 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
 
-    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}iunmute <member>\``)] });
+    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}iunmute <member>\``)] });
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
 
     const muteRole = message.guild.roles.cache.find(r => r.name === 'Image Muted');
     if (!muteRole || !member.roles.cache.has(muteRole.id))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: **${member.user.tag}** is not image muted.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: **${member.user.tag}** is not image muted.`)] });
 
     await member.roles.remove(muteRole);
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Removed image mute from **${member.user.tag}**.`)] });

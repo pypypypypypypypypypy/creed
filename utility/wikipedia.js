@@ -48,7 +48,7 @@ module.exports = {
 
       if (!searchData.query.search.length) {
         await loading.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: No Wikipedia results found for **${query}**.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: No Wikipedia results found for **${query}**.`)] });
       }
 
       const title = searchData.query.search[0].title;
@@ -79,7 +79,7 @@ module.exports = {
       message.channel.send({ embeds: [embed] });
     } catch (e) {
       await loading.delete().catch(() => {});
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: An error occurred while searching Wikipedia.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: An error occurred while searching Wikipedia.`)] });
     }
   }
 };

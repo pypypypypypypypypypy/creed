@@ -30,7 +30,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     if (!args[0]) {
       const disabled = db.get(`disabled_modules_${message.guild.id}`) || [];
@@ -47,11 +47,11 @@ module.exports = {
 
     const mod = args[0].toLowerCase();
     if (!VALID_MODULES.includes(mod))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: \`${mod}\` is not a valid module. Valid modules: ${VALID_MODULES.join(', ')}`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${mod}\` is not a valid module. Valid modules: ${VALID_MODULES.join(', ')}`)] });
 
     const disabled = db.get(`disabled_modules_${message.guild.id}`) || [];
     if (disabled.includes(mod))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: The \`${mod}\` module is already disabled.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The \`${mod}\` module is already disabled.`)] });
 
     disabled.push(mod);
     db.set(`disabled_modules_${message.guild.id}`, disabled);

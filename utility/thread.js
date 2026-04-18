@@ -102,7 +102,7 @@ module.exports = {
       const watched = db.get(key) || [];
       if (action === 'list') return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Watched Threads').setDescription(watched.length ? watched.map(id => `<#${id}>`).join('\n') : 'No watched threads.')] });
       const id = message.channel.isThread() ? message.channel.id : args[1];
-      if (!id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Run this inside a thread or provide a thread id.`)] });
+      if (!id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Run this inside a thread or provide a thread id.`)] });
       if (watched.includes(id)) db.set(key, watched.filter(x => x !== id));
       else db.set(key, [...watched, id]);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Thread watch toggled for <#${id}>.`)] });
@@ -110,14 +110,14 @@ module.exports = {
 
     if (['create', 'add'].includes(sub)) {
       if (!hasManageThreads && !message.member.permissions.has(PermissionFlagsBits.CreatePublicThreads))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`create_public_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`create_public_threads\``)] });
 
       const name = args.slice(1).join(' ');
       if (!name)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a thread name. Usage: \`${prefix}thread create <name>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a thread name. Usage: \`${prefix}thread create <name>\``)] });
 
       if (!message.channel.isTextBased() || message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can only create threads in a text channel.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can only create threads in a text channel.`)] });
 
       try {
         const thread = await message.channel.threads.create({
@@ -128,17 +128,17 @@ module.exports = {
         });
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Thread ${thread} has been created.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to create thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to create thread: ${e.message}`)] });
       }
     }
 
     // ,thread delete
     if (['delete', 'remove'].includes(sub)) {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       await message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Deleting this thread...`)] });
       return message.channel.delete().catch(() => {});
@@ -147,147 +147,147 @@ module.exports = {
     // ,thread archive
     if (sub === 'archive') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       try {
         await message.channel.setArchived(true, `Archived by ${message.author.tag}`);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: This thread has been archived.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to archive thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to archive thread: ${e.message}`)] });
       }
     }
 
     // ,thread unarchive
     if (sub === 'unarchive') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       try {
         await message.channel.setArchived(false, `Unarchived by ${message.author.tag}`);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: This thread has been unarchived.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to unarchive thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to unarchive thread: ${e.message}`)] });
       }
     }
 
     // ,thread lock
     if (sub === 'lock') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       try {
         await message.channel.setLocked(true, `Locked by ${message.author.tag}`);
         await message.channel.setArchived(true, `Locked by ${message.author.tag}`);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: This thread has been locked.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to lock thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to lock thread: ${e.message}`)] });
       }
     }
 
     // ,thread unlock
     if (sub === 'unlock') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       try {
         await message.channel.setArchived(false, `Unlocked by ${message.author.tag}`);
         await message.channel.setLocked(false, `Unlocked by ${message.author.tag}`);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: This thread has been unlocked.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to unlock thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to unlock thread: ${e.message}`)] });
       }
     }
 
     // ,thread rename <name>
     if (sub === 'rename') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       const name = args.slice(1).join(' ');
       if (!name)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a new name. Usage: \`${prefix}thread rename <name>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a new name. Usage: \`${prefix}thread rename <name>\``)] });
 
       try {
         await message.channel.setName(name, `Renamed by ${message.author.tag}`);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Thread renamed to **${name}**.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to rename thread: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to rename thread: ${e.message}`)] });
       }
     }
 
     // ,thread add @user
     if (sub === 'add') {
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       const target = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
       if (!target)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a user. Usage: \`${prefix}thread add @user\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a user. Usage: \`${prefix}thread add @user\``)] });
 
       try {
         await message.channel.members.add(target.id);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: ${target} has been added to this thread.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to add user: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to add user: ${e.message}`)] });
       }
     }
 
     // ,thread remove @user
     if (sub === 'remove') {
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       if (!hasManageThreads && message.author.id !== message.channel.ownerId)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You need \`manage_threads\` or must be the thread owner.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need \`manage_threads\` or must be the thread owner.`)] });
 
       const target = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
       if (!target)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a user. Usage: \`${prefix}thread remove @user\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a user. Usage: \`${prefix}thread remove @user\``)] });
 
       try {
         await message.channel.members.remove(target.id);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: ${target} has been removed from this thread.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to remove user: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to remove user: ${e.message}`)] });
       }
     }
 
     // ,thread slowmode <seconds>
     if (sub === 'slowmode') {
       if (!hasManageThreads)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_threads\``)] });
 
       if (!message.channel.isThread())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must run this command inside a thread.`)] });
 
       const seconds = parseInt(args[1]);
       if (isNaN(seconds) || seconds < 0 || seconds > 21600)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid duration in seconds (0–21600). Usage: \`${prefix}thread slowmode <seconds>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid duration in seconds (0–21600). Usage: \`${prefix}thread slowmode <seconds>\``)] });
 
       try {
         await message.channel.setRateLimitPerUser(seconds, `Set by ${message.author.tag}`);
         const label = seconds === 0 ? 'disabled' : `set to **${seconds}s**`;
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Thread slowmode ${label}.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Failed to set slowmode: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Failed to set slowmode: ${e.message}`)] });
       }
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}thread\` to see all available subcommands.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}thread\` to see all available subcommands.`)] });
   }
 };

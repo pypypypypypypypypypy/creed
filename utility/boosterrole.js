@@ -60,14 +60,14 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.premiumSince)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You must be a **server booster** to use this command.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You must be a **server booster** to use this command.`)] });
 
     const sub = (args[0] || '').toLowerCase();
 
     if (sub === 'create') {
       const existingRoleId = db.get(`boosterrole_${message.guild.id}_${message.author.id}`);
       if (existingRoleId && message.guild.roles.cache.has(existingRoleId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You already have a booster role.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You already have a booster role.`)] });
 
       const name = args.slice(1).join(' ') || `${message.author.username}'s role`;
 
@@ -85,7 +85,7 @@ module.exports = {
 
         message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Created your booster role: ${role}`)] });
       } catch (err) {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Failed to create role: ${err.message}`)] });
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to create role: ${err.message}`)] });
       }
       return;
     }
@@ -94,7 +94,7 @@ module.exports = {
       const roleId = db.get(`boosterrole_${message.guild.id}_${message.author.id}`);
       const role = roleId ? message.guild.roles.cache.get(roleId) : null;
       if (!role)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role. Use \`${prefix}boosterrole create\` first.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role. Use \`${prefix}boosterrole create\` first.`)] });
 
       const hex = args[1];
       if (!hex || !/^#?[0-9a-fA-F]{6}$/.test(hex))
@@ -110,7 +110,7 @@ module.exports = {
       const roleId = db.get(`boosterrole_${message.guild.id}_${message.author.id}`);
       const role = roleId ? message.guild.roles.cache.get(roleId) : null;
       if (!role)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
 
       const name = args.slice(1).join(' ');
       if (!name)
@@ -125,7 +125,7 @@ module.exports = {
       const roleId = db.get(`boosterrole_${message.guild.id}_${message.author.id}`);
       const role = roleId ? message.guild.roles.cache.get(roleId) : null;
       if (!role)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
 
       const icon = message.attachments.first()?.url || args[1];
       if (!icon)
@@ -135,7 +135,7 @@ module.exports = {
         await role.setIcon(icon);
         message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Updated your booster role icon.`)] });
       } catch (err) {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Failed to set icon. The server may need more boosts.`)] });
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to set icon. The server may need more boosts.`)] });
       }
       return;
     }
@@ -144,7 +144,7 @@ module.exports = {
       const roleId = db.get(`boosterrole_${message.guild.id}_${message.author.id}`);
       const role = roleId ? message.guild.roles.cache.get(roleId) : null;
       if (!role)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You don't have a booster role.`)] });
 
       await role.delete('Booster role removed');
       db.delete(`boosterrole_${message.guild.id}_${message.author.id}`);
@@ -154,7 +154,7 @@ module.exports = {
 
     if (sub === 'cleanup') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageRoles))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
 
       let cleaned = 0;
       const keys = Object.keys(require('../db_data.json') || {}).filter(k => k.startsWith(`boosterrole_${message.guild.id}_`));

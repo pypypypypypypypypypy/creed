@@ -22,13 +22,13 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!client.musicQueue || !client.musicQueue.get(message.guild.id)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
     }
 
     const queue = client.musicQueue.get(message.guild.id);
     const current = queue.current;
 
-    if (!current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (!current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
 
     const embed = new EmbedBuilder()
       .setColor(color)

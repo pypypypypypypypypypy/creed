@@ -80,11 +80,11 @@ module.exports = {
     // ,confessions channel #channel — set confession channel
     if (sub === 'channel') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
 
       const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
       if (!channel || !channel.isTextBased())
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a valid text channel. Usage: \`${prefix}confessions channel #channel\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a valid text channel. Usage: \`${prefix}confessions channel #channel\``)] });
 
       db.set(`confessions_channel_${guildId}`, channel.id);
       db.set(`confessions_enabled_${guildId}`, true);
@@ -97,25 +97,25 @@ module.exports = {
       const channelId = db.get(`confessions_channel_${guildId}`);
 
       if (!enabled || !channelId)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Confessions are not enabled in this server. An admin must run \`${prefix}confessions channel #channel\` first.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Confessions are not enabled in this server. An admin must run \`${prefix}confessions channel #channel\` first.`)] });
 
       const muted = db.get(`confessions_muted_${guildId}`) || [];
       if (muted.includes(message.author.id))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: You have been muted from sending confessions in this server.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You have been muted from sending confessions in this server.`)] });
 
       const confessionText = args.slice(1).join(' ');
       if (!confessionText)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a confession message. Usage: \`${prefix}confessions send <message>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a confession message. Usage: \`${prefix}confessions send <message>\``)] });
 
       const blacklist = db.get(`confessions_blacklist_${guildId}`) || [];
       const lower = confessionText.toLowerCase();
       const hit = blacklist.find(w => lower.includes(w.toLowerCase()));
       if (hit)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Your confession contains a blacklisted word.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Your confession contains a blacklisted word.`)] });
 
       const confessCh = message.guild.channels.cache.get(channelId);
       if (!confessCh)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: The configured confession channel no longer exists. Please ask an admin to set a new one.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: The configured confession channel no longer exists. Please ask an admin to set a new one.`)] });
 
       const count = (db.get(`confessions_count_${guildId}`) || 0) + 1;
       db.set(`confessions_count_${guildId}`, count);
@@ -144,20 +144,20 @@ module.exports = {
     // ,confessions mute <confession#>
     if (sub === 'mute') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
 
       const num = parseInt(args[1]);
       if (!num || isNaN(num))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a confession number. Usage: \`${prefix}confessions mute <confession#>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a confession number. Usage: \`${prefix}confessions mute <confession#>\``)] });
 
       const authorMap = db.get(`confessions_authors_${guildId}`) || {};
       const userId = authorMap[num];
       if (!userId)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No confession found with number **#${num}**.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No confession found with number **#${num}**.`)] });
 
       const muted = db.get(`confessions_muted_${guildId}`) || [];
       if (muted.includes(userId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: The author of confession **#${num}** is already muted.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The author of confession **#${num}** is already muted.`)] });
 
       muted.push(userId);
       db.set(`confessions_muted_${guildId}`, muted);
@@ -167,7 +167,7 @@ module.exports = {
     // ,confessions unmute <confession#> or all
     if (sub === 'unmute') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
 
       if ((args[1] || '').toLowerCase() === 'all') {
         db.set(`confessions_muted_${guildId}`, []);
@@ -176,16 +176,16 @@ module.exports = {
 
       const num = parseInt(args[1]);
       if (!num || isNaN(num))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a confession number or \`all\`. Usage: \`${prefix}confessions unmute <confession#|all>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a confession number or \`all\`. Usage: \`${prefix}confessions unmute <confession#|all>\``)] });
 
       const authorMap = db.get(`confessions_authors_${guildId}`) || {};
       const userId = authorMap[num];
       if (!userId)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No confession found with number **#${num}**.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No confession found with number **#${num}**.`)] });
 
       let muted = db.get(`confessions_muted_${guildId}`) || [];
       if (!muted.includes(userId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: The author of confession **#${num}** is not muted.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The author of confession **#${num}** is not muted.`)] });
 
       muted = muted.filter(id => id !== userId);
       db.set(`confessions_muted_${guildId}`, muted);
@@ -195,7 +195,7 @@ module.exports = {
     // ,confessions blacklist add/remove/list/clear
     if (sub === 'blacklist') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
 
       const action = (args[1] || '').toLowerCase();
       const blacklist = db.get(`confessions_blacklist_${guildId}`) || [];
@@ -213,11 +213,11 @@ module.exports = {
 
       const word = args.slice(2).join(' ');
       if (!word)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a word.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a word.`)] });
 
       if (action === 'add') {
         if (blacklist.includes(word.toLowerCase()))
-          return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: \`${word}\` is already blacklisted.`)] });
+          return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${word}\` is already blacklisted.`)] });
         blacklist.push(word.toLowerCase());
         db.set(`confessions_blacklist_${guildId}`, blacklist);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: \`${word}\` has been added to the confession blacklist.`)] });
@@ -225,18 +225,18 @@ module.exports = {
 
       if (action === 'remove') {
         if (!blacklist.includes(word.toLowerCase()))
-          return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: \`${word}\` is not in the blacklist.`)] });
+          return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${word}\` is not in the blacklist.`)] });
         db.set(`confessions_blacklist_${guildId}`, blacklist.filter(w => w !== word.toLowerCase()));
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: \`${word}\` has been removed from the confession blacklist.`)] });
       }
 
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid subcommand. Use \`add\`, \`remove\`, \`list\`, or \`clear\`.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid subcommand. Use \`add\`, \`remove\`, \`list\`, or \`clear\`.`)] });
     }
 
     // ,confessions disable
     if (sub === 'disable') {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
 
       db.set(`confessions_enabled_${guildId}`, false);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Anonymous confessions have been disabled.`)] });
@@ -245,7 +245,7 @@ module.exports = {
     // ,confessions reset
     if (sub === 'reset') {
       if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`administrator\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`administrator\``)] });
 
       db.delete(`confessions_channel_${guildId}`);
       db.delete(`confessions_enabled_${guildId}`);
@@ -256,6 +256,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: All confession data has been reset.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}confessions\` to see all available subcommands.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}confessions\` to see all available subcommands.`)] });
   }
 };

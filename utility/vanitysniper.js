@@ -51,7 +51,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`administrator\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`administrator\``)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -83,7 +83,7 @@ module.exports = {
     const snipers = db.get(`vanitysniper_${message.guild.id}`) || [];
 
     if (snipers.includes(vanity.toLowerCase()))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: That vanity is already being sniped.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: That vanity is already being sniped.`)] });
 
     snipers.push(vanity.toLowerCase());
     db.set(`vanitysniper_${message.guild.id}`, snipers);

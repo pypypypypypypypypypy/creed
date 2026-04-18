@@ -161,7 +161,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (active.has(message.channel.id))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: A **Black Tea** game is already running in this channel`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: A **Black Tea** game is already running in this channel`)] });
 
     active.set(message.channel.id, true);
 
@@ -193,7 +193,7 @@ module.exports = {
 
     if (lives.size === 0) {
       active.delete(message.channel.id);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Nobody joined. Game cancelled.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nobody joined. Game cancelled.`)] });
     }
 
     let turnIdx = 0;

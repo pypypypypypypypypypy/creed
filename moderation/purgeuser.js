@@ -23,8 +23,8 @@ module.exports = {
   aliases: ["puser"],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
     const purgehelpEmbed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
       .setTitle('Command: purgeuser')
@@ -46,10 +46,10 @@ module.exports = {
 
     let member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     let amount = args[1]
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You need to **mention** a user to purge`)] })
-    if (!amount) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: Provide an **amount** to purge`)] })
-    if (isNaN(amount)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You need to enter a **valid** amount to purge`)] })
-    if (amount > 100) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: Invalid amount. Make sure it is between **2-100**`)] })
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to **mention** a user to purge`)] })
+    if (!amount) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an **amount** to purge`)] })
+    if (isNaN(amount)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to enter a **valid** amount to purge`)] })
+    if (amount > 100) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid amount. Make sure it is between **2-100**`)] })
     let AllMessages = await message.channel.messages.fetch()
     let FilteredMessages = await AllMessages.filter(x => x.author.id === member.id)
     let deletedMessages = 0

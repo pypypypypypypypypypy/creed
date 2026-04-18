@@ -24,7 +24,7 @@ module.exports = {
     const target = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member;
 
     const guildInvites = await message.guild.invites.fetch().catch(() => null);
-    if (!guildInvites) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I don't have permission to view invites.`)] });
+    if (!guildInvites) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I don't have permission to view invites.`)] });
 
     const userInvites = guildInvites.filter(i => i.inviter?.id === target.id);
     const totalUses = userInvites.reduce((acc, inv) => acc + (inv.uses || 0), 0);

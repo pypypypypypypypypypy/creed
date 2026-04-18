@@ -83,13 +83,13 @@ module.exports = {
 
     if (sub === 'reset') {
       Object.keys(global.buttonRoles).forEach(k => { if (k.startsWith(guildId + ':')) delete global.buttonRoles[k]; });
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Cleared all button roles in this server.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Cleared all button roles in this server.`)] });
     }
 
     const linkArg = args[1];
-    if (!linkArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a message link.`)] });
+    if (!linkArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a message link.`)] });
     const match = linkArg.match(linkRegex);
-    if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
+    if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
     const [, , channelId, messageId] = match;
     const key = `${guildId}:${messageId}`;
 
@@ -100,14 +100,14 @@ module.exports = {
         const msg = await ch.messages.fetch(messageId).catch(() => null);
         if (msg) await msg.edit({ components: [] }).catch(() => {});
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed all button roles from that message.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed all button roles from that message.`)] });
     }
 
     if (sub === 'remove') {
       const idx = parseInt(args[2]) - 1;
-      if (isNaN(idx)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a valid index.`)] });
+      if (isNaN(idx)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a valid index.`)] });
       const existing = global.buttonRoles[key] || [];
-      if (idx < 0 || idx >= existing.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Index out of range.`)] });
+      if (idx < 0 || idx >= existing.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Index out of range.`)] });
       existing.splice(idx, 1);
       global.buttonRoles[key] = existing;
 
@@ -128,14 +128,14 @@ module.exports = {
           await msg.edit({ components: [row] }).catch(() => {});
         }
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed button role at index ${idx + 1}.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed button role at index ${idx + 1}.`)] });
     }
 
     if (sub === 'add') {
       const [, , roleArg, styleArg, emojiArg, ...labelParts] = args;
-      if (!roleArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a role.`)] });
+      if (!roleArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a role.`)] });
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(roleArg);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Role not found.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Role not found.`)] });
 
       const styleMap = { primary: ButtonStyle.Primary, secondary: ButtonStyle.Secondary, success: ButtonStyle.Success, danger: ButtonStyle.Danger };
       const btnStyle = (styleArg && styleMap[styleArg.toLowerCase()]) || ButtonStyle.Primary;
@@ -145,9 +145,9 @@ module.exports = {
       global.buttonRoles[key].push({ roleId: role.id, style: btnStyle, emoji: emojiArg || null, label });
 
       const ch = client.channels.cache.get(channelId);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
       const msg = await ch.messages.fetch(messageId).catch(() => null);
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Message not found.`)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Message not found.`)] });
 
       const all = global.buttonRoles[key];
       const rows = [];
@@ -166,7 +166,7 @@ module.exports = {
       }
 
       await msg.edit({ components: rows }).catch(() => {});
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Added button role **${label}** → <@&${role.id}>.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added button role **${label}** → <@&${role.id}>.`)] });
     }
   },
 };

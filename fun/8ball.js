@@ -35,7 +35,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     const question = args.join(' ');
-    if (!question) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}8ball <question>\``)] });
+    if (!question) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}8ball <question>\``)] });
 
     const response = responses[Math.floor(Math.random() * responses.length)];
     const embed = new EmbedBuilder()

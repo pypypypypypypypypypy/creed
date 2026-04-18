@@ -26,7 +26,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -37,7 +37,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Usage: \`${prefix}enableevent <#channel|all> <event>\`\nAvailable events: ${EVENTS.map(e => `\`${e}\``).join(', ')}`)] });
 
     if (!channel)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Invalid channel.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Invalid channel.`)] });
 
     const disabled = db.get(`disabled_events_${message.guild.id}`) || {};
 

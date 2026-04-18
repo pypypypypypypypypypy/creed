@@ -26,13 +26,13 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}setlevel @user <level>\``)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}setlevel @user <level>\``)] });
 
     const level = parseInt(args[1]);
-    if (isNaN(level) || level < 0 || level > 500) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a valid level between 0 and 500.`)] });
+    if (isNaN(level) || level < 0 || level > 500) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a valid level between 0 and 500.`)] });
 
     // Calculate XP needed to reach that level from 0
     let totalXp = 0;

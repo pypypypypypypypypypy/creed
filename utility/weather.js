@@ -47,7 +47,7 @@ module.exports = {
 
       if (!res.ok) {
         await loading.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Could not find weather data for **${location}**.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not find weather data for **${location}**.`)] });
       }
 
       const data = await res.json();
@@ -99,7 +99,7 @@ module.exports = {
       message.channel.send({ embeds: [embed] });
     } catch (e) {
       await loading.delete().catch(() => {});
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: An error occurred while fetching weather data.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: An error occurred while fetching weather data.`)] });
     }
   }
 };

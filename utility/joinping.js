@@ -51,7 +51,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -83,11 +83,11 @@ module.exports = {
     if (sub === 'test') {
       const config = db.get(`joinping_${message.guild.id}`);
       if (!config || !config.channel)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Join ping is not configured.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Join ping is not configured.`)] });
 
       const channel = message.guild.channels.cache.get(config.channel);
       if (!channel)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Configured channel no longer exists.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Configured channel no longer exists.`)] });
 
       const text = (config.message || '{user}')
         .replace(/{user}/g, message.author.toString())

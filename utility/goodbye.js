@@ -61,7 +61,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     const sub = args[0]?.toLowerCase();
 
@@ -79,14 +79,14 @@ module.exports = {
 
     if (sub === 'channel') {
       const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
+      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
       db.set(`goodbye_channel_${message.guild.id}`, channel.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Goodbye channel set to ${channel}.`)] });
     }
 
     if (sub === 'message') {
       const msg = args.slice(1).join(' ');
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a message. Variables: \`{user}\`, \`{user.tag}\`, \`{guild}\`, \`{membercount}\``)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a message. Variables: \`{user}\`, \`{user.tag}\`, \`{guild}\`, \`{membercount}\``)] });
       db.set(`goodbye_message_${message.guild.id}`, msg);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Goodbye message updated.`)] });
     }
@@ -97,6 +97,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Goodbye messages disabled.`)] });
     }
 
-    message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}goodbye [channel #ch | message <text> | disable]\``)] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}goodbye [channel #ch | message <text> | disable]\``)] });
   }
 };

@@ -36,7 +36,7 @@ module.exports = {
     const insult = insults[Math.floor(Math.random() * insults.length)];
 
     const embed = new EmbedBuilder()
-      .setColor('fe6464')
+      .setColor('#fe6464')
       .setDescription(`😈 ${target}: ${insult}`)
       .setTimestamp();
 

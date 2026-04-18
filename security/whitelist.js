@@ -64,7 +64,7 @@ module.exports = {
     const guildId = message.guild.id;
 
     if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`administrator\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`administrator\``)] });
 
     if (!sub) {
       const embed = new EmbedBuilder()
@@ -97,14 +97,14 @@ module.exports = {
         || message.guild.members.cache.get(args[1]);
 
       if (!target)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a user or provide their ID.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a user or provide their ID.`)] });
 
       if (target.id === message.author.id)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You cannot whitelist yourself.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You cannot whitelist yourself.`)] });
 
       const wl = db.get(`antinuke_whitelist_${guildId}`) || [];
       if (wl.includes(target.id))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: **${target.user.username}** is already whitelisted.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: **${target.user.username}** is already whitelisted.`)] });
 
       wl.push(target.id);
       db.set(`antinuke_whitelist_${guildId}`, wl);
@@ -117,11 +117,11 @@ module.exports = {
         || message.guild.members.cache.get(args[1]);
 
       if (!target)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a user or provide their ID.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a user or provide their ID.`)] });
 
       let wl = db.get(`antinuke_whitelist_${guildId}`) || [];
       if (!wl.includes(target.id))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: **${target.user.username}** is not on the whitelist.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: **${target.user.username}** is not on the whitelist.`)] });
 
       wl = wl.filter(id => id !== target.id);
       db.set(`antinuke_whitelist_${guildId}`, wl);
@@ -157,6 +157,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: The antinuke whitelist has been cleared.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}whitelist\` to see all available subcommands.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}whitelist\` to see all available subcommands.`)] });
   }
 };

@@ -37,6 +37,6 @@ module.exports = {
       return message.channel.send({ embeds: [twitterEmbed] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: The Twitter API integration is currently unavailable`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The Twitter API integration is currently unavailable`)] });
   }
 };

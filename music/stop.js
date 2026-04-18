@@ -21,7 +21,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.voice.channel) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
     }
 
     if (client.musicQueue) client.musicQueue.delete(message.guild.id);

@@ -18,8 +18,8 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`);
     if (prefix === null) { prefix = default_prefix; };
 
-    if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
 
     let reason = args.slice(1).join(" ");
     const mentionedMember = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
@@ -39,11 +39,11 @@ module.exports = {
     if (!args[0]) return paginate(message, [
       { name: 'ban', description: 'Bans the mentioned user from the guild', aliases: 'n/a', parameters: '(member) [reason]', information: 'BAN_MEMBERS', usage: `${prefix}ban (member) <reason>`, example: `${prefix}ban @user Threatening members` }
     ], 'moderation');
-    if (mentionedMember.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot ban **yourself**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
+    if (mentionedMember.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban **yourself**`)] })
+    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
     if (!mentionedMember) return message.channel.send({ embed: { color: "#efa23a", description: `${warn} ${message.author}: **Invalid User**. Do \`${prefix}ban\` to see the variables` } })
     if (!mentionedMember.bannable) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: Cannot ban due to **hierarchy**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
+    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
 
 
     const banEmbed = new EmbedBuilder()

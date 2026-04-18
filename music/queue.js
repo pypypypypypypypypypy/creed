@@ -22,7 +22,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!client.musicQueue || !client.musicQueue.get(message.guild.id)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: The queue is empty.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The queue is empty.`)] });
     }
 
     const queue = client.musicQueue.get(message.guild.id);

@@ -24,8 +24,8 @@ module.exports = {
   aliases: ["rc"],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageRoles)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_roles\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageRoles)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_roles\``)] });
 
 
     const rcEmbed = new EmbedBuilder()

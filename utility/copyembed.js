@@ -39,7 +39,7 @@ module.exports = {
     const linkRegex = /https?:\/\/(?:ptb\.|canary\.)?discord(?:app)?\.com\/channels\/(\d+)\/(\d+)\/(\d+)/;
     const match = args[0].match(linkRegex);
     if (!match) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That doesn't look like a valid message link.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That doesn't look like a valid message link.`)] });
     }
 
     const [, guildId, channelId, messageId] = match;
@@ -47,12 +47,12 @@ module.exports = {
     try {
       const targetChannel = client.channels.cache.get(channelId) || await client.channels.fetch(channelId).catch(() => null);
       if (!targetChannel) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I couldn't find that channel.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I couldn't find that channel.`)] });
       }
 
       const targetMessage = await targetChannel.messages.fetch(messageId).catch(() => null);
       if (!targetMessage) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I couldn't find that message.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I couldn't find that message.`)] });
       }
 
       const result = { content: targetMessage.content || undefined, embeds: [] };
@@ -79,9 +79,9 @@ module.exports = {
         await message.channel.send({ content: `\`\`\`json\n${chunk}\n\`\`\`` });
       }
 
-      await message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Copied the message embed script above.`)] });
+      await message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Copied the message embed script above.`)] });
     } catch (e) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: ${e.message}`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: ${e.message}`)] });
     }
   },
 };

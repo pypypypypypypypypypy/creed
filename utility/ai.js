@@ -70,7 +70,7 @@ module.exports = {
 
       await thinking.edit({ embeds: [embed] });
     } catch (e) {
-      await thinking.edit({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed to get a response. ${e.message}`)] });
+      await thinking.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to get a response. ${e.message}`)] });
     }
   },
 };

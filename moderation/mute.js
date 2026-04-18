@@ -18,8 +18,8 @@ module.exports = {
    */
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.MuteMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`mute_members\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.MuteMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`mute_members\``)] });
 
     const muteEmbed = new EmbedBuilder()
     .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
@@ -43,8 +43,8 @@ module.exports = {
     let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member;
 
     const Member = message.mentions.members.first() || message.guild.members.cache.get(args[0])
-    if (Member.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot mute **yourself**`)] })
-    if (message.member.roles.highest.comparePositionTo(Member.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot mute someone that is **higher** than **yours**`)] })
+    if (Member.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot mute **yourself**`)] })
+    if (message.member.roles.highest.comparePositionTo(Member.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot mute someone that is **higher** than **yours**`)] })
     if (!Member) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: I was unable to find a member with that name`)] })
     const role = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'muted')
     if (!role) {

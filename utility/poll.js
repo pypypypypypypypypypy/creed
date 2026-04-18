@@ -22,9 +22,9 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`embed_links\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`embed_links\``)] });
 
     if (!args[0]) {
       const pollEmbed = new EmbedBuilder()

@@ -97,53 +97,53 @@ module.exports = {
     }
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
     }
 
     if (sub === 'clear') {
       Object.keys(global.reactionRoles).forEach(k => {
         if (k.startsWith(message.guild.id + ':')) delete global.reactionRoles[k];
       });
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Cleared all reaction roles in this server.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Cleared all reaction roles in this server.`)] });
     }
 
     if (sub === 'add') {
       const [, link, emojiArg, roleArg] = args;
       if (!link || !emojiArg || !roleArg) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`reactionrole add <message link> <emoji> <role>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`reactionrole add <message link> <emoji> <role>\``)] });
       }
       const match = link.match(linkRegex);
-      if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
+      if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
       const [, , channelId, messageId] = match;
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(roleArg);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Role not found.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Role not found.`)] });
 
       const targetChannel = client.channels.cache.get(channelId);
-      if (!targetChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
+      if (!targetChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
       const targetMessage = await targetChannel.messages.fetch(messageId).catch(() => null);
-      if (!targetMessage) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Message not found.`)] });
+      if (!targetMessage) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Message not found.`)] });
 
       await targetMessage.react(emojiArg).catch(() => null);
       const key = getKey(message.guild.id, messageId, emojiArg);
       global.reactionRoles[key] = role.id;
 
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Added reaction role ${emojiArg} → <@&${role.id}> to that message.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added reaction role ${emojiArg} → <@&${role.id}> to that message.`)] });
     }
 
     if (sub === 'remove') {
       const [, link, emojiArg] = args;
       if (!link || !emojiArg) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`reactionrole remove <message link> <emoji>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`reactionrole remove <message link> <emoji>\``)] });
       }
       const match = link.match(linkRegex);
-      if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
+      if (!match) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid message link.`)] });
       const [, , , messageId] = match;
       const key = getKey(message.guild.id, messageId, emojiArg);
       if (!global.reactionRoles[key]) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No reaction role found for that message and emoji.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No reaction role found for that message and emoji.`)] });
       }
       delete global.reactionRoles[key];
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed reaction role for emoji ${emojiArg} on that message.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed reaction role for emoji ${emojiArg} on that message.`)] });
     }
   },
 };

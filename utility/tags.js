@@ -36,43 +36,43 @@ module.exports = {
     }
 
     if (['add', 'create'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
       const name = args[1]?.toLowerCase();
       const content = args.slice(2).join(' ');
-      if (!name || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags add (name) (content)\``)] });
-      if (tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: A tag with that name already exists.`)] });
+      if (!name || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags add (name) (content)\``)] });
+      if (tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: A tag with that name already exists.`)] });
       tags[name] = { content, author: message.author.id, created: Date.now() };
       db.set(tagsKey, tags);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Tag **${name}** has been created.`)] });
     }
 
     if (['remove', 'del', 'delete'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
       const name = args[1]?.toLowerCase();
-      if (!name || !tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
+      if (!name || !tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
       delete tags[name];
       db.set(tagsKey, tags);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Tag **${name}** has been deleted.`)] });
     }
 
     if (['edit', 'change', 'update'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
       const name = args[1]?.toLowerCase();
       const content = args.slice(2).join(' ');
-      if (!name || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags edit (name) (new content)\``)] });
-      if (!tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
+      if (!name || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags edit (name) (new content)\``)] });
+      if (!tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
       tags[name].content = content;
       db.set(tagsKey, tags);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Tag **${name}** has been updated.`)] });
     }
 
     if (['rename', 'editname'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
       const oldName = args[1]?.toLowerCase();
       const newName = args[2]?.toLowerCase();
-      if (!oldName || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags rename (old name) (new name)\``)] });
-      if (!tags[oldName]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Tag **${oldName}** does not exist.`)] });
-      if (tags[newName]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Tag **${newName}** already exists.`)] });
+      if (!oldName || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tags rename (old name) (new name)\``)] });
+      if (!tags[oldName]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Tag **${oldName}** does not exist.`)] });
+      if (tags[newName]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Tag **${newName}** already exists.`)] });
       tags[newName] = tags[oldName];
       delete tags[oldName];
       db.set(tagsKey, tags);
@@ -94,13 +94,13 @@ module.exports = {
 
     if (['author', 'owner', 'creator'].includes(sub)) {
       const name = args[1]?.toLowerCase();
-      if (!name || !tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
+      if (!name || !tags[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That tag does not exist.`)] });
       const author = await client.users.fetch(tags[name].author).catch(() => null);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Tag **${name}** was created by ${author ? author.tag : 'Unknown User'}.`)] });
     }
 
     if (sub === 'reset') {
-      if (!hasAdmin) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasAdmin) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       db.set(tagsKey, {});
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: All tags have been **reset**.`)] });
     }
@@ -109,6 +109,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle(`Tag: ${sub}`).setDescription(tags[sub].content)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Tag **${sub}** not found. Use \`${prefix}tags list\` to see all tags.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Tag **${sub}** not found. Use \`${prefix}tags list\` to see all tags.`)] });
   }
 };

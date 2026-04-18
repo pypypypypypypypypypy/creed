@@ -24,7 +24,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
 
     if (!args[0] || !args[1])
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Usage: \`${prefix}reason <case_id> <new reason>\``)] });
@@ -36,7 +36,7 @@ module.exports = {
     const modCase = cases.find(c => String(c.id) === String(caseId));
 
     if (!modCase)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Case **#${caseId}** not found.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Case **#${caseId}** not found.`)] });
 
     modCase.reason = newReason;
     db.set(`cases_${message.guild.id}`, cases);

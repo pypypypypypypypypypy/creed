@@ -1,22 +1,16 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const { color } = require('../config.json');
 
-/**
- * Sends a paginated command info embed with buttons.
- * @param {import('discord.js').Message} message
- * @param {object[]} pages - Array of page objects: { name, description, aliases, parameters, information, usage, example }
- * @param {string} module - Module name shown in footer
- */
 async function paginate(message, pages, module) {
   let current = 0;
 
   function buildEmbed(i) {
     const p = pages[i];
-    return new EmbedBuilder()
+    const embed = new EmbedBuilder()
       .setColor(color)
       .setAuthor({ name: message.guild.name, iconURL: message.guild.iconURL({ forceStatic: false }) || undefined })
       .setTitle(p.name)
-      .setDescription(`> ${p.description}`)
+      .setDescription(p.description ? `> ${p.description}` : null)
       .addFields(
         { name: 'Aliases', value: p.aliases || 'n/a', inline: false },
         { name: 'Parameters', value: p.parameters || 'n/a', inline: false },
@@ -24,6 +18,9 @@ async function paginate(message, pages, module) {
         { name: 'Usage', value: `\`\`\`\nSyntax: ${p.usage}\nExample: ${p.example || p.usage}\n\`\`\``, inline: false }
       )
       .setFooter({ text: `Page ${i + 1}/${pages.length} (${pages.length} entries) • Module: ${module}` });
+
+    if (p.flags) embed.addFields({ name: 'Flags', value: p.flags, inline: false });
+    return embed;
   }
 
   function buildRow(i, disabled = false) {
@@ -31,18 +28,23 @@ async function paginate(message, pages, module) {
       new ButtonBuilder()
         .setCustomId('pag_prev')
         .setLabel('<')
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(ButtonStyle.Primary)
         .setDisabled(disabled || i === 0),
-      new ButtonBuilder()
-        .setCustomId('pag_stop')
-        .setEmoji({ name: 'x_square', id: '1440975468500357210' })
-        .setStyle(ButtonStyle.Danger)
-        .setDisabled(disabled),
       new ButtonBuilder()
         .setCustomId('pag_next')
         .setLabel('>')
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(disabled || i === pages.length - 1),
+      new ButtonBuilder()
+        .setCustomId('pag_page')
+        .setLabel(`${i + 1}/${pages.length}`)
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(disabled || i === pages.length - 1)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId('pag_stop')
+        .setLabel('x')
+        .setStyle(ButtonStyle.Danger)
+        .setDisabled(disabled)
     );
   }
 
@@ -65,8 +67,8 @@ async function paginate(message, pages, module) {
       return msg.delete().catch(() => {});
     }
 
-    if (interaction.customId === 'pag_prev') current = current > 0 ? current - 1 : pages.length - 1;
-    if (interaction.customId === 'pag_next') current = current < pages.length - 1 ? current + 1 : 0;
+    if (interaction.customId === 'pag_prev') current = current > 0 ? current - 1 : 0;
+    if (interaction.customId === 'pag_next') current = current < pages.length - 1 ? current + 1 : pages.length - 1;
 
     msg.edit({ embeds: [buildEmbed(current)], components: [buildRow(current)] }).catch(() => {});
   });

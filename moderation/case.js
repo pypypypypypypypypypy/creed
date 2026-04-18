@@ -24,14 +24,14 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
 
     const caseId = parseInt(args[0]);
-    if (isNaN(caseId)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}case <id>\``)] });
+    if (isNaN(caseId)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}case <id>\``)] });
 
     const cases = db.get(`cases_${message.guild.id}`) || [];
     const c = cases[caseId - 1];
-    if (!c) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Case **#${caseId}** not found.`)] });
+    if (!c) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Case **#${caseId}** not found.`)] });
 
     const embed = new EmbedBuilder()
       .setColor(color)

@@ -24,10 +24,10 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageChannels))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
 
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageChannels))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_channels\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_channels\``)] });
 
     const channel = message.mentions.channels.first() || message.channel;
 
@@ -41,7 +41,7 @@ module.exports = {
     const collected = await message.channel.awaitMessages({ filter, max: 1, time: 15000, errors: ['time'] }).catch(() => null);
 
     if (!collected || collected.size === 0)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Nuke cancelled.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Nuke cancelled.`)] });
 
     try {
       const pos = channel.position;
@@ -70,7 +70,7 @@ module.exports = {
         embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} Channel has been **nuked** by ${message.author}.`).setImage('https://media.tenor.com/images/2e1d68962bff7b9ab45f498e93c5e8e2/tenor.gif')]
       });
     } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Failed to nuke channel: ${err.message}`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to nuke channel: ${err.message}`)] });
     }
   }
 };

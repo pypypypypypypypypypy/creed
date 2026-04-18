@@ -23,10 +23,10 @@ module.exports = {
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
-    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}quote <message id>\``)] });
+    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}quote <message id>\``)] });
 
     const msg = await message.channel.messages.fetch(args[0]).catch(() => null);
-    if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Message not found in this channel.`)] });
+    if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Message not found in this channel.`)] });
 
     const embed = new EmbedBuilder()
       .setColor(color)

@@ -49,7 +49,7 @@ module.exports = {
     }
 
     if (!FILTERS.includes(sub) && sub !== 'fortunecookie' && sub !== 'heartlocket' && sub !== 'speech' && sub !== 'bubble') {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown filter. Available filters:\n${FILTERS.map(f => `\`${f}\``).join(', ')}`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown filter. Available filters:\n${FILTERS.map(f => `\`${f}\``).join(', ')}`)] });
     }
 
     let filter = sub;
@@ -58,7 +58,7 @@ module.exports = {
     if (sub === 'speech' || sub === 'bubble') filter = 'speechbubble';
 
     const imageUrl = await getImageUrl(message, args.slice(1));
-    if (!imageUrl) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide an image, mention a user, or reply to a message with an image.`)] });
+    if (!imageUrl) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide an image, mention a user, or reply to a message with an image.`)] });
 
     const captionText = args.slice(1).filter(a => !/^https?:\/\//.test(a) && !a.startsWith('<@')).join(' ');
 

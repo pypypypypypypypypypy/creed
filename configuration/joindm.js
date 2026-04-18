@@ -18,8 +18,8 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
 
     let prefix = db.get(`prefix_${message.guild.id}`);
     if (prefix === null) { prefix = default_prefix; }
@@ -71,7 +71,7 @@ module.exports = {
       const msg = args.slice(1).join(" ");
       if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: You need to provide a **join message**`)] });
       db.set(`joindm_${message.guild.id}`, msg);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor("a3eb7b").setDescription(`${approve} ${message.author}: Successfully set your **joindm message**`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Successfully set your **joindm message**`)] });
     }
 
     if (sub === 'clear') {

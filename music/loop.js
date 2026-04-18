@@ -22,7 +22,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.voice.channel)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
 
     const key = `music_loop_${message.guild.id}`;
     const modes = ['off', 'track', 'queue'];

@@ -49,7 +49,7 @@ module.exports = {
     }
 
     if (options.length < 2) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide at least **2 options** to choose from.\n**Usage:** \`,choose pizza, burger, sushi\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide at least **2 options** to choose from.\n**Usage:** \`,choose pizza, burger, sushi\``)] });
     }
 
     const chosen = options[Math.floor(Math.random() * options.length)];

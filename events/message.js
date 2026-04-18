@@ -55,7 +55,7 @@ client.on("messageCreate", async message => {
       const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+/i;
       if (urlRegex.test(content)) {
         await message.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`🚫 ${message.author}: Links are not allowed in this server.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Links are not allowed in this server.`)] });
       }
     }
 
@@ -64,7 +64,7 @@ client.on("messageCreate", async message => {
       const inviteRegex = /discord\.gg\/[^\s]+|discord\.com\/invite\/[^\s]+/i;
       if (inviteRegex.test(content)) {
         await message.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`🚫 ${message.author}: Discord invites are not allowed in this server.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Discord invites are not allowed in this server.`)] });
       }
     }
 
@@ -80,7 +80,7 @@ client.on("messageCreate", async message => {
         global.spamTracker[key] = [];
         await message.delete().catch(() => {});
         await message.member?.timeout(10000, 'Anti-spam').catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`🚫 ${message.author}: Slow down! You have been timed out for spamming.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Slow down! You have been timed out for spamming.`)] });
       }
     }
   }

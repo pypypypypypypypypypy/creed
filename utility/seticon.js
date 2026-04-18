@@ -21,8 +21,8 @@ module.exports = {
     name: "seticon",
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_guild\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_guild\``)] });
     let icon = args[0]
     const embed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
@@ -40,12 +40,12 @@ module.exports = {
     if (message.attachments.first()) {
       icon = message.attachments.first().url
       message.guild.setIcon(icon).then(() => {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor("a3eb7b").setDescription(`${approve} ${message.author}: Successfully set the guild icon to [**this image**](${icon})`)] })
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Successfully set the guild icon to [**this image**](${icon})`)] })
       })
     } else {
-      if (!icon) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You must provide a **url or attachment** to set as the guild icon`)] })
+      if (!icon) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You must provide a **url or attachment** to set as the guild icon`)] })
       message.guild.setIcon(icon).then(() => {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor("a3eb7b").setDescription(`${approve} ${message.author}: Successfully set the guild icon to [**this image**](${icon})`)] })
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Successfully set the guild icon to [**this image**](${icon})`)] })
       })
     }
   }

@@ -61,7 +61,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageRoles))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_roles\``)] });
 
     const sub = args[0]?.toLowerCase();
 
@@ -76,7 +76,7 @@ module.exports = {
     if (sub === 'add') {
       const level = parseInt(args[1]);
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[2]);
-      if (isNaN(level) || !role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole add <level> @role\``)] });
+      if (isNaN(level) || !role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole add <level> @role\``)] });
       const roles = db.get(`levelroles_${message.guild.id}`) || {};
       roles[level] = role.id;
       db.set(`levelroles_${message.guild.id}`, roles);
@@ -85,14 +85,14 @@ module.exports = {
 
     if (sub === 'remove') {
       const level = parseInt(args[1]);
-      if (isNaN(level)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole remove <level>\``)] });
+      if (isNaN(level)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole remove <level>\``)] });
       const roles = db.get(`levelroles_${message.guild.id}`) || {};
-      if (!roles[level]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No role set for level **${level}**.`)] });
+      if (!roles[level]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No role set for level **${level}**.`)] });
       delete roles[level];
       db.set(`levelroles_${message.guild.id}`, roles);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Removed level role for level **${level}**.`)] });
     }
 
-    message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole [add <level> @role] [remove <level>] [list]\``)] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}levelrole [add <level> @role] [remove <level>] [list]\``)] });
   }
 };

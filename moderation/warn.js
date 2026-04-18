@@ -16,7 +16,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
     }
 
     if (!args[0]) return paginate(message, [
@@ -24,8 +24,8 @@ module.exports = {
     ], 'moderation');
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
-    if (member.id === message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: You cannot warn yourself.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
+    if (member.id === message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: You cannot warn yourself.`)] });
 
     const reason = args.slice(1).join(' ') || 'No reason provided';
     const guildId = message.guild.id;
@@ -36,7 +36,7 @@ module.exports = {
     db.set(`warns.${guildId}.${userId}`, warns);
 
     const dmEmbed = new EmbedBuilder()
-      .setColor('efa23a')
+      .setColor('#efa23a')
       .setTitle('You have been warned')
       .addFields(
         { name: 'Server', value: message.guild.name, inline: true },

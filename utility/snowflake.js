@@ -26,7 +26,7 @@ module.exports = {
 
     const id = args[0];
     if (!id || !/^\d+$/.test(id)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}snowflake <id>\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}snowflake <id>\``)] });
     }
 
     const timestamp = Number(BigInt(id) >> 22n) + 1420070400000;

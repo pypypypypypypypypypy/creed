@@ -24,10 +24,10 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     const cmdName = args[0]?.toLowerCase();
-    if (!cmdName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}aliases <command>\``)] });
+    if (!cmdName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}aliases <command>\``)] });
 
     const cmd = client.commands.get(cmdName) || client.commands.get(client.aliases.get(cmdName));
-    if (!cmd) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Command \`${cmdName}\` not found.`)] });
+    if (!cmd) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Command \`${cmdName}\` not found.`)] });
 
     const aliasList = cmd.aliases?.length ? cmd.aliases.map(a => `\`${a}\``).join(', ') : 'This command has no aliases.';
 

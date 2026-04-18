@@ -26,7 +26,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
     }
 
     if (!args[0]) return paginate(message, [
@@ -35,7 +35,7 @@ module.exports = {
 
     const seconds = parseInt(args[0]);
     if (isNaN(seconds) || seconds < 0 || seconds > 21600) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a number between **0** and **21600** seconds.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a number between **0** and **21600** seconds.`)] });
     }
 
     await message.channel.setRateLimitPerUser(seconds);

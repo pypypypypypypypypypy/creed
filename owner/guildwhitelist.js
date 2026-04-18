@@ -51,7 +51,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!isOwner(message.author.id))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: This command is restricted to the **bot owner**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: This command is restricted to the **bot owner**.`)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -86,11 +86,11 @@ module.exports = {
     if (sub === 'add') {
       const guildId = args[1];
       if (!guildId || !/^\d{17,20}$/.test(guildId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid guild ID.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid guild ID.`)] });
 
       const wl = db.get('guild_whitelist') || [];
       if (wl.includes(guildId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Server \`${guildId}\` is already whitelisted.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Server \`${guildId}\` is already whitelisted.`)] });
 
       wl.push(guildId);
       db.set('guild_whitelist', wl);
@@ -104,11 +104,11 @@ module.exports = {
     if (sub === 'remove') {
       const guildId = args[1];
       if (!guildId || !/^\d{17,20}$/.test(guildId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid guild ID.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid guild ID.`)] });
 
       let wl = db.get('guild_whitelist') || [];
       if (!wl.includes(guildId))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Server \`${guildId}\` is not on the whitelist.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Server \`${guildId}\` is not on the whitelist.`)] });
 
       wl = wl.filter(id => id !== guildId);
       db.set('guild_whitelist', wl);
@@ -119,7 +119,7 @@ module.exports = {
         try {
           const guildOwner = await guild.fetchOwner();
           await guildOwner.send({ embeds: [new EmbedBuilder()
-            .setColor('fe6464')
+            .setColor('#fe6464')
             .setTitle('Server Removed from Whitelist')
             .setDescription(`**${client.user.username}** has left **${guild.name}** because it has been removed from the approved whitelist.`)
             .setFooter({ text: `Guild ID: ${guildId}` })
@@ -161,6 +161,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: The guild whitelist has been cleared. The bot will now leave all servers.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`,guildwhitelist\` to see all subcommands.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`,guildwhitelist\` to see all subcommands.`)] });
   }
 };

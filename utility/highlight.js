@@ -32,10 +32,10 @@ module.exports = {
 
     if (sub === 'add') {
       const word = args.slice(1).join(' ').toLowerCase();
-      if (!word) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a word to highlight.`)] });
+      if (!word) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a word to highlight.`)] });
       const words = db.get(hlKey) || [];
-      if (words.includes(word)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That word is already highlighted.`)] });
-      if (words.length >= 25) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can only have up to 25 highlight words.`)] });
+      if (words.includes(word)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That word is already highlighted.`)] });
+      if (words.length >= 25) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can only have up to 25 highlight words.`)] });
       words.push(word);
       db.set(hlKey, words);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added **${word}** to your highlights.`)] });
@@ -43,9 +43,9 @@ module.exports = {
 
     if (['remove', 'delete', 'del'].includes(sub)) {
       const word = args.slice(1).join(' ').toLowerCase();
-      if (!word) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a word to remove.`)] });
+      if (!word) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a word to remove.`)] });
       const words = db.get(hlKey) || [];
-      if (!words.includes(word)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: That word is not in your highlights.`)] });
+      if (!words.includes(word)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That word is not in your highlights.`)] });
       db.set(hlKey, words.filter(w => w !== word));
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${word}** from your highlights.`)] });
     }
@@ -66,7 +66,7 @@ module.exports = {
       }
 
       const target = message.mentions.channels.first() || message.mentions.users.first() || message.guild.channels.cache.get(args[1]);
-      if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Mention a channel or user to ignore.`)] });
+      if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Mention a channel or user to ignore.`)] });
       const targetId = target.id;
       if (ignored.includes(targetId)) {
         db.set(ignoreKey, ignored.filter(id => id !== targetId));
@@ -77,6 +77,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: ${target} will now be ignored for highlights.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}highlight\` for help.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}highlight\` for help.`)] });
   }
 };

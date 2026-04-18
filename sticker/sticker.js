@@ -73,42 +73,42 @@ module.exports = {
     }
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis_and_stickers\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis_and_stickers\``)] });
     }
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis_and_stickers\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis_and_stickers\``)] });
     }
 
     if (sub === 'add') {
       const [, url, ...nameParts] = args;
       const name = nameParts.join('_');
-      if (!url || !name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker add <url> <name>\``)] });
+      if (!url || !name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker add <url> <name>\``)] });
       try {
         const sticker = await message.guild.stickers.create({ file: url, name, tags: 'misc' });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Added sticker **${sticker.name}**!`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added sticker **${sticker.name}**!`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed to add sticker: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to add sticker: ${e.message}`)] });
       }
     }
 
     if (sub === 'remove') {
       const name = args[1];
-      if (!name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker remove <name>\``)] });
+      if (!name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker remove <name>\``)] });
       const stickers = await message.guild.stickers.fetch();
       const sticker = stickers.find(s => s.name.toLowerCase() === name.toLowerCase());
-      if (!sticker) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Sticker \`${name}\` not found.`)] });
+      if (!sticker) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Sticker \`${name}\` not found.`)] });
       await sticker.delete().catch(() => null);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed sticker **${name}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed sticker **${name}**.`)] });
     }
 
     if (sub === 'rename') {
       const [, oldName, newName] = args;
-      if (!oldName || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker rename <old name> <new name>\``)] });
+      if (!oldName || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`sticker rename <old name> <new name>\``)] });
       const stickers = await message.guild.stickers.fetch();
       const sticker = stickers.find(s => s.name.toLowerCase() === oldName.toLowerCase());
-      if (!sticker) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Sticker \`${oldName}\` not found.`)] });
+      if (!sticker) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Sticker \`${oldName}\` not found.`)] });
       await sticker.edit({ name: newName }).catch(() => null);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Renamed sticker to **${newName}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Renamed sticker to **${newName}**.`)] });
     }
   },
 };

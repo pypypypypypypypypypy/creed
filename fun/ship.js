@@ -26,7 +26,7 @@ module.exports = {
     const user1 = message.mentions.users.first() || message.author;
     const user2 = message.mentions.users.array ? message.mentions.users.array()[1] : [...message.mentions.users.values()][1];
 
-    if (!user2) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}ship @user1 @user2\``)] });
+    if (!user2) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}ship @user1 @user2\``)] });
 
     const combined = user1.id + user2.id;
     let hash = 0;
@@ -43,7 +43,7 @@ module.exports = {
     const bar = '█'.repeat(Math.floor(percent / 10)) + '░'.repeat(10 - Math.floor(percent / 10));
 
     const embed = new EmbedBuilder()
-      .setColor('ff73fa')
+      .setColor('#ff73fa')
       .setTitle(`💘 Ship: ${user1.username} × ${user2.username}`)
       .setDescription(`**${percent}%** ${desc}\n\`[${bar}]\``)
       .setTimestamp();

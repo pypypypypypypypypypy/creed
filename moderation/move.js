@@ -24,20 +24,20 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.MoveMembers))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`move_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`move_members\``)] });
 
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.MoveMembers))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`move_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`move_members\``)] });
 
     if (!args[0])
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Usage: \`${prefix}move <member> <voice channel>\``)] });
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     if (!member)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: **Invalid** member.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: **Invalid** member.`)] });
 
     if (!member.voice.channel)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: That member is not in a **voice channel**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: That member is not in a **voice channel**.`)] });
 
     const channelName = args.slice(1).join(' ');
     if (!channelName)
@@ -48,13 +48,13 @@ module.exports = {
       || message.guild.channels.cache.get(args[1]);
 
     if (!voiceChannel || voiceChannel.type !== 2)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Could not find that **voice channel**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Could not find that **voice channel**.`)] });
 
     try {
       await member.voice.setChannel(voiceChannel);
       message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Moved **${member.user.tag}** to **${voiceChannel.name}**`)] });
     } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Failed to move member: ${err.message}`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to move member: ${err.message}`)] });
     }
   }
 };

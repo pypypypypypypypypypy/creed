@@ -38,19 +38,19 @@ module.exports = {
     }
 
     if (['set', 'channel'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const ch = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
       db.set(`suggest_channel_${gid}`, ch.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Suggestion channel set to ${ch}.`)] });
     }
 
     if (sub === 'review') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const sub2 = (args[1] || '').toLowerCase();
       if (sub2 === 'channel') {
         const ch = message.mentions.channels.first() || message.guild.channels.cache.get(args[2]);
-        if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
+        if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
         db.set(`suggest_review_channel_${gid}`, ch.id);
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Suggestion review channel set to ${ch}.`)] });
       }
@@ -60,42 +60,42 @@ module.exports = {
     }
 
     if (sub === 'reactions') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const current = db.get(`suggest_reactions_${gid}`) ?? true;
       db.set(`suggest_reactions_${gid}`, !current);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Auto-reactions on suggestions **${!current ? 'enabled' : 'disabled'}**.`)] });
     }
 
     if (['threads', 'thread'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const current = db.get(`suggest_threads_${gid}`) || false;
       db.set(`suggest_threads_${gid}`, !current);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Auto-threads on suggestions **${!current ? 'enabled' : 'disabled'}**.`)] });
     }
 
     if (['lock', 'disable', 'off'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       db.set(`suggest_locked_${gid}`, true);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Suggestions are now **locked**.`)] });
     }
 
     if (['unlock', 'enable', 'on'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       db.set(`suggest_locked_${gid}`, false);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Suggestions are now **unlocked**.`)] });
     }
 
     if (sub === 'reply') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const msgId = args[1];
       const reply = args.slice(2).join(' ');
-      if (!msgId || !reply) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}suggest reply (message ID) (reply)\``)] });
+      if (!msgId || !reply) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}suggest reply (message ID) (reply)\``)] });
       const channelId = db.get(`suggest_channel_${gid}`);
-      if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No suggestion channel configured.`)] });
+      if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No suggestion channel configured.`)] });
       const ch = message.guild.channels.cache.get(channelId);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Suggestion channel not found.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Suggestion channel not found.`)] });
       const msg = await ch.messages.fetch(msgId).catch(() => null);
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Could not find that suggestion message.`)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Could not find that suggestion message.`)] });
       const embed = msg.embeds[0] ? EmbedBuilder.from(msg.embeds[0]) : new EmbedBuilder();
       embed.addFields({ name: `Reply from ${message.author.tag}`, value: reply });
       await msg.edit({ embeds: [embed] }).catch(() => null);
@@ -103,7 +103,7 @@ module.exports = {
     }
 
     if (sub === 'ignore') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const sub2 = (args[1] || '').toLowerCase();
       const ignoreKey = `suggest_ignore_${gid}`;
       const ignored = db.get(ignoreKey) || [];
@@ -112,7 +112,7 @@ module.exports = {
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Suggestion Ignores').setDescription(ignored.map(id => `<#${id}> / <@&${id}>`).join('\n'))] });
       }
       const target = message.mentions.channels.first() || message.mentions.roles.first() || message.guild.channels.cache.get(args[1]) || message.guild.roles.cache.get(args[1]);
-      if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Mention a channel or role to ignore.`)] });
+      if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Mention a channel or role to ignore.`)] });
       if (ignored.includes(target.id)) {
         db.set(ignoreKey, ignored.filter(id => id !== target.id));
         return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: ${target} is no longer ignored for suggestions.`)] });
@@ -123,7 +123,7 @@ module.exports = {
     }
 
     if (['reset', 'pending'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       db.delete(`suggest_channel_${gid}`);
       db.delete(`suggest_locked_${gid}`);
       db.delete(`suggest_reactions_${gid}`);
@@ -136,7 +136,7 @@ module.exports = {
     }
 
     if (['config', 'configuration'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const channelId = db.get(`suggest_channel_${gid}`);
       const locked = db.get(`suggest_locked_${gid}`) || false;
       const reactions = db.get(`suggest_reactions_${gid}`) ?? true;
@@ -158,13 +158,13 @@ module.exports = {
     async function updateSuggestion(status, statusColor) {
       const msgId = args[1];
       const reason = args.slice(2).join(' ') || 'No reason provided';
-      if (!msgId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a suggestion message ID.`)] });
+      if (!msgId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a suggestion message ID.`)] });
       const channelId = db.get(`suggest_channel_${gid}`);
-      if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No suggestion channel configured.`)] });
+      if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No suggestion channel configured.`)] });
       const ch = message.guild.channels.cache.get(channelId);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Suggestion channel not found.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Suggestion channel not found.`)] });
       const msg = await ch.messages.fetch(msgId).catch(() => null);
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Could not find that suggestion.`)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Could not find that suggestion.`)] });
       const embed = msg.embeds[0] ? EmbedBuilder.from(msg.embeds[0]) : new EmbedBuilder();
       embed.setColor(statusColor);
       embed.setFooter({ text: `${status} by ${message.author.tag} — ${reason}` });
@@ -173,31 +173,31 @@ module.exports = {
     }
 
     if (sub === 'approve') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       return updateSuggestion('Approved', '#a3eb7b');
     }
     if (['deny', 'decline'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       return updateSuggestion('Denied', '#fe6464');
     }
     if (sub === 'consider') {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       return updateSuggestion('Considered', '#efa23a');
     }
     if (['progress', 'working'].includes(sub)) {
-      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!hasPerms) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       return updateSuggestion('In Progress', '#3498db');
     }
 
     const locked = db.get(`suggest_locked_${gid}`);
-    if (locked) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Suggestions are currently **locked**.`)] });
+    if (locked) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Suggestions are currently **locked**.`)] });
     const channelId = db.get(`suggest_channel_${gid}`);
-    if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No suggestion channel has been set. An admin can use \`${prefix}suggest set #channel\`.`)] });
+    if (!channelId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No suggestion channel has been set. An admin can use \`${prefix}suggest set #channel\`.`)] });
     const ch = message.guild.channels.cache.get(channelId);
-    if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: The suggestion channel no longer exists.`)] });
+    if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: The suggestion channel no longer exists.`)] });
 
     const text = args.join(' ');
-    if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide your suggestion text.`)] });
+    if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide your suggestion text.`)] });
 
     const count = (db.get(`suggest_count_${gid}`) || 0) + 1;
     db.set(`suggest_count_${gid}`, count);
@@ -210,7 +210,7 @@ module.exports = {
       .setTimestamp();
 
     const sent = await ch.send({ embeds: [embed] }).catch(() => null);
-    if (!sent) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed to send suggestion.`)] });
+    if (!sent) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to send suggestion.`)] });
 
     const reactions = db.get(`suggest_reactions_${gid}`) ?? true;
     if (reactions) {

@@ -24,7 +24,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     const thing = args.join(' ');
-    if (!thing) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}rate <thing>\``)] });
+    if (!thing) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}rate <thing>\``)] });
 
     const combined = thing.toLowerCase();
     let hash = 0;

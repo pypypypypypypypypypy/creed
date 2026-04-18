@@ -26,10 +26,10 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
     }
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
     }
 
     if (!args[0]) return paginate(message, [
@@ -37,13 +37,13 @@ module.exports = {
     ], 'moderation');
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
-    if (!member.bannable) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: I cannot ban this member due to hierarchy.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
+    if (!member.bannable) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: I cannot ban this member due to hierarchy.`)] });
 
     const reason = args.slice(1).join(' ') || 'No reason provided';
 
     const dmEmbed = new EmbedBuilder()
-      .setColor('efa23a')
+      .setColor('#efa23a')
       .setTitle('You have been softbanned')
       .addFields({ name: 'Server', value: message.guild.name, inline: true }, { name: 'Reason', value: reason, inline: true })
       .setTimestamp();

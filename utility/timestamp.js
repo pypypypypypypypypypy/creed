@@ -84,7 +84,7 @@ module.exports = {
     const date = parseDate(input);
 
     if (!date || isNaN(date.getTime()))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Could not parse \`${input}\` as a date or Unix timestamp.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Could not parse \`${input}\` as a date or Unix timestamp.`)] });
 
     const unix = Math.floor(date.getTime() / 1000);
 

@@ -61,7 +61,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     const sub = args[0]?.toLowerCase();
     const responders = db.get(`autoresponders_${message.guild.id}`) || [];
@@ -75,11 +75,11 @@ module.exports = {
     if (sub === 'add') {
       const rest = args.slice(1).join(' ');
       const sep = rest.indexOf('|');
-      if (sep === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder add <trigger> | <response>\``)] });
+      if (sep === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder add <trigger> | <response>\``)] });
       const trigger = rest.slice(0, sep).trim().toLowerCase();
       const response = rest.slice(sep + 1).trim();
-      if (!trigger || !response) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Both trigger and response are required.`)] });
-      if (responders.find(r => r.trigger === trigger)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: A responder with that trigger already exists.`)] });
+      if (!trigger || !response) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Both trigger and response are required.`)] });
+      if (responders.find(r => r.trigger === trigger)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: A responder with that trigger already exists.`)] });
       responders.push({ trigger, response });
       db.set(`autoresponders_${message.guild.id}`, responders);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Added autoresponder for trigger: \`${trigger}\``)] });
@@ -89,8 +89,8 @@ module.exports = {
       const trigger = args[1]?.toLowerCase();
       const response = args.slice(2).join(' ');
       const idx = responders.findIndex(r => r.trigger === trigger);
-      if (!trigger || !response) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder update <trigger> <new response>\``)] });
-      if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No autoresponder with trigger \`${trigger}\` found.`)] });
+      if (!trigger || !response) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder update <trigger> <new response>\``)] });
+      if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No autoresponder with trigger \`${trigger}\` found.`)] });
       responders[idx].response = response;
       db.set(`autoresponders_${message.guild.id}`, responders);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Updated autoresponder \`${trigger}\`.`)] });
@@ -115,7 +115,7 @@ module.exports = {
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Autoresponder Roles').setDescription(`Add roles:\n${(data.add || []).map(id => `<@&${id}>`).join('\n') || 'None'}\n\nRemove roles:\n${(data.remove || []).map(id => `<@&${id}>`).join('\n') || 'None'}`)] });
       }
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[2]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder role ${action} @role\``)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder role ${action} @role\``)] });
       data[action] = data[action] || [];
       if (data[action].includes(role.id)) data[action] = data[action].filter(id => id !== role.id);
       else data[action].push(role.id);
@@ -126,7 +126,7 @@ module.exports = {
     if (sub === 'remove' || sub === 'delete') {
       const trigger = args.slice(1).join(' ').toLowerCase();
       const idx = responders.findIndex(r => r.trigger === trigger);
-      if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No autoresponder with trigger \`${trigger}\` found.`)] });
+      if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No autoresponder with trigger \`${trigger}\` found.`)] });
       responders.splice(idx, 1);
       db.set(`autoresponders_${message.guild.id}`, responders);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Removed autoresponder for \`${trigger}\`.`)] });
@@ -137,6 +137,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Cleared all autoresponders.`)] });
     }
 
-    message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder [add <trigger> | <response>] [remove <trigger>] [list] [clear]\``)] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}autoresponder [add <trigger> | <response>] [remove <trigger>] [list] [clear]\``)] });
   }
 };

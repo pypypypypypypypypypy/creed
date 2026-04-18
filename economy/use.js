@@ -26,12 +26,12 @@ module.exports = {
     const userId = message.author.id;
 
     const itemName = args.join(' ');
-    if (!itemName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}use <item name>\``)] });
+    if (!itemName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}use <item name>\``)] });
 
     const inv = db.get(`economy.${guildId}.inventory.${userId}`) || [];
     const idx = inv.findIndex(i => i.toLowerCase() === itemName.toLowerCase());
 
-    if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You don't have **${itemName}** in your inventory.`)] });
+    if (idx === -1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You don't have **${itemName}** in your inventory.`)] });
 
     inv.splice(idx, 1);
     db.set(`economy.${guildId}.inventory.${userId}`, inv);

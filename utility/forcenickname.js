@@ -24,10 +24,10 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageNicknames))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_nicknames\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_nicknames\``)] });
 
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageNicknames))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_nicknames\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_nicknames\``)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -63,14 +63,14 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Please provide a **nickname** to force.`)] });
 
     if (!member.manageable)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: I cannot change that member's nickname due to **hierarchy**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: I cannot change that member's nickname due to **hierarchy**.`)] });
 
     try {
       await member.setNickname(nickname, `Forced by ${message.author.tag}`);
       db.set(`forcenick_${message.guild.id}_${member.id}`, nickname);
       message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Forced **${member.user.tag}**'s nickname to **${nickname}**`)] });
     } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: Failed to set nickname: ${err.message}`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to set nickname: ${err.message}`)] });
     }
   }
 };

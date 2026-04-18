@@ -38,7 +38,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     const target = message.mentions.users.first() || (args[0] ? await client.users.fetch(args[0]).catch(() => null) : message.author);
-    if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: User not found.`)] });
+    if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: User not found.`)] });
 
     const flags = target.flags?.toArray() || [];
     const badgeList = flags.map(f => BADGE_MAP[f] || f).filter(Boolean);

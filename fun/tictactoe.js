@@ -52,9 +52,9 @@ module.exports = {
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
     const opponent = message.mentions.members.first();
-    if (!opponent) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tictactoe @user\``)] });
-    if (opponent.id === message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can't play against yourself.`)] });
-    if (opponent.user.bot) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can't play against a bot.`)] });
+    if (!opponent) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}tictactoe @user\``)] });
+    if (opponent.id === message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can't play against yourself.`)] });
+    if (opponent.user.bot) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can't play against a bot.`)] });
 
     const board = Array(9).fill('');
     const players = { X: message.author.id, O: opponent.id };

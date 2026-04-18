@@ -21,11 +21,11 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.voice.channel)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
 
     const queue = db.get(`music_queue_${message.guild.id}`) || [];
     if (queue.length < 2)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Not enough songs in the queue to shuffle.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Not enough songs in the queue to shuffle.`)] });
 
     for (let i = queue.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

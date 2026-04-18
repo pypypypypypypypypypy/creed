@@ -63,7 +63,7 @@ module.exports = {
 
       await message.channel.send({ content: text || msgContent || undefined, embeds: [embed] });
     } catch (e) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: ${e.message}`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: ${e.message}`)] });
     }
   },
 };

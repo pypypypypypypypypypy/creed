@@ -18,7 +18,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
     const sub = args[0]?.toLowerCase();
@@ -39,14 +39,14 @@ module.exports = {
 
     if (sub === 'channel') {
       const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
+      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a valid channel.`)] });
       db.set(`boost_channel_${message.guild.id}`, channel.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Boost message channel set to ${channel}.`)] });
     }
 
     if (sub === 'message') {
       const text = args.slice(1).join(' ');
-      if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a message.\n**Variables:** \`{user}\`, \`{user.tag}\`, \`{guild}\`, \`{membercount}\`, \`{boostcount}\``)] });
+      if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a message.\n**Variables:** \`{user}\`, \`{user.tag}\`, \`{guild}\`, \`{membercount}\`, \`{boostcount}\``)] });
       db.set(`boost_message_${message.guild.id}`, text);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Boost message set to: \`${text}\``)] });
     }
@@ -62,7 +62,7 @@ module.exports = {
       const msgTemplate = db.get(`boost_message_${message.guild.id}`) || `🎉 Thank you **{user.tag}** for boosting **{guild}**! We now have **{boostcount}** boosts!`;
       const targetChannel = channelId ? message.guild.channels.cache.get(channelId) : message.channel;
 
-      if (!targetChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Boost channel not found.`)] });
+      if (!targetChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Boost channel not found.`)] });
 
       const formatted = msgTemplate
         .replace(/{user}/g, message.author.toString())
@@ -78,6 +78,6 @@ module.exports = {
       return;
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}boost\` for help.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}boost\` for help.`)] });
   }
 };

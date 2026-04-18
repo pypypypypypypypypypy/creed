@@ -27,7 +27,7 @@ module.exports = {
 
     if (member && member.id !== message.author.id) {
       if (!message.member.permissions.has(PermissionFlagsBits.ManageNicknames))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_nicknames\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_nicknames\``)] });
     }
 
     const targetId = member ? member.id : message.author.id;

@@ -52,7 +52,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageChannels))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_channels\``)] });
 
     const sub = args[0]?.toLowerCase();
 
@@ -73,7 +73,7 @@ module.exports = {
 
     if (sub === 'add') {
       const type = args[1]?.toLowerCase();
-      if (!type || !types[type]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Valid types: \`${Object.keys(types).join('`, `')}\``)] });
+      if (!type || !types[type]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Valid types: \`${Object.keys(types).join('`, `')}\``)] });
 
       const value = types[type]();
       const labels = { members: 'Members', humans: 'Humans', bots: 'Bots', roles: 'Roles', channels: 'Channels' };
@@ -93,13 +93,13 @@ module.exports = {
 
     if (sub === 'remove') {
       const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Mention a counter channel to remove.`)] });
+      if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Mention a counter channel to remove.`)] });
       const counters = (db.get(`counters_${message.guild.id}`) || []).filter(c => c.channelId !== channel.id);
       db.set(`counters_${message.guild.id}`, counters);
       await channel.delete('Counter removed');
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Counter removed.`)] });
     }
 
-    message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}counter [add <type>] [remove #channel] [list]\``)] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}counter [add <type>] [remove #channel] [list]\``)] });
   }
 };

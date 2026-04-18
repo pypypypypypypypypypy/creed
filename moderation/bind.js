@@ -60,7 +60,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`administrator\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`administrator\``)] });
 
     const sub = (args[0] || '').toLowerCase();
 
@@ -72,7 +72,7 @@ module.exports = {
       const staffRoles = db.get(`staff_roles_${message.guild.id}`) || [];
 
       if (staffRoles.includes(role.id))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${deny} ${message.author}: ${role} is already bound as a **staff** role.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: ${role} is already bound as a **staff** role.`)] });
 
       staffRoles.push(role.id);
       db.set(`staff_roles_${message.guild.id}`, staffRoles);

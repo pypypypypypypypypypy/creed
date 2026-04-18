@@ -91,32 +91,32 @@ module.exports = {
     if (sub === 'add') {
       const [, type, desired] = args;
       if (!type || !desired || !['username', 'vanity'].includes(type.toLowerCase())) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`notify add <username|vanity> <name>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`notify add <username|vanity> <name>\``)] });
       }
       if (!global.notifyWatchers[userId]) global.notifyWatchers[userId] = [];
       if (global.notifyWatchers[userId].length >= 10) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can only watch up to 10 resources.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can only watch up to 10 resources.`)] });
       }
       if (global.notifyWatchers[userId].find(w => w.type === type.toLowerCase() && w.desired === desired)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're already watching that.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're already watching that.`)] });
       }
       global.notifyWatchers[userId].push({ type: type.toLowerCase(), desired, channelId: message.channel.id });
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Now watching \`${type.toLowerCase()}\` **${desired}**. I'll notify you here when it becomes available.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Now watching \`${type.toLowerCase()}\` **${desired}**. I'll notify you here when it becomes available.`)] });
     }
 
     if (sub === 'remove') {
       const [, type, desired] = args;
       if (!type || !desired) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`notify remove <username|vanity> <name>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`notify remove <username|vanity> <name>\``)] });
       }
       const watches = global.notifyWatchers[userId] || [];
       const idx = watches.findIndex(w => w.type === type.toLowerCase() && w.desired === desired);
       if (idx === -1) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No watcher found for that.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No watcher found for that.`)] });
       }
       watches.splice(idx, 1);
       global.notifyWatchers[userId] = watches;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed watcher for \`${type.toLowerCase()}\` **${desired}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed watcher for \`${type.toLowerCase()}\` **${desired}**.`)] });
     }
   },
 };

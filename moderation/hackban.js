@@ -23,8 +23,8 @@ module.exports = {
   aliases: ['hban'],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`ban_members\``)] });
 
     const hackbanEmbed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
@@ -46,8 +46,8 @@ module.exports = {
     }
 
     const target = args[0];
-    if (target.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot ban **yourself**`)] })
-    if (message.member.roles.highest.comparePositionTo(target.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
+    if (target.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban **yourself**`)] })
+    if (message.member.roles.highest.comparePositionTo(target.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
     if (isNaN(target)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: You must to **specify** a valid user ID`)] });
 
     const reason = args.splice(1, args.length).join(' ');

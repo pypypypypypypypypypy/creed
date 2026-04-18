@@ -42,7 +42,7 @@ module.exports = {
     const text = args.slice(1).join(' ');
 
     if (!text) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide text to translate.\n**Usage:** \`,translate <language> <text>\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide text to translate.\n**Usage:** \`,translate <language> <text>\``)] });
     }
 
     const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Translating...`)] });
@@ -66,7 +66,7 @@ module.exports = {
 
       if (!data || data.responseStatus !== 200) {
         await loading.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Could not translate the text. Make sure the language is valid.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not translate the text. Make sure the language is valid.`)] });
       }
 
       const translated = data.responseData.translatedText;
@@ -87,7 +87,7 @@ module.exports = {
       message.channel.send({ embeds: [embed] });
     } catch (e) {
       await loading.delete().catch(() => {});
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: An error occurred while translating.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: An error occurred while translating.`)] });
     }
   }
 };

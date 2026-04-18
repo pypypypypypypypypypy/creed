@@ -18,8 +18,8 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`);
     if (prefix === null) { prefix = default_prefix; };
 
-    if (!message.member.permissions.has(PermissionFlagsBits.KickMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`kick_members\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`kick_members\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.KickMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`kick_members\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.KickMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`kick_members\``)] });
     const mentionedMember = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     let reason = args.slice(1).join(" ");
     if (!reason) reason = "No Reason Supplied"
@@ -48,11 +48,11 @@ module.exports = {
     if (!args[0]) return paginate(message, [
       { name: 'kick', description: 'Kicks the mentioned user from the guild', aliases: 'n/a', parameters: '(member) [reason]', information: 'KICK_MEMBERS', usage: `${prefix}kick (member) <reason>`, example: `${prefix}kick @user You need a break` }
     ], 'moderation');
-    if (mentionedMember.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot kick **yourself**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) <= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
+    if (mentionedMember.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot kick **yourself**`)] })
+    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) <= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
     if (!mentionedMember) return message.channel.send({ embed: { color: "#efa23a", description: `${warn} ${message.author}: **Invalid User**. Do \`${prefix}kick\` to see the variables` } });
     if (!mentionedMember.kickable) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: Cannot kick due to **hierarchy**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
+    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
     try {
       await mentionedMember.send({ embeds: [kickEmbed] });
     } catch (err) {

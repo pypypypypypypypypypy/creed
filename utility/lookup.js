@@ -41,11 +41,11 @@ module.exports = {
     const length = parseInt(args[1]) || 3;
 
     if (!['username', 'vanity'].includes(type)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Resource type must be \`username\` or \`vanity\`.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Resource type must be \`username\` or \`vanity\`.`)] });
     }
 
     if (length < 1 || length > 32) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Length must be between 1 and 32.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Length must be between 1 and 32.`)] });
     }
 
     const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Searching for available **${type}** with length **${length}**...`)] });
@@ -74,7 +74,7 @@ module.exports = {
     }
 
     if (!results.length) {
-      return thinking.edit({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No available ${type}s found with length **${length}** after checking.`)] });
+      return thinking.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No available ${type}s found with length **${length}** after checking.`)] });
     }
 
     return thinking.edit({ embeds: [new EmbedBuilder().setColor(color).setTitle(`Available ${type}s (length ${length})`).setDescription(results.map(r => `\`${r}\``).join(', ')).setTimestamp()] });

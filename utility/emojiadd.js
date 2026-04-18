@@ -21,8 +21,8 @@ module.exports = {
   aliases: ["copy"],
 
   run: (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuildExpressions)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis\``)] });
 
     if (!args[0]) {
       const emojiEmbed = new EmbedBuilder()
@@ -49,8 +49,8 @@ module.exports = {
         const emojiURL = `https://cdn.discordapp.com/emojis/${match[2] + emojiExt}`;
         message.guild.emojis
           .create({ attachment: emojiURL, name: match[1] })
-          .then((emoji) => message.channel.send({ embeds: [new EmbedBuilder().setColor("a3eb7b").setDescription(`${approve} ${message.author}: Added \`:${emoji.name}:\` to this guild`)] }))
-          .catch(() => message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: Failed to add that emoji`)] }));
+          .then((emoji) => message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added \`:${emoji.name}:\` to this guild`)] }))
+          .catch(() => message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to add that emoji`)] }));
       }
     }
   }

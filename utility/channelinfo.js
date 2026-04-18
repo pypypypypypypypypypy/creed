@@ -22,7 +22,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     const channel = message.mentions.channels.first() || (args[0] ? message.guild.channels.cache.get(args[0]) : message.channel);
-    if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
+    if (!channel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Channel not found.`)] });
 
     const typeNames = {
       [ChannelType.GuildText]: 'Text Channel',

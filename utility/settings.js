@@ -25,7 +25,7 @@ module.exports = {
     const gid = message.guild.id;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild) && !message.member.permissions.has(PermissionFlagsBits.Administrator))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     if (!sub || ['config', 'list', 'configuration'].includes(sub)) {
       const staffRole = db.get(`settings_staff_${gid}`);
@@ -67,70 +67,70 @@ module.exports = {
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Staff Roles').setDescription(staffList.map(id => `<@&${id}>`).join('\n'))] });
       }
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_staff_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Staff role set to ${role}.`)] });
     }
 
     if (['modlog', 'jaillog'].includes(sub)) {
       const ch = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
       db.set(`settings_modlog_${gid}`, ch.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Mod log channel set to ${ch}.`)] });
     }
 
     if (['joinlogs', 'joinlog', 'jl'].includes(sub)) {
       const ch = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
       db.set(`settings_joinlogs_${gid}`, ch.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Join logs channel set to ${ch}.`)] });
     }
 
     if (['muted', 'textmute', 'mute'].includes(sub)) {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_muted_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Muted role set to ${role}.`)] });
     }
 
     if (['imuted', 'imute'].includes(sub)) {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_imuted_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Image muted role set to ${role}.`)] });
     }
 
     if (['rmuted', 'rmute'].includes(sub)) {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_rmuted_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Reaction muted role set to ${role}.`)] });
     }
 
     if (['baserole', 'baseid'].includes(sub)) {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_baserole_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Base role set to ${role}.`)] });
     }
 
     if (['premiumrole', 'premiumid', 'pr'].includes(sub)) {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_premiumrole_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Premium role set to ${role}.`)] });
     }
 
     if (sub === 'dj') {
       const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
+      if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a role.`)] });
       db.set(`settings_dj_${gid}`, role.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: DJ role set to ${role}.`)] });
     }
 
     if (sub === 'autonick') {
       const template = args.slice(1).join(' ');
-      if (!template) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a nickname template. Use \`{user}\` for the username.`)] });
+      if (!template) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a nickname template. Use \`{user}\` for the username.`)] });
       db.set(`settings_autonick_${gid}`, template);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Auto nickname template set to: \`${template}\``)] });
     }
@@ -147,6 +147,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: All server settings have been **reset**.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}settings\` to see all options.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}settings\` to see all options.`)] });
   }
 };

@@ -99,7 +99,7 @@ module.exports = {
     }
 
     if (!/^[0-9a-fA-F]{6}$/.test(hex)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: \`${args[0]}\` is not a valid hex color. Example: \`#5865F2\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${args[0]}\` is not a valid hex color. Example: \`#5865F2\``)] });
     }
 
     const upper = hex.toUpperCase();

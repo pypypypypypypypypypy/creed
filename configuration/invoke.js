@@ -113,20 +113,20 @@ module.exports = {
     }
 
     if (!hasAdmin)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_guild\``)] });
 
     // ,invoke set <command> <message> [--dm]
     if (sub === 'set') {
       const cmdName = (args[1] || '').toLowerCase();
       if (!cmdName || !SUPPORTED_COMMANDS.includes(cmdName))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name. Supported: ${SUPPORTED_COMMANDS.map(c => `\`${c}\``).join(', ')}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name. Supported: ${SUPPORTED_COMMANDS.map(c => `\`${c}\``).join(', ')}`)] });
 
       const isDm = args.includes('--dm');
       const msgParts = args.slice(2).filter(a => a !== '--dm');
       const msgText = msgParts.join(' ');
 
       if (!msgText)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a message. Usage: \`${prefix}invoke set <command> <message>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a message. Usage: \`${prefix}invoke set <command> <message>\``)] });
 
       const key = isDm ? `invoke_dm_${guildId}_${cmdName}` : `invoke_${guildId}_${cmdName}`;
       db.set(key, msgText);
@@ -138,7 +138,7 @@ module.exports = {
     if (sub === 'view') {
       const cmdName = (args[1] || '').toLowerCase();
       if (!cmdName || !SUPPORTED_COMMANDS.includes(cmdName))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name.`)] });
 
       const channelMsg = db.get(`invoke_${guildId}_${cmdName}`);
       const dmMsg = db.get(`invoke_dm_${guildId}_${cmdName}`);
@@ -179,13 +179,13 @@ module.exports = {
     if (sub === 'remove') {
       const cmdName = (args[1] || '').toLowerCase();
       if (!cmdName || !SUPPORTED_COMMANDS.includes(cmdName))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid command name.`)] });
 
       const isDm = args.includes('--dm');
       const key = isDm ? `invoke_dm_${guildId}_${cmdName}` : `invoke_${guildId}_${cmdName}`;
 
       if (!db.get(key))
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No ${isDm ? 'DM' : 'channel'} invoke message is set for \`${cmdName}\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No ${isDm ? 'DM' : 'channel'} invoke message is set for \`${cmdName}\`.`)] });
 
       db.delete(key);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Invoke ${isDm ? 'DM' : 'channel'} message for \`${cmdName}\` has been removed.`)] });
@@ -246,7 +246,7 @@ module.exports = {
 
       const text = args.slice(2).join(' ');
       if (!text)
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a message or use \`${prefix}invoke ${action} ${type} view\` to see the current one.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a message or use \`${prefix}invoke ${action} ${type} view\` to see the current one.`)] });
 
       if (text.toLowerCase() === 'none' || text.toLowerCase() === 'default') {
         db.delete(key);
@@ -257,6 +257,6 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Set the **${action}** ${label} message to:\n\`${text}\``)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}invoke\` to see all available subcommands.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Run \`${prefix}invoke\` to see all available subcommands.`)] });
   }
 };

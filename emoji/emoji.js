@@ -79,11 +79,11 @@ module.exports = {
 
     const requireManage = () => {
       if (!hasManage()) {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis_and_stickers\``)] });
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_emojis_and_stickers\``)] });
         return false;
       }
       if (!botHasManage()) {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis_and_stickers\``)] });
+        message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_emojis_and_stickers\``)] });
         return false;
       }
       return true;
@@ -118,10 +118,10 @@ module.exports = {
 
     if (['information', 'info'].includes(sub)) {
       const emojiArg = args[1];
-      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
+      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
       const parsed = parseEmoji(emojiArg);
       const emoji = parsed ? message.guild.emojis.cache.get(parsed.id) : message.guild.emojis.cache.find(e => e.name === emojiArg);
-      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Emoji not found in this server.`)] });
+      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Emoji not found in this server.`)] });
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle(`:${emoji.name}:`).setThumbnail(emoji.url).addFields(
         { name: 'ID', value: emoji.id, inline: true },
         { name: 'Animated', value: emoji.animated ? 'Yes' : 'No', inline: true },
@@ -141,9 +141,9 @@ module.exports = {
 
     if (sub === 'enlarge') {
       const emojiArg = args[1];
-      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
+      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
       const parsed = parseEmoji(emojiArg);
-      if (!parsed) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Not a valid custom emoji.`)] });
+      if (!parsed) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Not a valid custom emoji.`)] });
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setImage(emojiURL(parsed.id, parsed.animated)).setTitle(`:${parsed.name}:`)] });
     }
 
@@ -151,51 +151,51 @@ module.exports = {
 
     if (sub === 'add') {
       const [, emojiArg, nameArg] = args;
-      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji add <emoji> <name>\``)] });
+      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji add <emoji> <name>\``)] });
       const parsed = parseEmoji(emojiArg);
       const url = parsed ? emojiURL(parsed.id, parsed.animated) : emojiArg;
       const name = nameArg || parsed?.name || 'emoji';
       try {
         const e = await message.guild.emojis.create({ attachment: url, name });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Added ${e} \`:${e.name}:\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added ${e} \`:${e.name}:\``)] });
       } catch (err) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${err.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${err.message}`)] });
       }
     }
 
     if (sub === 'addmany') {
       const emojiArgs = args.slice(1);
-      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
+      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
       let added = 0;
       for (const emojiArg of emojiArgs) {
         const parsed = parseEmoji(emojiArg);
         if (!parsed) continue;
         await message.guild.emojis.create({ attachment: emojiURL(parsed.id, parsed.animated), name: parsed.name }).then(() => added++).catch(() => {});
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Added **${added}** emoji(s).`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Added **${added}** emoji(s).`)] });
     }
 
     if (sub === 'remove') {
       const emojiArg = args[1];
-      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
+      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an emoji.`)] });
       const parsed = parseEmoji(emojiArg);
       const emoji = parsed ? message.guild.emojis.cache.get(parsed.id) : message.guild.emojis.cache.find(e => e.name === emojiArg);
-      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Emoji not found.`)] });
+      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Emoji not found.`)] });
       const name = emoji.name;
       await emoji.delete().catch(() => {});
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed \`:${name}:\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed \`:${name}:\``)] });
     }
 
     if (sub === 'removemany') {
       const emojiArgs = args.slice(1);
-      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
+      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
       let removed = 0;
       for (const emojiArg of emojiArgs) {
         const parsed = parseEmoji(emojiArg);
         const emoji = parsed ? message.guild.emojis.cache.get(parsed.id) : null;
         if (emoji) { await emoji.delete().catch(() => {}); removed++; }
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}** emoji(s).`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}** emoji(s).`)] });
     }
 
     if (['removeduplicates', 'rmdups'].includes(sub)) {
@@ -209,43 +209,43 @@ module.exports = {
           seen.add(name);
         }
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}** duplicate emoji(s).`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}** duplicate emoji(s).`)] });
     }
 
     if (sub === 'rename') {
       const [, emojiArg, newName] = args;
-      if (!emojiArg || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji rename <emoji> <new name>\``)] });
+      if (!emojiArg || !newName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji rename <emoji> <new name>\``)] });
       const parsed = parseEmoji(emojiArg);
       const emoji = parsed ? message.guild.emojis.cache.get(parsed.id) : null;
-      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Emoji not found.`)] });
+      if (!emoji) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Emoji not found.`)] });
       await emoji.edit({ name: newName }).catch(() => {});
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Renamed to \`:${newName}:\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Renamed to \`:${newName}:\``)] });
     }
 
     if (sub === 'steal') {
       const [, emojiArg, nameArg] = args;
-      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji steal <emoji> [name]\``)] });
+      if (!emojiArg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`emoji steal <emoji> [name]\``)] });
       const parsed = parseEmoji(emojiArg);
-      if (!parsed) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Not a valid custom emoji.`)] });
+      if (!parsed) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Not a valid custom emoji.`)] });
       const name = nameArg || parsed.name;
       try {
         const e = await message.guild.emojis.create({ attachment: emojiURL(parsed.id, parsed.animated), name });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Stole ${e} \`:${e.name}:\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Stole ${e} \`:${e.name}:\``)] });
       } catch (err) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${err.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${err.message}`)] });
       }
     }
 
     if (sub === 'stealmany') {
       const emojiArgs = args.slice(1);
-      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
+      if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
       let added = 0;
       for (const emojiArg of emojiArgs) {
         const parsed = parseEmoji(emojiArg);
         if (!parsed) continue;
         await message.guild.emojis.create({ attachment: emojiURL(parsed.id, parsed.animated), name: parsed.name }).then(() => added++).catch(() => {});
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Stole **${added}** emoji(s).`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Stole **${added}** emoji(s).`)] });
     }
   },
 };

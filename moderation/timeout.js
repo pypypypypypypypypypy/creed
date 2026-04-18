@@ -18,7 +18,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
     }
 
     if (!args[0]) return paginate(message, [
@@ -26,12 +26,12 @@ module.exports = {
     ], 'moderation');
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
-    if (!member.moderatable) return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: I cannot timeout this member due to hierarchy.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Couldn't find that member.`)] });
+    if (!member.moderatable) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: I cannot timeout this member due to hierarchy.`)] });
 
     const duration = ms(args[1] || '');
-    if (!duration) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid duration (e.g. \`10m\`, \`1h\`, \`1d\`).`)] });
-    if (duration > ms('28d')) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Duration cannot exceed **28 days**.`)] });
+    if (!duration) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid duration (e.g. \`10m\`, \`1h\`, \`1d\`).`)] });
+    if (duration > ms('28d')) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Duration cannot exceed **28 days**.`)] });
 
     const reason = args.slice(2).join(' ') || 'No reason provided';
     await member.timeout(duration, reason);

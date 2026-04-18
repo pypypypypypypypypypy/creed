@@ -26,7 +26,7 @@ module.exports = {
     const prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're missing permission: \`manage_messages\``)] });
 
     if (!args[0]) {
       const embed = new EmbedBuilder()
@@ -50,11 +50,11 @@ module.exports = {
       || message.guild.members.cache.find(m => m.user.username.toLowerCase() === args[0].toLowerCase());
 
     if (!target)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Could not find that user. Please mention them or provide their ID.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Could not find that user. Please mention them or provide their ID.`)] });
 
     const mailContent = args.slice(1).join(' ');
     if (!mailContent)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a message to send.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a message to send.`)] });
 
     const mailEmbed = new EmbedBuilder()
       .setColor(color)
@@ -68,7 +68,7 @@ module.exports = {
       await target.send({ embeds: [mailEmbed] });
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Your message has been sent to **${target.user.username}**.`)] });
     } catch {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Could not send a DM to **${target.user.username}**. They may have DMs disabled.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not send a DM to **${target.user.username}**. They may have DMs disabled.`)] });
     }
   }
 };

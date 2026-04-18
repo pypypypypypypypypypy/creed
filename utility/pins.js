@@ -24,7 +24,7 @@ module.exports = {
     const gid = message.guild.id;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages) && !message.member.permissions.has(PermissionFlagsBits.Administrator))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
 
     if (!sub || sub === 'config') {
       const ch = db.get(`pins_channel_${gid}`);
@@ -40,28 +40,28 @@ module.exports = {
     }
 
     if (sub === 'channel') {
-      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const ch = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please mention a channel.`)] });
       db.set(`pins_channel_${gid}`, ch.id);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Pin archive channel set to ${ch}.`)] });
     }
 
     if (sub === 'set') {
-      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       const num = parseInt(args[1]);
-      if (isNaN(num) || num < 1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a valid number.`)] });
+      if (isNaN(num) || num < 1) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a valid number.`)] });
       db.set(`pins_threshold_${gid}`, num);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Pin threshold set to **${num}**.`)] });
     }
 
     if (sub === 'archive') {
       const archiveChannel = db.get(`pins_channel_${gid}`);
-      if (!archiveChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No archive channel set. Use \`${prefix}pins channel #channel\`.`)] });
+      if (!archiveChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No archive channel set. Use \`${prefix}pins channel #channel\`.`)] });
       const ch = message.guild.channels.cache.get(archiveChannel);
-      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Archive channel not found.`)] });
+      if (!ch) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Archive channel not found.`)] });
       const pins = await message.channel.messages.fetchPinned().catch(() => null);
-      if (!pins || !pins.size) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No pinned messages in this channel.`)] });
+      if (!pins || !pins.size) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No pinned messages in this channel.`)] });
       let count = 0;
       for (const [, pin] of pins) {
         const embed = new EmbedBuilder()
@@ -79,7 +79,7 @@ module.exports = {
 
     if (sub === 'unpin') {
       const pins = await message.channel.messages.fetchPinned().catch(() => null);
-      if (!pins || !pins.size) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No pinned messages in this channel.`)] });
+      if (!pins || !pins.size) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No pinned messages in this channel.`)] });
       let count = 0;
       for (const [, pin] of pins) {
         await pin.unpin().catch(() => {});
@@ -89,12 +89,12 @@ module.exports = {
     }
 
     if (sub === 'reset') {
-      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
       db.delete(`pins_channel_${gid}`);
       db.delete(`pins_threshold_${gid}`);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Pin settings have been **reset**.`)] });
     }
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}pins\` for help.`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Unknown subcommand. Use \`${prefix}pins\` for help.`)] });
   }
 };

@@ -70,12 +70,12 @@ module.exports = {
 
     if (sub === 'remove') {
       const idx = parseInt(args[1]) - 1;
-      if (isNaN(idx)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a valid index.`)] });
+      if (isNaN(idx)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a valid index.`)] });
       const reminders = global.userReminders[userId];
-      if (idx < 0 || idx >= reminders.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Index out of range. You have ${reminders.length} reminder(s).`)] });
+      if (idx < 0 || idx >= reminders.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Index out of range. You have ${reminders.length} reminder(s).`)] });
       const removed = reminders.splice(idx, 1)[0];
       clearTimeout(removed.timeout);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed reminder: **${removed.message}**`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed reminder: **${removed.message}**`)] });
     }
 
     if (sub === 'add' || sub === 'set') {
@@ -83,7 +83,7 @@ module.exports = {
       const reminderMsg = args.slice(2).join(' ');
 
       if (!timeStr || !reminderMsg) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`reminder add <time> <message>\` (e.g. \`1h\`, \`30m\`, \`2d\`)`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`reminder add <time> <message>\` (e.g. \`1h\`, \`30m\`, \`2d\`)`)] });
       }
 
       function parseTime(str) {
@@ -96,11 +96,11 @@ module.exports = {
 
       const ms = parseTime(timeStr);
       if (!ms || ms < 5000) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid time format. Use \`5s\`, \`10m\`, \`1h\`, \`2d\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid time format. Use \`5s\`, \`10m\`, \`1h\`, \`2d\`.`)] });
       }
 
       if (global.userReminders[userId].length >= 20) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You can only have 20 active reminders.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You can only have 20 active reminders.`)] });
       }
 
       const fireAt = Date.now() + ms;
@@ -116,7 +116,7 @@ module.exports = {
 
       global.userReminders[userId].push({ message: reminderMsg, fireAt, timeout, channelId });
 
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: I'll remind you about **${reminderMsg}** in **${timeStr}**! (<t:${Math.floor(fireAt / 1000)}:R>)`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: I'll remind you about **${reminderMsg}** in **${timeStr}**! (<t:${Math.floor(fireAt / 1000)}:R>)`)] });
     }
   },
 };

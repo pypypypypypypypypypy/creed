@@ -24,7 +24,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
     }
 
     const sub = args[0]?.toLowerCase();
@@ -33,17 +33,17 @@ module.exports = {
     if (['create', 'c', 'edit'].includes(sub)) {
       const name = args[1]?.toLowerCase();
       const text = args.slice(2).join(' ');
-      if (!name || !text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed create <name> <text>\``)] });
+      if (!name || !text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed create <name> <text>\``)] });
       const saved = db.get(key) || {};
       saved[name] = { text, author: message.author.id, updatedAt: Date.now() };
       db.set(key, saved);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Saved embed **${name}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Saved embed **${name}**.`)] });
     }
 
     if (['preview', 'view'].includes(sub)) {
       const name = args[1]?.toLowerCase();
       const saved = db.get(key) || {};
-      if (!name || !saved[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Saved embed not found.`)] });
+      if (!name || !saved[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Saved embed not found.`)] });
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(saved[name].text).setFooter({ text: `Embed: ${name}` }).setTimestamp()] });
     }
 
@@ -51,19 +51,19 @@ module.exports = {
       const target = args[1]?.toLowerCase();
       const name = args[2]?.toLowerCase();
       const saved = db.get(key) || {};
-      if (!target || !name || !saved[target]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed copy <existing> <new>\``)] });
+      if (!target || !name || !saved[target]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed copy <existing> <new>\``)] });
       saved[name] = { ...saved[target], author: message.author.id, updatedAt: Date.now() };
       db.set(key, saved);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Copied **${target}** to **${name}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Copied **${target}** to **${name}**.`)] });
     }
 
     if (['delete', 'del'].includes(sub)) {
       const name = args[1]?.toLowerCase();
       const saved = db.get(key) || {};
-      if (!name || !saved[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Saved embed not found.`)] });
+      if (!name || !saved[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Saved embed not found.`)] });
       delete saved[name];
       db.set(key, saved);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Deleted embed **${name}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Deleted embed **${name}**.`)] });
     }
 
     if (sub === 'list') {
@@ -73,7 +73,7 @@ module.exports = {
     }
 
     const text = args.join(' ');
-    if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed <text>\``)] });
+    if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed <text>\``)] });
 
     await message.delete().catch(() => {});
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(text).setTimestamp()] });

@@ -88,15 +88,15 @@ module.exports = {
 
     if (sub === 'add' || sub === 'set') {
       const content = args.slice(2).join(' ');
-      if (!content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide the sticky message content.`)] });
+      if (!content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide the sticky message content.`)] });
       global.stickyMessages[key] = { content, channelId: targetChannel.id };
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Sticky message added to <#${targetChannel.id}>.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Sticky message added to <#${targetChannel.id}>.`)] });
     }
 
     if (['remove', 'delete', 'del'].includes(sub)) {
-      if (!global.stickyMessages[key]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No sticky message in <#${targetChannel.id}>.`)] });
+      if (!global.stickyMessages[key]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No sticky message in <#${targetChannel.id}>.`)] });
       delete global.stickyMessages[key];
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed sticky message from <#${targetChannel.id}>.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed sticky message from <#${targetChannel.id}>.`)] });
     }
   },
 };

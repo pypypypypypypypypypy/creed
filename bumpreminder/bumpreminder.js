@@ -69,7 +69,7 @@ module.exports = {
 
     const needsManageGuild = ['enable', 'disable', 'reminder', 'message', 'thankyou', 'channel', 'set', 'view', 'check', 'test', 'leaderboard', 'autoclean', 'autolock'];
     if (needsManageGuild.includes(sub) && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
     }
 
     if (!global.bumpReminders[guildId]) {
@@ -82,12 +82,12 @@ module.exports = {
       cfg.enabled = true;
       const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]) || message.channel;
       cfg.channelId = channel.id;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Bump reminders enabled in ${channel}.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Bump reminders enabled in ${channel}.`)] });
     }
 
     if (sub === 'disable') {
       cfg.enabled = false;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Bump reminders disabled.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Bump reminders disabled.`)] });
     }
 
     if (['reminder', 'message'].includes(sub)) {
@@ -95,9 +95,9 @@ module.exports = {
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Bump Reminder Message').setDescription(cfg.reminderMsg || 'Not set.').setTimestamp()] });
       }
       const msg = args.slice(1).join(' ');
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a reminder message.`)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a reminder message.`)] });
       cfg.reminderMsg = msg;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Reminder message set.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Reminder message set.`)] });
     }
 
     if (sub === 'thankyou') {
@@ -105,20 +105,20 @@ module.exports = {
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle('Bump Thank You Message').setDescription(cfg.thankyouMsg || 'Not set.').setTimestamp()] });
       }
       const msg = args.slice(1).join(' ');
-      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Please provide a thank you message.`)] });
+      if (!msg) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide a thank you message.`)] });
       cfg.thankyouMsg = msg;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Thank you message set.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Thank you message set.`)] });
     }
 
     if (['autoclean', 'autolock'].includes(sub)) {
       cfg[sub] = !cfg[sub];
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Bump reminder **${sub}** is now **${cfg[sub] ? 'enabled' : 'disabled'}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Bump reminder **${sub}** is now **${cfg[sub] ? 'enabled' : 'disabled'}**.`)] });
     }
 
     if (sub === 'view') {
       const type = args[1]?.toLowerCase();
       if (!type || !['reminder', 'thankyou'].includes(type)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Specify \`reminder\` or \`thankyou\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Specify \`reminder\` or \`thankyou\`.`)] });
       }
       const msgText = type === 'reminder' ? cfg.reminderMsg : cfg.thankyouMsg;
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle(`${type.charAt(0).toUpperCase() + type.slice(1)} Message`).setDescription(msgText || 'Not set.').setTimestamp()] });
@@ -127,7 +127,7 @@ module.exports = {
     if (sub === 'test') {
       const type = args[1]?.toLowerCase();
       if (!type || !['reminder', 'thankyou'].includes(type)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Specify \`reminder\` or \`thankyou\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Specify \`reminder\` or \`thankyou\`.`)] });
       }
       const template = type === 'reminder' ? cfg.reminderMsg : cfg.thankyouMsg;
       const preview = (template || 'Not set.').replace('{user}', message.author.toString()).replace('{role}', '@here');

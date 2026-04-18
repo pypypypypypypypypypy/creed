@@ -24,7 +24,7 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     const target = message.mentions.members.first() || (args[0] ? message.guild.members.cache.get(args[0]) : null);
-    if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}copyid <member>\``)] });
+    if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}copyid <member>\``)] });
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`The ID of **${target.user.tag}** is \`${target.id}\``)] });
   }

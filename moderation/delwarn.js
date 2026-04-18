@@ -25,18 +25,18 @@ module.exports = {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
 
     if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers))
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`moderate_members\``)] });
 
-    if (!args[0] || !args[1]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}delwarn <member> <warn number>\``)] });
+    if (!args[0] || !args[1]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}delwarn <member> <warn number>\``)] });
 
     const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
 
     const warnIndex = parseInt(args[1]) - 1;
     const warns = db.get(`warns.${message.guild.id}.${member.id}`) || [];
 
-    if (!warns.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: **${member.user.tag}** has no warnings.`)] });
-    if (warnIndex < 0 || warnIndex >= warns.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid warning number. Use \`${prefix}warnings @user\` to see warn numbers.`)] });
+    if (!warns.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: **${member.user.tag}** has no warnings.`)] });
+    if (warnIndex < 0 || warnIndex >= warns.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid warning number. Use \`${prefix}warnings @user\` to see warn numbers.`)] });
 
     const removed = warns.splice(warnIndex, 1)[0];
     db.set(`warns.${message.guild.id}.${member.id}`, warns);

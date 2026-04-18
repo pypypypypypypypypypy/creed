@@ -92,51 +92,51 @@ module.exports = {
 
     if (sub === 'create') {
       const name = args.slice(1).join(' ');
-      if (!name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide a name for the webhook.`)] });
+      if (!name) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a name for the webhook.`)] });
       if (!message.member.permissions.has(PermissionFlagsBits.ManageWebhooks)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_webhooks\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_webhooks\``)] });
       }
       try {
         const wh = await message.channel.createWebhook({ name, reason: `Created by ${message.author.tag}` });
         const shortId = genShortId();
         global.webhooks[guildId][shortId] = { name, channelId: message.channel.id, url: wh.url, id: wh.id, token: wh.token };
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Webhook **${name}** created! Short ID: \`${shortId}\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Webhook **${name}** created! Short ID: \`${shortId}\``)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed to create webhook: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to create webhook: ${e.message}`)] });
       }
     }
 
     if (sub === 'delete') {
       const shortId = args[1];
-      if (!shortId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide the short ID.`)] });
+      if (!shortId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide the short ID.`)] });
       const whData = global.webhooks[guildId][shortId];
-      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
+      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
       if (!message.member.permissions.has(PermissionFlagsBits.ManageWebhooks)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_webhooks\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_webhooks\``)] });
       }
       try {
         const wh = await client.fetchWebhook(whData.id, whData.token).catch(() => null);
         if (wh) await wh.delete();
         delete global.webhooks[guildId][shortId];
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Deleted webhook \`${shortId}\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Deleted webhook \`${shortId}\`.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
       }
     }
 
     if (sub === 'send') {
       const [, shortId, ...contentParts] = args;
       const content = contentParts.join(' ');
-      if (!shortId || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`webhook send <short id> <content>\``)] });
+      if (!shortId || !content) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`webhook send <short id> <content>\``)] });
       const whData = global.webhooks[guildId][shortId];
-      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
+      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
       try {
         const wh = await client.fetchWebhook(whData.id, whData.token).catch(() => null);
         if (!wh) throw new Error('Webhook not found on Discord.');
         await wh.send({ content });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Message sent via webhook \`${shortId}\`.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Message sent via webhook \`${shortId}\`.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
       }
     }
 
@@ -145,31 +145,31 @@ module.exports = {
       const messageId = args[2];
       const content = args.slice(3).join(' ');
       if (!targetChannel || !messageId || !content) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`webhook edit <#channel> <message id> <content>\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`webhook edit <#channel> <message id> <content>\``)] });
       }
       try {
         const channelWebhooks = await targetChannel.fetchWebhooks();
         const wh = channelWebhooks.first();
-        if (!wh) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No webhook found in that channel.`)] });
+        if (!wh) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No webhook found in that channel.`)] });
         await wh.editMessage(messageId, { content });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Message edited.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Message edited.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
       }
     }
 
     if (sub === 'avatar') {
       const [, shortId, url] = args;
-      if (!shortId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Provide the short ID.`)] });
+      if (!shortId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide the short ID.`)] });
       const whData = global.webhooks[guildId][shortId];
-      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
+      if (!whData) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Webhook not found.`)] });
       try {
         const wh = await client.fetchWebhook(whData.id, whData.token).catch(() => null);
         if (!wh) throw new Error('Webhook not found on Discord.');
         await wh.edit({ avatar: url || null });
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Webhook avatar ${url ? 'updated' : 'removed'}.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Webhook avatar ${url ? 'updated' : 'removed'}.`)] });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed: ${e.message}`)] });
       }
     }
   },

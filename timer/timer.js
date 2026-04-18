@@ -64,7 +64,7 @@ module.exports = {
       const key = `timer_ignore_activity_${guildId}`;
       const enabled = !require('../db').get(key);
       require('../db').set(key, enabled);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Timer activity ignore is now **${enabled ? 'enabled' : 'disabled'}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Timer activity ignore is now **${enabled ? 'enabled' : 'disabled'}**.`)] });
     }
 
     if (['view', 'check'].includes(sub)) {
@@ -75,21 +75,21 @@ module.exports = {
 
     if (['remove', 'delete', 'del'].includes(sub)) {
       const timer = global.timers[key];
-      if (!timer) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: No timer in <#${targetChannel.id}>.`)] });
+      if (!timer) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No timer in <#${targetChannel.id}>.`)] });
       clearInterval(timer.interval);
       delete global.timers[key];
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Removed timer from <#${targetChannel.id}>.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed timer from <#${targetChannel.id}>.`)] });
     }
 
     if (['add', 'create', 'send'].includes(sub)) {
       const intervalStr = args[2];
       const content = args.slice(3).join(' ');
       if (!intervalStr || !content) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`timer add <#channel> <interval> <message>\` (e.g. 1h, 30m, 10s)`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`timer add <#channel> <interval> <message>\` (e.g. 1h, 30m, 10s)`)] });
       }
       const ms = parseInterval(intervalStr);
       if (!ms || ms < 10000) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Invalid interval. Use format like \`30m\`, \`1h\`, \`2d\`. Minimum is 10s.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Invalid interval. Use format like \`30m\`, \`1h\`, \`2d\`. Minimum is 10s.`)] });
       }
 
       if (global.timers[key]) {
@@ -103,7 +103,7 @@ module.exports = {
 
       global.timers[key] = { interval: intervalRef, intervalStr, content, channelId: targetChannel.id };
 
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('a3eb7b').setDescription(`${approve} ${message.author}: Timer added! Sending message to <#${targetChannel.id}> every **${intervalStr}**.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Timer added! Sending message to <#${targetChannel.id}> every **${intervalStr}**.`)] });
     }
   },
 };

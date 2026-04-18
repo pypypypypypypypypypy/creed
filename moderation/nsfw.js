@@ -33,7 +33,7 @@ module.exports = {
       await channel.setNSFW(true, `Marked NSFW by ${message.author.tag}`);
       message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: ${channel} has been marked as **NSFW** 🔞`)] });
     } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: I need the **Manage Channels** permission to do that.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: I need the **Manage Channels** permission to do that.`)] });
     }
   }
 };

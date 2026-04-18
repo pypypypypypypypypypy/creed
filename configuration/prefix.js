@@ -12,7 +12,7 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
 
     if (!args[0]) {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor("#6495ED").setDescription(`${message.author}: Please provide the prefix that you want to set`)] });

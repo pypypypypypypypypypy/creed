@@ -22,7 +22,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     const member = message.mentions.members.first() || (args[0] ? message.guild.members.cache.get(args[0]) : message.member);
-    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
+    if (!member) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Member not found.`)] });
 
     const perms = member.permissions.toArray();
     const has = perms.map(p => `✅ \`${p}\``);

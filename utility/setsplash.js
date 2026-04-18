@@ -21,9 +21,9 @@ module.exports = {
     name: "setsplash",
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
-    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_guild\``)] });
-    if (!message.guild.features.includes("SPLASH")) return message.channel.send({ embeds: [new EmbedBuilder().setColor("fe6464").setDescription(`${deny} ${message.author}: This command requires: Guild \`SPLASH\` feature`)] });
+    if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
+    if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_guild\``)] });
+    if (!message.guild.features.includes("SPLASH")) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: This command requires: Guild \`SPLASH\` feature`)] });
 
     let splash = message.attachments.first()?.url || args[0];
 
@@ -45,9 +45,9 @@ module.exports = {
     }
 
     message.guild.setSplash(splash).then(() => {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor("a3eb7b").setDescription(`${approve} ${message.author}: Successfully set the guild splash to [**this image**](${splash})`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Successfully set the guild splash to [**this image**](${splash})`)] });
     }).catch(() => {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor("efa23a").setDescription(`${warn} ${message.author}: Failed to set the guild splash`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to set the guild splash`)] });
     });
   }
 };

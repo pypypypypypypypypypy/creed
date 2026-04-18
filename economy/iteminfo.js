@@ -27,12 +27,12 @@ module.exports = {
     const guildId = message.guild.id;
     const itemName = args.join(' ');
 
-    if (!itemName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}iteminfo <item name>\``)] });
+    if (!itemName) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}iteminfo <item name>\``)] });
 
     const shop = db.get(`economy.${guildId}.shop`) || {};
     const item = shop[itemName.toLowerCase()];
 
-    if (!item) return message.channel.send({ embeds: [new EmbedBuilder().setColor('efa23a').setDescription(`${warn} ${message.author}: Item **${itemName}** not found in the shop.`)] });
+    if (!item) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Item **${itemName}** not found in the shop.`)] });
 
     const embed = new EmbedBuilder()
       .setColor(color)

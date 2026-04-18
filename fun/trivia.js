@@ -61,7 +61,7 @@ module.exports = {
       question = data.results[0];
     } catch {
       await loading.delete().catch(() => {});
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('fe6464').setDescription(`${warn} ${message.author}: Could not fetch a trivia question. Try again.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not fetch a trivia question. Try again.`)] });
     }
 
     await loading.delete().catch(() => {});
@@ -147,7 +147,7 @@ module.exports = {
           )
         );
         const timeoutEmbed = new EmbedBuilder()
-          .setColor('efa23a')
+          .setColor('#efa23a')
           .setTitle('⏱️ Time\'s up!')
           .setDescription(`${message.author} ran out of time. The correct answer was **${correct}**.`)
           .setFooter({ text: 'Module: fun' })
