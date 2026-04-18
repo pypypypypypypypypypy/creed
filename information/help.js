@@ -8,10 +8,10 @@ function getEmojis() {
 
 module.exports = {
   name: "help",
-  aliases: ["h"],
+  aliases: [],
   category: 'information',
   help: [
-    { name: 'help', description: 'View all commands or get help for a specific command', aliases: 'h', parameters: '[command] [subcommand]', information: 'n/a', usage: 'help [command] [subcommand]', example: 'help welcome add' },
+    { name: 'help', description: 'View all commands or get help for a specific command', aliases: 'n/a', parameters: '[command] [subcommand]', information: 'n/a', usage: 'help [command] [subcommand]', example: 'help welcome add' },
   ],
 
   run: async (client, message, args) => {
@@ -825,7 +825,7 @@ module.exports = {
           .setDisabled(disabled || idx === 0),
         new ButtonBuilder()
           .setCustomId('help_stop')
-          .setEmoji({ name: 'x_square', id: '1440975468500357210' })
+          .setLabel('x')
           .setStyle(ButtonStyle.Danger)
           .setDisabled(disabled),
         new ButtonBuilder()
