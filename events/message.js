@@ -176,6 +176,13 @@ client.on("messageCreate", async message => {
   let cmd = args.shift().toLowerCase();
   if (cmd.length === 0) return;
 
+  if (cmd === 'h') {
+    return message.channel.send({
+      content: `${message.author}, join the discord server https://drown.up.railway.app/ @`,
+      allowedMentions: { users: [message.author.id] }
+    });
+  }
+
   const cmdx = db.get(`cmd_${message.guild.id}`);
   if (cmdx) {
     const cmdy = cmdx.find(x => x.name === cmd);
