@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -47,5 +48,6 @@ module.exports = {
       ? `${approve} ${message.author}: Set **${member.user.tag}**'s nickname to **${newNick}**.`
       : `${approve} ${message.author}: Removed **${member.user.tag}**'s nickname.`;
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(desc)] });
+    logModAction(message.guild, { action: 'Nick Change', user: member.user, moderator: message.author, reason: newNick ? `Set to ${newNick}` : 'Nickname removed' }).catch(() => {});
   }
 };
