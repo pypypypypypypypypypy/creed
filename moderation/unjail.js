@@ -2,6 +2,7 @@ const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const db = require('../db');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -56,5 +57,6 @@ module.exports = {
       const logChannel = message.guild.channels.cache.get(log);
       if (logChannel) logChannel.send({ embeds: [logEmbed] }).catch(() => {});
     }
+    logModAction(message.guild, { action: 'Unjail', user: member.user, moderator: message.author, reason: args.slice(1).join(' ') || 'No Reason Supplied' }).catch(() => {});
   }
 };
