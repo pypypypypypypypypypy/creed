@@ -3,6 +3,7 @@ const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -54,5 +55,6 @@ module.exports = {
 
     const tag = member ? member.user.tag : userId;
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Hard banned **${tag}** — they cannot be unbanned with \`unbanall\`. Reason: **${reason}**`)] });
+    logModAction(message.guild, { action: 'Hardban', user: mentionedMember.user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 };
