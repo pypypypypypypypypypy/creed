@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   name: 'warn',
@@ -48,5 +49,6 @@ module.exports = {
     await member.send({ embeds: [dmEmbed] }).catch(() => {});
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Warned **${member.user.tag}** — reason: **${reason}** (warn #${warns.length})`)] });
+    logModAction(message.guild, { action: 'Warn', user: member.user, moderator: message.author, reason: reason }).catch(() => {});
   }
 };
