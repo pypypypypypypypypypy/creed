@@ -3,6 +3,7 @@ const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -44,5 +45,6 @@ module.exports = {
     const reason = args.slice(1).join(' ') || 'No reason provided';
     await member.roles.add(muteRole, reason);
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Reaction muted **${member.user.tag}** — reason: **${reason}**`)] });
+    logModAction(message.guild, { action: 'Reaction Mute', user: member.user, moderator: message.author, reason: reason }).catch(() => {});
   }
 };
