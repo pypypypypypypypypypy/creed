@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -39,5 +40,6 @@ module.exports = {
 
     await member.timeout(null);
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Removed timeout from **${member.user.tag}**.`)] });
+    logModAction(message.guild, { action: 'Untimeout', user: member.user, moderator: message.author, reason: 'No Reason Supplied' }).catch(() => {});
   }
 };
