@@ -4,6 +4,7 @@ const db = require('../db');
 const { default_prefix, color } = require('../config.json');
 const { warn } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   name: 'jail',
@@ -73,5 +74,6 @@ module.exports = {
       await member.roles.remove(jailRole).catch(() => {});
       message.channel.send(`<@${member.id}> has been unjailed.`);
     }, ms(mutetime));
+    logModAction(message.guild, { action: 'Jail', user: member.user, moderator: message.author, reason: rson || 'No Reason Supplied' }).catch(() => {});
   }
 };
