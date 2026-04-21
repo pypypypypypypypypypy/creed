@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
 const ms = require('ms');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -60,5 +61,6 @@ module.exports = {
     }, duration);
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Temporarily banned **${member.user.tag}** for **${args[1]}** — reason: **${reason}**`)] });
+    logModAction(message.guild, { action: 'Tempban', user: mentionedMember.user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 };
