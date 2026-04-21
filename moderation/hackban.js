@@ -4,6 +4,7 @@ const { color } = require("../config.json");
 const { warn } = require('../emojis.json')
 const { paginate } = require('../utils/paginate');
 const db = require('../db');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -55,5 +56,6 @@ module.exports = {
     message.guild.members.ban(target, { reason: reason.length < 1 ? 'No Reason Supplied' : reason });
 
     return message.channel.send('👍');
+    logModAction(message.guild, { action: 'Hackban', user: user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 }
