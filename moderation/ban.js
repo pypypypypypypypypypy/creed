@@ -6,6 +6,7 @@ const { color } = require("../config.json");
 const { warn } = require('../emojis.json')
 const { deny } = require('../emojis.json')
 const { paginate } = require('../utils/paginate');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   name: "ban",
@@ -43,8 +44,6 @@ module.exports = {
     if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
     if (!mentionedMember) return message.channel.send({ embed: { color: "#efa23a", description: `${warn} ${message.author}: **Invalid User**. Do \`${prefix}ban\` to see the variables` } })
     if (!mentionedMember.bannable) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: Cannot ban due to **hierarchy**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot ban someone that is **higher** than **yours**`)] })
-
 
     const banEmbed = new EmbedBuilder()
       .setTitle('**Banned**')
@@ -57,9 +56,15 @@ module.exports = {
       .setFooter({ text: 'If you would like to dispute this punishment, contact a staff member.' });
 
     await mentionedMember.send({ embeds: [banEmbed] }).catch(err => console.log(err));
-    await mentionedMember.ban({
-      days: 7,
-      reason: reason
-    }).catch(err => console.log(err)).then(() => message.channel.send('👍'))
+    await mentionedMember.ban({ days: 7, reason }).catch(err => console.log(err))
+      .then(() => {
+        message.channel.send('👍');
+        logModAction(message.guild, {
+          action: 'Ban',
+          user: mentionedMember.user,
+          moderator: message.author,
+          reason
+        }).catch(() => {});
+      });
   }
 }
