@@ -5,6 +5,7 @@ const { color } = require("../config.json");
 const { warn } = require('../emojis.json')
 const { paginate } = require('../utils/paginate');
 const db = require('../db');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -60,5 +61,6 @@ module.exports = {
     await Member.roles.remove(role)
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor("RED").setDescription(`${message.author}: **${user.user.tag}** is now unmuted`)] })
+    logModAction(message.guild, { action: 'Unmute', user: Member.user, moderator: message.author, reason: 'No Reason Supplied' }).catch(() => {});
   }
 }
