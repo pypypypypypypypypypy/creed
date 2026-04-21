@@ -5,6 +5,7 @@ const { color } = require("../config.json");
 const { approve, warn, deny } = require('../emojis.json')
 const { paginate } = require('../utils/paginate');
 const db = require('../db');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   name: 'mute',
@@ -75,5 +76,6 @@ module.exports = {
     if (Member.roles.cache.has(role2.id)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: **${user.user.tag}** has already been muted`)] })
     await Member.roles.add(role2)
     message.channel.send({ embeds: [new EmbedBuilder().setColor("RED").setDescription(`${message.author}: **${user.user.tag}** is now muted`)] })
+    logModAction(message.guild, { action: 'Mute', user: Member.user, moderator: message.author, reason: 'No Reason Supplied' }).catch(() => {});
   }
 }
