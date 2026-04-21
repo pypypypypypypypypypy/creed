@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -45,5 +46,6 @@ module.exports = {
     }
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Banned **${banned}** user(s). Failed: **${failed}**.`)] });
+    logModAction(message.guild, { action: 'Massban', user: { username: "Multiple Users", id: "N/A" }, moderator: message.author, reason: 'Mass ban executed' }).catch(() => {});
   }
 };
