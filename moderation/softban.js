@@ -4,6 +4,7 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -53,5 +54,6 @@ module.exports = {
     await message.guild.members.unban(member.id, 'Softban — messages cleared').catch(() => {});
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Softbanned **${member.user.tag}** and cleared their recent messages.`)] });
+    logModAction(message.guild, { action: 'Softban', user: mentionedMember.user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 };
