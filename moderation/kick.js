@@ -6,6 +6,7 @@ const { color } = require("../config.json");
 const { warn } = require('../emojis.json')
 const { deny } = require('../emojis.json')
 const { paginate } = require('../utils/paginate');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   name: "kick",
@@ -23,17 +24,7 @@ module.exports = {
     const mentionedMember = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     let reason = args.slice(1).join(" ");
     if (!reason) reason = "No Reason Supplied"
-    const kickEmbed = new EmbedBuilder()
-      .setTitle('**Kicked**')
-      .addFields({ name: `**You have been kicked from**`, value: `${message.guild.name}`, inline: true })
-      .addFields({ name: `**Moderator**`, value: `${message.author.tag}`, inline: true })
-      .addFields({ name: `**Reason**`, value: `${reason}`, inline: true })
-      .setColor("#e74c3c")
-      .setThumbnail(message.author.avatarURL({ forceStatic: false, size: 2048 }))
-      .setTimestamp()
-      .setFooter({ text: 'If you would like to dispute this punishment, contact a staff member.' });
 
-    //,kick @user [reason]
     const embed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
       .setTitle('Command: kick')
@@ -52,19 +43,34 @@ module.exports = {
     if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) <= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
     if (!mentionedMember) return message.channel.send({ embed: { color: "#efa23a", description: `${warn} ${message.author}: **Invalid User**. Do \`${prefix}kick\` to see the variables` } });
     if (!mentionedMember.kickable) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: Cannot kick due to **hierarchy**`)] })
-    if (message.member.roles.highest.comparePositionTo(mentionedMember.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot kick someone that is **higher** than **yours**`)] })
+
+    const kickEmbed = new EmbedBuilder()
+      .setTitle('**Kicked**')
+      .addFields({ name: `**You have been kicked from**`, value: `${message.guild.name}`, inline: true })
+      .addFields({ name: `**Moderator**`, value: `${message.author.tag}`, inline: true })
+      .addFields({ name: `**Reason**`, value: `${reason}`, inline: true })
+      .setColor("#e74c3c")
+      .setThumbnail(message.author.avatarURL({ forceStatic: false, size: 2048 }))
+      .setTimestamp()
+      .setFooter({ text: 'If you would like to dispute this punishment, contact a staff member.' });
+
     try {
       await mentionedMember.send({ embeds: [kickEmbed] });
     } catch (err) {
-      return message.channel.send('Cannot dm that member');
+      console.log('Could not DM member');
     }
 
     try {
-      await mentionedMember.kick(reason)
-      return message.channel.send('👍')
+      await mentionedMember.kick(reason);
+      message.channel.send('👍');
+      logModAction(message.guild, {
+        action: 'Kick',
+        user: mentionedMember.user,
+        moderator: message.author,
+        reason
+      }).catch(() => {});
     } catch (err) {
       console.log(err);
     }
-
   }
 }
