@@ -2,6 +2,7 @@ const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const db = require('../db');
 const { default_prefix, color } = require('../config.json');
 const { warn, deny, approve } = require('../emojis.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -50,5 +51,6 @@ module.exports = {
     } catch (err) {
       message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to deafen member: ${err.message}`)] });
     }
+    logModAction(message.guild, { action: 'Deafen', user: member.user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 };
