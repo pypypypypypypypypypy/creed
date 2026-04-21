@@ -3,6 +3,7 @@ const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -37,5 +38,6 @@ module.exports = {
     await member.roles.remove(roles, `Stripped by ${message.author.tag}`);
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Stripped **${roles.size}** role(s) from **${member.user.tag}**.`)] });
+    logModAction(message.guild, { action: 'Strip Roles', user: member.user, moderator: message.author, reason: 'No Reason Supplied' }).catch(() => {});
   }
 };
