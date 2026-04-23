@@ -116,4 +116,22 @@ function buildWelcomeVars(member) {
   };
 }
 
-module.exports = { parseEmbed, applyVars, buildWelcomeVars };
+function buildBoostVars(member) {
+  return {
+    '{user}': `<@${member.id}>`,
+    '{user.mention}': `<@${member.id}>`,
+    '{user.name}': member.user.username,
+    '{user.tag}': member.user.tag,
+    '{user.id}': member.id,
+    '{user.avatar}': member.user.displayAvatarURL({ forceStatic: false, size: 1024 }),
+    '{guild}': member.guild.name,
+    '{guild.name}': member.guild.name,
+    '{guild.id}': member.guild.id,
+    '{guild.icon}': member.guild.iconURL({ size: 1024 }) || '',
+    '{membercount}': String(member.guild.memberCount),
+    '{boostcount}': String(member.guild.premiumSubscriptionCount ?? 0),
+    '{boosttier}': String(member.guild.premiumTier ?? 0),
+  };
+}
+
+module.exports = { parseEmbed, applyVars, buildWelcomeVars, buildBoostVars };
