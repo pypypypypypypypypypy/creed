@@ -5,10 +5,10 @@ const { warn, approve } = require('../emojis.json');
 
 module.exports = {
   name: 'restrictcommand',
-  aliases: ['rc', 'restrict'],
+  aliases: ['restrict'],
   category: 'configuration',
   help: [
-    { name: 'restrictcommand', description: 'Restrict a command to specific roles', aliases: 'rc, restrict', parameters: '(command) (role)', information: 'MANAGE_GUILD', usage: 'restrictcommand (command) (role)', example: 'restrictcommand ban @Moderator' },
+    { name: 'restrictcommand', description: 'Restrict a command to specific roles', aliases: 'restrict', parameters: '(command) (role)', information: 'MANAGE_GUILD', usage: 'restrictcommand (command) (role)', example: 'restrictcommand ban @Moderator' },
     { name: 'restrictcommand list', description: 'List all command restrictions', aliases: 'n/a', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'restrictcommand list', example: 'restrictcommand list' },
   ],
 
