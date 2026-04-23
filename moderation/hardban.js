@@ -20,7 +20,7 @@ module.exports = {
 ],
 
     name: 'hardban',
-  aliases: ['hban'],
+  aliases: [],
 
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
