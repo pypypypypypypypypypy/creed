@@ -845,8 +845,8 @@ module.exports = {
 
     const input = args[0] ? args[0].toLowerCase() : null;
 
-    // ,h <command> [subcommand] — per-command help lookup
-    if (input && !aliasMap[input]) {
+    // ,h <command> [subcommand] — per-command help lookup (any args = old behavior)
+    if (input) {
       const cmdName = input;
       let command = client.commands.get(cmdName);
       if (!command) command = client.commands.get(client.aliases.get(cmdName));
@@ -918,46 +918,6 @@ module.exports = {
         .setFooter({ text: `Module: ${category}` });
 
       return message.channel.send({ embeds: [fallbackEmbed] });
-    }
-
-    // ,h <group>
-    if (input && aliasMap[input]) {
-      const group = groups[aliasMap[input]];
-      const pages = group.pages;
-
-      if (pages.length === 1) {
-        return message.channel.send({ embeds: [pages[0]] });
-      }
-
-      let current = 0;
-
-      const msg = await message.channel.send({
-        embeds: [pages[current]],
-        components: [buildRow(current, pages.length)],
-      });
-
-      const collector = msg.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        filter: i => i.user.id === message.author.id,
-        time: 60_000,
-      });
-
-      collector.on('collect', async interaction => {
-        await interaction.deferUpdate();
-        if (interaction.customId === 'help_stop') {
-          collector.stop('user');
-          return msg.delete().catch(() => {});
-        }
-        if (interaction.customId === 'help_prev') current = Math.max(0, current - 1);
-        if (interaction.customId === 'help_next') current = Math.min(pages.length - 1, current + 1);
-        await msg.edit({ embeds: [pages[current]], components: [buildRow(current, pages.length)] }).catch(() => {});
-      });
-
-      collector.on('end', () => {
-        msg.edit({ components: [buildRow(current, pages.length, true)] }).catch(() => {});
-      });
-
-      return;
     }
 
     // ,h — paginated overview: page 1 is the overview, then one page per group
