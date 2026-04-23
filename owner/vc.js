@@ -1,9 +1,36 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const voice24 = require('../music/voice24');
+const { isOwner } = require('../utils/owners');
 
-const OWNER_ID = '370268185410404353';
+const VOICE_TYPES = new Set([ChannelType.GuildVoice, ChannelType.GuildStageVoice]);
+
+async function resolveChannel(message, arg) {
+  if (!message.guild) return null;
+  if (!arg) {
+    const m = await message.guild.members.fetch(message.author.id).catch(() => null);
+    return m?.voice?.channel || null;
+  }
+
+  const mentioned = message.mentions.channels.first();
+  if (mentioned && VOICE_TYPES.has(mentioned.type)) return mentioned;
+
+  const id = arg.replace(/[<#>]/g, '').trim();
+  if (/^\d{17,20}$/.test(id)) {
+    const cached = message.guild.channels.cache.get(id);
+    if (cached) return cached;
+    const fetched = await message.guild.channels.fetch(id).catch(() => null);
+    if (fetched) return fetched;
+  }
+
+  const lower = arg.toLowerCase();
+  return (
+    message.guild.channels.cache.find(c => VOICE_TYPES.has(c.type) && c.name.toLowerCase() === lower) ||
+    message.guild.channels.cache.find(c => VOICE_TYPES.has(c.type) && c.name.toLowerCase().includes(lower)) ||
+    null
+  );
+}
 
 module.exports = {
   category: 'owner',
@@ -14,7 +41,7 @@ module.exports = {
       aliases: 'n/a',
       parameters: '(channel)',
       information: 'BOT_OWNER',
-      usage: 'vc (channel id or mention)',
+      usage: 'vc (channel id, mention, or name) — defaults to your current voice channel',
       example: 'vc #general',
     },
   ],
@@ -24,34 +51,48 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (message.author.id !== OWNER_ID) return;
+    if (!isOwner(message.author.id)) return;
+    if (!message.guild) return;
 
     const arg = args[0];
-    if (!arg) {
-      return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`,vc <channel>\` (or \`,vc stop\` to leave)`)],
-      });
-    }
 
-    if (arg.toLowerCase() === 'stop' || arg.toLowerCase() === 'leave') {
+    if (arg && (arg.toLowerCase() === 'stop' || arg.toLowerCase() === 'leave')) {
       voice24.stop(message.guild.id);
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Stopped the 24/7 voice session.`)],
       });
     }
 
-    const id = arg.replace(/[<#>]/g, '');
-    const channel = message.guild.channels.cache.get(id) || message.mentions.channels.first();
-    if (!channel || (channel.type !== 2 && channel.type !== 13)) {
+    const channel = await resolveChannel(message, arg);
+    if (!channel) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That isn't a valid voice channel.`)],
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Could not find that channel. Pass a voice-channel ID, mention, or name — or join a voice channel and run \`,vc\` with no arguments.`)],
+      });
+    }
+    if (!VOICE_TYPES.has(channel.type)) {
+      return message.channel.send({
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: <#${channel.id}> is type \`${channel.type}\` — not a voice channel.`)],
       });
     }
 
-    const ok = voice24.start(client, message.guild.id, channel.id);
+    const me = message.guild.members.me || await message.guild.members.fetchMe().catch(() => null);
+    const perms = me ? channel.permissionsFor(me) : null;
+    if (perms && (!perms.has('Connect') || !perms.has('Speak'))) {
+      return message.channel.send({
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Missing **Connect** or **Speak** permission in ${channel}.`)],
+      });
+    }
+
+    let ok = false;
+    let errMsg = '';
+    try {
+      ok = voice24.start(client, message.guild.id, channel.id);
+    } catch (e) {
+      errMsg = e?.message || String(e);
+    }
     if (!ok) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to join ${channel}.`)],
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Failed to join ${channel}${errMsg ? ` — \`${errMsg}\`` : ''}.`)],
       });
     }
 
