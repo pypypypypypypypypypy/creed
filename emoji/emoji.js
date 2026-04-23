@@ -70,7 +70,7 @@ module.exports = {
       .setTimestamp()
       .setColor(color);
 
-    if (!sub || !['add','addmany','remove','removemany','removeduplicates','rmdups','rename','information','info','stats','steal','stealmany','enlarge','list'].includes(sub)) {
+    if (!sub || !['add','addmany','remove','removemany','removeall','removeduplicates','rmdups','rename','information','info','stats','steal','stealmany','enlarge','list'].includes(sub)) {
       return message.channel.send({ embeds: [helpEmbed] });
     }
 
@@ -208,6 +208,35 @@ module.exports = {
       }
 
       return status.edit({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}**/${targets.length} emoji(s).`)] });
+    }
+
+    if (sub === 'removeall') {
+      if (!requireManage()) return;
+
+      const confirmArg = (args[1] || '').toLowerCase();
+      const all = [...message.guild.emojis.cache.values()];
+      if (!all.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: This server has no custom emojis.`)] });
+
+      if (confirmArg !== 'confirm') {
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: This will delete **${all.length}** emojis from **${message.guild.name}**. Run \`emoji removeall confirm\` to proceed.`)] });
+      }
+
+      const status = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Removing **${all.length}** emoji(s)...`)] });
+
+      let removed = 0;
+      const BATCH = 5;
+      let lastEdit = 0;
+      for (let i = 0; i < all.length; i += BATCH) {
+        const slice = all.slice(i, i + BATCH);
+        await Promise.all(slice.map(e => e.delete().then(() => removed++).catch(() => {})));
+        const now = Date.now();
+        if (now - lastEdit > 4000 || i + BATCH >= all.length) {
+          lastEdit = now;
+          await status.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Progress: **${Math.min(i + BATCH, all.length)}/${all.length}** removed`)] }).catch(() => {});
+        }
+      }
+
+      return status.edit({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}**/${all.length} emoji(s).`)] });
     }
 
     if (['removeduplicates', 'rmdups'].includes(sub)) {
