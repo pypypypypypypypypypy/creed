@@ -1,21 +1,38 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
 const { isOwner } = require('../utils/owners');
 
+function getEmojis() {
+  delete require.cache[require.resolve('../emojis.json')];
+  return require('../emojis.json');
+}
+
+function parseEmojiTag(tag) {
+  if (!tag) return null;
+  const m = String(tag).match(/^<(a)?:(\w+):(\d+)>$/);
+  if (!m) return null;
+  return { animated: !!m[1], name: m[2], id: m[3] };
+}
+
+function applyEmoji(button, tag, fallbackLabel) {
+  const parsed = parseEmojiTag(tag);
+  if (parsed) button.setEmoji({ id: parsed.id, name: parsed.name, animated: parsed.animated });
+  else button.setLabel(fallbackLabel);
+  return button;
+}
+
 module.exports = {
   name: "guilds",
   aliases: ["serverlist", "slt"],
   category: "owner",
-  help: [
-    {
-      name: 'guilds',
-      description: 'List all guilds the bot is in',
-      aliases: 'serverlist, slt',
-      parameters: 'n/a',
-      information: 'BOT_OWNER',
-      usage: 'guilds',
-      example: 'guilds'
-    }
-  ],
+  help: [{
+    name: 'guilds',
+    description: 'List all guilds the bot is in',
+    aliases: 'serverlist, slt',
+    parameters: 'n/a',
+    information: 'BOT_OWNER',
+    usage: 'guilds',
+    example: 'guilds',
+  }],
 
   run: async (client, message, args) => {
     if (!isOwner(message.author.id)) return;
@@ -44,23 +61,14 @@ module.exports = {
     }
 
     function buildRow(pageIndex, disabled = false) {
-      return new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('guilds_prev')
-          .setLabel('◀')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(disabled || pageIndex === 0),
-        new ButtonBuilder()
-          .setCustomId('guilds_stop')
-          .setLabel('✕')
-          .setStyle(ButtonStyle.Danger)
-          .setDisabled(disabled),
-        new ButtonBuilder()
-          .setCustomId('guilds_next')
-          .setLabel('▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(disabled || pageIndex >= totalPages - 1)
-      );
+      const e = getEmojis();
+      const prevBtn = new ButtonBuilder().setCustomId('guilds_prev').setStyle(ButtonStyle.Secondary).setDisabled(disabled || pageIndex === 0);
+      const stopBtn = new ButtonBuilder().setCustomId('guilds_stop').setStyle(ButtonStyle.Danger).setDisabled(disabled);
+      const nextBtn = new ButtonBuilder().setCustomId('guilds_next').setStyle(ButtonStyle.Secondary).setDisabled(disabled || pageIndex >= totalPages - 1);
+      applyEmoji(prevBtn, e.previous, '◀');
+      applyEmoji(stopBtn, e.cancel,   '✕');
+      applyEmoji(nextBtn, e.next,     '▶');
+      return new ActionRowBuilder().addComponents(prevBtn, stopBtn, nextBtn);
     }
 
     let msg;
@@ -84,20 +92,14 @@ module.exports = {
 
     collector.on('collect', async interaction => {
       try { await interaction.deferUpdate(); } catch {}
-
-      if (interaction.customId === 'guilds_stop') {
-        collector.stop('user');
-        return msg.delete().catch(() => {});
-      }
-
+      if (interaction.customId === 'guilds_stop') { collector.stop('user'); return msg.delete().catch(() => {}); }
       if (interaction.customId === 'guilds_prev') page = Math.max(0, page - 1);
       if (interaction.customId === 'guilds_next') page = Math.min(totalPages - 1, page + 1);
-
       msg.edit({ embeds: [buildEmbed(page)], components: [buildRow(page)] }).catch(() => {});
     });
 
     collector.on('end', () => {
       msg.edit({ components: [buildRow(page, true)] }).catch(() => {});
     });
-  }
+  },
 };
