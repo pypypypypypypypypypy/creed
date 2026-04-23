@@ -50,10 +50,10 @@ module.exports = {
 
     let roleListEmbed = new EmbedBuilder()
       .setColor(role.hexColor)
-      .setAuthor(`${message.author.username}`, message.author.displayAvatarURL({
-        forceStatic: false,
-        size: 2048
-      }))
+      .setAuthor({
+        name: `${message.author.username}`,
+        iconURL: message.author.displayAvatarURL({ forceStatic: false, size: 2048 })
+      })
       .setTitle(`Members in '${role.name}'`)
       .setDescription(`**${membersWithRole.join("\n")}**`);
     message.channel.send({ embeds: [roleListEmbed] });

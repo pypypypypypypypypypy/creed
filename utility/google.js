@@ -31,7 +31,10 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(color)
-      .setAuthor(`${message.author.username}`, message.author.displayAvatarURL({ forceStatic: false, size: 2048 }))
+      .setAuthor({
+        name: `${message.author.username}`,
+        iconURL: message.author.displayAvatarURL({ forceStatic: false, size: 2048 })
+      })
       .setTitle(`Search Results for: ${query}`)
       .setDescription(`[Click here to view Google results](${searchUrl})`)
       .setFooter({ text: 'Google Search' })

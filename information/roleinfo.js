@@ -39,10 +39,10 @@ module.exports = {
 
     const roleInfoEmbed = new EmbedBuilder()
       .setColor(role.hexColor)
-      .setAuthor(`${message.author.username}`, message.author.displayAvatarURL({
-        forceStatic: false,
-        size: 2048
-      }))
+      .setAuthor({
+        name: `${message.author.username}`,
+        iconURL: message.author.displayAvatarURL({ forceStatic: false, size: 2048 })
+      })
       .setTitle(`${role.name}`)
       .addFields({ name: "**Role ID**", value: `\`${role.id}\``, inline: true })
       .addFields({ name: "**Guild**", value: `${message.guild.name} (\`${message.guild.id}\`)`, inline: true })
