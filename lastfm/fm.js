@@ -15,7 +15,7 @@ module.exports = {
     {
         name: 'fm',
         description: 'View your Last.fm now playing',
-        aliases: 'np',
+        aliases: 'lfm',
         parameters: 'n/a',
         information: 'n/a',
         usage: 'fm',
@@ -24,7 +24,7 @@ module.exports = {
 ],
 
     name: "fm",
-  aliases: ["lfm", "np"],
+  aliases: ["lfm"],
   usage: "fm",
   category: "lastfm",
 
