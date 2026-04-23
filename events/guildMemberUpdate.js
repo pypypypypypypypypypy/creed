@@ -1,8 +1,8 @@
 const client = require('../bleed');
 const db = require('../db');
+const { parseEmbed, buildBoostVars } = require('../utils/embedParser');
 
 client.on("guildMemberUpdate", async (oldMember, newMember) => {
-  // Handle server boost messages
   const wasBoosting = !!oldMember.premiumSinceTimestamp;
   const isBoosting = !!newMember.premiumSinceTimestamp;
 
@@ -12,14 +12,12 @@ client.on("guildMemberUpdate", async (oldMember, newMember) => {
       const channel = newMember.guild.channels.cache.get(channelId);
       if (channel) {
         const msgTemplate = db.get(`boost_message_${newMember.guild.id}`) ||
-          `🎉 Thank you **{user.tag}** for boosting **{guild}**! We now have **{boostcount}** boosts!`;
-        const formatted = msgTemplate
-          .replace(/{user}/g, newMember.user.toString())
-          .replace(/{user\.tag}/g, newMember.user.tag || newMember.user.username)
-          .replace(/{guild}/g, newMember.guild.name)
-          .replace(/{membercount}/g, newMember.guild.memberCount)
-          .replace(/{boostcount}/g, newMember.guild.premiumSubscriptionCount);
-        channel.send({ content: formatted }).catch(() => {});
+          `Thank you {user} for boosting **{guild}**! We now have **{boostcount}** boosts!`;
+        const vars = buildBoostVars(newMember);
+        const payload = parseEmbed(msgTemplate, vars);
+        if (payload && (payload.content || (payload.embeds && payload.embeds.length))) {
+          channel.send(payload).catch(() => {});
+        }
       }
     }
   }
