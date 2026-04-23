@@ -35,7 +35,11 @@ module.exports = {
   }],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!isOwner(message.author.id)) {
+      console.log(`[guilds] non-owner attempt by ${message.author.id} (${message.author.tag})`);
+      return;
+    }
+    console.log(`[guilds] running for ${message.author.tag}, ${client.guilds.cache.size} guilds cached`);
 
     const perPage = 10;
     let page = 0;
