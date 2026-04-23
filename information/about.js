@@ -36,6 +36,10 @@ module.exports = {
   run: async (client, message, args) => {
     const totalUsers = client.guilds.cache.reduce((acc, g) => acc + g.memberCount, 0);
     const totalServers = client.guilds.cache.size;
+    const totalOnline = client.guilds.cache.reduce(
+      (acc, g) => acc + g.presences.cache.filter((p) => p.status && p.status !== 'offline').size,
+      0,
+    );
     const latency = client.ws.ping;
     const memoryGB = (process.memoryUsage().rss / 1024 / 1024 / 1024).toFixed(2);
 
@@ -53,7 +57,7 @@ module.exports = {
       .addFields(
         {
           name: 'Bot',
-          value: `**Users:** \`${fmt(totalUsers)}\`\n**Servers:** \`${fmt(totalServers)}\`\nCreated: <t:${createdTs}:R>`,
+          value: `**Users:** \`${fmt(totalUsers)}\` (\`${fmt(totalOnline)}\` online)\n**Servers:** \`${fmt(totalServers)}\`\nCreated: <t:${createdTs}:R>`,
           inline: false,
         },
         {
