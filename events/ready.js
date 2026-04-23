@@ -3,6 +3,7 @@ const db = require('../db');
 const fs = require('fs');
 const path = require('path');
 const { scheduleEnd, endGiveaway } = require('../giveaway/giveaway');
+const voice24 = require('../music/voice24');
 
 const COMMAND_DIRS = [
   'configuration', 'economy', 'fun', 'information', 'lastfm', 'moderation',
@@ -104,4 +105,7 @@ client.on('clientReady', async () => {
     }
   }
   console.log(`Restored ${restored} active giveaway timer(s).`);
+
+  // Restore 24/7 voice sessions
+  await voice24.restoreAll(client).catch(() => {});
 });
