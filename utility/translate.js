@@ -45,7 +45,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide text to translate.\n**Usage:** \`,translate <language> <text>\``)] });
     }
 
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Translating...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496708542676074667> ${message.author}: Translating...`)] });
 
     try {
       const langMap = {

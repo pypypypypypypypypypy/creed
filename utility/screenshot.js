@@ -118,7 +118,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That isn't a valid URL.`)] });
     }
 
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Capturing screenshot...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496708542676074667> ${message.author}: Capturing screenshot...`)] });
 
     if (await isNsfwPage(target)) {
       return loading.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That URL appears to be NSFW. Refusing to capture.`)] });

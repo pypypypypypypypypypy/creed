@@ -50,7 +50,7 @@ module.exports = {
     const diffQuery = difficulty ? `&difficulty=${difficulty}` : '';
 
     const loading = await message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Fetching a trivia question...`)]
+      embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496708542676074667> ${message.author}: Fetching a trivia question...`)]
     });
 
     let question;

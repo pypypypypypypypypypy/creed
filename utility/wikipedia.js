@@ -39,7 +39,7 @@ module.exports = {
     if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
 
     const query = args.join(' ');
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Searching Wikipedia...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496708542676074667> ${message.author}: Searching Wikipedia...`)] });
 
     try {
       const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&utf8=1`;
