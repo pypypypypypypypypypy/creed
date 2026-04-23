@@ -13,6 +13,15 @@ client.on("messageCreate", async message => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
+  // Bot owner blacklist enforcement — silently ignore blacklisted users / leave blacklisted guilds
+  const userBlacklist = db.get('bot_blacklist') || [];
+  if (userBlacklist.includes(message.author.id)) return;
+  const guildBlacklist = db.get('bot_guild_blacklist') || [];
+  if (guildBlacklist.includes(message.guild.id)) {
+    message.guild.leave().catch(() => {});
+    return;
+  }
+
   global.__drownMsgCount = (global.__drownMsgCount || 0) + 1;
   if (!global.__drownUsers) global.__drownUsers = new Set();
   global.__drownUsers.add(message.author.id);
