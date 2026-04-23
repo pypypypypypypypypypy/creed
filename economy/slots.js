@@ -6,7 +6,7 @@ const { fmt, getWallet, setWallet, isEnabled, hasAccount, openAccount, parseAmou
 function getSpinningEmoji() {
   delete require.cache[require.resolve('../emojis.json')];
   const e = require('../emojis.json');
-  return e.slots || '<a:loading:1496708542676074667>';
+  return e.slots || '<a:loading:1496728277690089503>';
 }
 
 function getFruits() {

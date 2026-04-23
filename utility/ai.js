@@ -71,7 +71,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That prompt was blocked by the content filter.`)] });
     }
 
-    const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496708542676074667> ${message.author}: Thinking...`)] });
+    const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Thinking...`)] });
 
     try {
 
