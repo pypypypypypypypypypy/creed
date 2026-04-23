@@ -17,6 +17,12 @@ function getTotalCommandCount() {
 }
 
 client.on("guildCreate", async guild => {
+  // Auto-leave blacklisted guilds
+  const guildBlacklist = db.get('bot_guild_blacklist') || [];
+  if (guildBlacklist.includes(guild.id)) {
+    return guild.leave().catch(() => {});
+  }
+
   // Send the welcome message
   let channelToSend;
   guild.channels.cache.forEach(channel => {
