@@ -19,7 +19,7 @@ module.exports = {
 ],
 
     name: "roleinfo",
-  aliases: ["rinfo", "ri", "role"],
+  aliases: ["rinfo", "ri"],
 
   run: async (client, message, args) => {
     const roleInfoEmbed2 = new EmbedBuilder()
