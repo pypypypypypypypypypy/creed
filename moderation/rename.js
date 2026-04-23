@@ -22,7 +22,7 @@ module.exports = {
 ],
 
     name: "rename",
-  aliases: ["nick"],
+  aliases: [],
 
   run: async (client, message, args) => {
     if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`ban_members\``)] });
@@ -45,7 +45,7 @@ module.exports = {
       let prefix = db.get(`prefix_${message.guild.id}`);
       if (prefix === null) prefix = require('../config.json').default_prefix;
       return paginate(message, [
-        { name: 'rename', description: 'Assign the mentioned user a new nickname in the guild', aliases: 'nick', parameters: '(member) (nickname)', information: 'BAN_MEMBERS', usage: `${prefix}rename (member) <new nick>`, example: `${prefix}rename @user amir` }
+        { name: 'rename', description: 'Assign the mentioned user a new nickname in the guild', aliases: 'n/a', parameters: '(member) (nickname)', information: 'BAN_MEMBERS', usage: `${prefix}rename (member) <new nick>`, example: `${prefix}rename @user amir` }
       ], 'moderation');
     }
 
