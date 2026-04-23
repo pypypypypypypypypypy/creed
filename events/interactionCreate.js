@@ -88,6 +88,28 @@ client.on('interactionCreate', async interaction => {
   if (interaction.isModalSubmit()) return;
   if (interaction.isStringSelectMenu()) return;
 
+  // Auto Setup button from guildCreate welcome message
+  if (interaction.isButton() && interaction.customId === 'drown_auto_setup') {
+    if (!interaction.member?.permissions?.has(PermissionFlagsBits.Administrator)) {
+      return interaction.reply({ embeds: [errEmbed(`${interaction.user}: Only administrators can run automatic setup.`)], ephemeral: true });
+    }
+    const setupCmd = client.commands.get('setup');
+    if (!setupCmd) {
+      return interaction.reply({ embeds: [errEmbed(`${interaction.user}: Setup command not available.`)], ephemeral: true });
+    }
+    await interaction.reply({ embeds: [okEmbed(`${interaction.user}: Running automatic setup...`)], ephemeral: true });
+    const fakeMessage = {
+      author: interaction.user,
+      member: interaction.member,
+      guild: interaction.guild,
+      channel: interaction.channel,
+      mentions: { users: new Map(), roles: new Map(), channels: new Map(), members: new Map() },
+      reply: (opts) => interaction.followUp({ ...(typeof opts === 'string' ? { content: opts } : opts), ephemeral: true }).catch(() => {}),
+    };
+    try { await setupCmd.run(client, fakeMessage, []); } catch (e) { console.error('auto_setup error:', e); }
+    return;
+  }
+
   // Handle button roles
   if (interaction.isButton() && interaction.customId.startsWith('brole_')) {
     await interaction.deferReply({ ephemeral: true });

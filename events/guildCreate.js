@@ -1,29 +1,17 @@
 const client = require('../bleed');
 const db = require('../db');
-const { default_prefix, color, owner } = require("../config.json");
-const { EmbedBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
-const generatedEntries = require('../generatedCommands/missingCommands.json');
+const { default_prefix, color } = require("../config.json");
+const { EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-function getTotalCommandCount() {
-  const names = new Set();
-  for (const cmd of client.commands.values()) {
-    if (cmd.name) names.add(cmd.name.toLowerCase());
-  }
-  for (const entry of generatedEntries) {
-    const root = (entry.parts?.[0] || entry.command || '').toLowerCase();
-    if (root) names.add(root);
-  }
-  return names.size;
-}
+const DOCS_URL = 'https://drown.up.railway.app/docs';
+const DISCORD_URL = 'https://discord.gg/VWXFBA5AZH';
 
 client.on("guildCreate", async guild => {
-  // Auto-leave blacklisted guilds
   const guildBlacklist = db.get('bot_guild_blacklist') || [];
   if (guildBlacklist.includes(guild.id)) {
     return guild.leave().catch(() => {});
   }
 
-  // Send the welcome message
   let channelToSend;
   guild.channels.cache.forEach(channel => {
     if (
@@ -35,29 +23,30 @@ client.on("guildCreate", async guild => {
 
   if (!channelToSend) return;
 
+  const name = client.user.username;
+  const p = default_prefix;
+
+  const description =
+    `Thank you for adding **${name}** to **/${guild.name}**. ${name} is a multipurpose Discord bot with over **1,000** commands aimed at making your Discord experience seamless, hassle-free and fun. We are committed to resolving any issues that you face, instead of removing the bot, please [contact our support server to receive further help](${DISCORD_URL}).\n\n` +
+    `**${name}'s default prefix is set to:** \`${p}\`, If you would like to change this prefix, simply run \`${p}prefix set (prefix)\` and **ensure** that the bot has the necessary permissions.`;
+
+  const quickStart =
+    `\`${p}setup\` — Creates a jail and log channel along with the jail role\n` +
+    `\`${p}voicemaster setup\` — Creates join to create voice channels\n` +
+    `\`${p}filter setup\` — Initializes a setup for automod to moderate\n` +
+    `\`${p}antinuke setup\` — Creates the antinuke setup to keep your server safe`;
+
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setThumbnail(client.user.displayAvatarURL({ size: 2048 }))
-    .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-    .setTitle(`Thanks for adding ${client.user.username}!`)
-    .setDescription(
-      `**${client.user.username}** is a multipurpose Discord bot with **${getTotalCommandCount()} commands** across moderation, utility, fun, Last.fm, and more — built to keep your server organised and running smoothly.\n\n` +
-      `**${client.user.username}'s default prefix is set to:** \`${default_prefix}\`\n` +
-      `To change it, run \`${default_prefix}prefix set <prefix>\` and make sure the bot has the necessary permissions.`
-    )
-    .addFields(
-      { name: 'Quick Start Guide', value:
-        `\`${default_prefix}prefix set <prefix>\` — Change the command prefix for this server\n` +
-        `\`${default_prefix}autorole set\` — Set a role to give all new members on join\n` +
-        `\`${default_prefix}welcome channel\` — Set a channel for welcome messages\n` +
-        `\`${default_prefix}modlogs channel\` — Set a channel to log moderation actions\n` +
-        `\`${default_prefix}help\` — Browse all ${getTotalCommandCount()} commands`
-      },
-      { name: 'Invite', value: `[Add ${client.user.username} to another server](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot)`, inline: true },
-      { name: 'Help', value: `Run \`${default_prefix}help\` to view all commands`, inline: true }
-    )
-    .setFooter({ text: `${client.user.username} • Use ${default_prefix}help to get started` })
-    .setTimestamp();
+    .setAuthor({ name, iconURL: client.user.displayAvatarURL() })
+    .setDescription(description)
+    .addFields({ name: 'Quick Start Guide:', value: quickStart });
 
-  channelToSend.send({ embeds: [embed] });
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setLabel('Documentation').setURL(DOCS_URL).setStyle(ButtonStyle.Link),
+    new ButtonBuilder().setLabel('Discord Server').setURL(DISCORD_URL).setStyle(ButtonStyle.Link),
+    new ButtonBuilder().setLabel('Automatic Setup').setCustomId('drown_auto_setup').setStyle(ButtonStyle.Primary),
+  );
+
+  channelToSend.send({ embeds: [embed], components: [row] }).catch(() => {});
 });

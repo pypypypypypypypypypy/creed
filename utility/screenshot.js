@@ -31,6 +31,58 @@ const PROVIDER_NAMES = ['APIFlash', 'ScreenshotMachine', 'ScreenshotAPI'];
 
 const cooldowns = new Map();
 
+const NSFW_DOMAINS = new Set([
+  'pornhub.com','xvideos.com','xnxx.com','xhamster.com','redtube.com','youporn.com',
+  'spankbang.com','tnaflix.com','porn.com','beeg.com','tube8.com','brazzers.com',
+  'bangbros.com','realitykings.com','naughtyamerica.com','digitalplayground.com',
+  'manyvids.com','onlyfans.com','fansly.com','chaturbate.com','stripchat.com',
+  'cam4.com','myfreecams.com','livejasmin.com','bongacams.com','rule34.xxx',
+  'rule34.us','e621.net','e926.net','furaffinity.net','hentaihaven.org',
+  'hanime.tv','nhentai.net','hentai-foundry.com','luscious.net','gelbooru.com',
+  'danbooru.donmai.us','sankakucomplex.com','redgifs.com','motherless.com',
+  'eporner.com','heavy-r.com','pornhd.com','txxx.com','hclips.com','hqporner.com',
+  'literotica.com','asstr.org','adult-empire.com','adultfriendfinder.com',
+  'thothub.tv','thothub.lol','simpcity.su','coomer.party','coomer.su','kemono.party','kemono.su',
+  'sex.com','xvideos2.com','xxx.com','adultdvdempire.com','clips4sale.com',
+]);
+
+const NSFW_KEYWORDS = [
+  'porn','xxx','nsfw','hentai','sex','adult','erotic','nude','naked','fetish',
+  'rta-5042-1996-1400-1577-rta',
+];
+
+function isNsfwHost(hostname) {
+  const h = hostname.toLowerCase().replace(/^www\./, '');
+  if (NSFW_DOMAINS.has(h)) return true;
+  for (const d of NSFW_DOMAINS) {
+    if (h.endsWith('.' + d)) return true;
+  }
+  return false;
+}
+
+async function isNsfwPage(url) {
+  try {
+    const u = new URL(url);
+    if (isNsfwHost(u.hostname)) return true;
+    const res = await fetch(url, {
+      timeout: 8000,
+      redirect: 'follow',
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DrownBot/1.0)' },
+    });
+    if (!res.ok) return false;
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+    if (!ct.includes('text/html')) return false;
+    const text = (await res.text()).slice(0, 80000).toLowerCase();
+    if (/<meta[^>]+name=["']rating["'][^>]+content=["'](?:adult|mature|rta-5042-1996-1400-1577-rta)["']/i.test(text)) return true;
+    const head = text.match(/<head[\s\S]*?<\/head>/i)?.[0] || text.slice(0, 8000);
+    let hits = 0;
+    for (const kw of NSFW_KEYWORDS) if (head.includes(kw)) hits++;
+    return hits >= 2;
+  } catch {
+    return false;
+  }
+}
+
 module.exports = {
   category: 'utility',
   help: [
@@ -68,6 +120,10 @@ module.exports = {
 
     const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Capturing screenshot...`)] });
 
+    if (await isNsfwPage(target)) {
+      return loading.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That URL appears to be NSFW. Refusing to capture.`)] });
+    }
+
     const order = [pickProvider()];
     for (let i = 0; i < 3; i++) if (!order.includes(i)) order.push(i);
 
@@ -84,7 +140,6 @@ module.exports = {
           .setColor(color)
           .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
           .setTitle('Screenshot')
-          .setDescription(`[${target}](${target})`)
           .setImage('attachment://screenshot.jpg')
           .setFooter({ text: `via ${PROVIDER_NAMES[idx]}` })
           .setTimestamp();
