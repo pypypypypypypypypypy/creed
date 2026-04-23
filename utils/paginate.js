@@ -1,5 +1,12 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const { color } = require('../config.json');
+const emojis = require('../emojis.json');
+
+function parseEmoji(tag) {
+  const m = /^<(a)?:([a-zA-Z0-9_]+):(\d+)>$/.exec(tag || '');
+  if (!m) return null;
+  return { animated: !!m[1], name: m[2], id: m[3] };
+}
 
 async function paginate(message, pages, module) {
   let current = 0;
@@ -24,28 +31,35 @@ async function paginate(message, pages, module) {
   }
 
   function buildRow(i, disabled = false) {
-    return new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('pag_prev')
-        .setLabel('<')
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(disabled || i === 0),
-      new ButtonBuilder()
-        .setCustomId('pag_next')
-        .setLabel('>')
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(disabled || i === pages.length - 1),
-      new ButtonBuilder()
-        .setCustomId('pag_page')
-        .setLabel(`${i + 1}/${pages.length}`)
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true),
-      new ButtonBuilder()
-        .setCustomId('pag_stop')
-        .setLabel('x')
-        .setStyle(ButtonStyle.Danger)
-        .setDisabled(disabled)
-    );
+    const prevBtn = new ButtonBuilder()
+      .setCustomId('pag_prev')
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(disabled || i === 0);
+    const nextBtn = new ButtonBuilder()
+      .setCustomId('pag_next')
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(disabled || i === pages.length - 1);
+    const pageBtn = new ButtonBuilder()
+      .setCustomId('pag_page')
+      .setLabel(`${i + 1}/${pages.length}`)
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(true);
+    const stopBtn = new ButtonBuilder()
+      .setCustomId('pag_stop')
+      .setStyle(ButtonStyle.Danger)
+      .setDisabled(disabled);
+
+    const prevE = parseEmoji(emojis.previous);
+    const nextE = parseEmoji(emojis.next);
+    const navE = parseEmoji(emojis.navigate);
+    const stopE = parseEmoji(emojis.cancel);
+
+    if (prevE) prevBtn.setEmoji(prevE); else prevBtn.setLabel('<');
+    if (nextE) nextBtn.setEmoji(nextE); else nextBtn.setLabel('>');
+    if (navE) pageBtn.setEmoji(navE);
+    if (stopE) stopBtn.setEmoji(stopE); else stopBtn.setLabel('x');
+
+    return new ActionRowBuilder().addComponents(prevBtn, nextBtn, pageBtn, stopBtn);
   }
 
   const components = pages.length === 1 ? [] : [buildRow(0)];

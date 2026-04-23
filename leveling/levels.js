@@ -162,9 +162,10 @@ module.exports = {
         .setTimestamp();
     };
 
+    const { applyEmoji } = require('../utils/buttonEmoji');
     const buildRow = (p) => new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('lb_prev').setLabel('◀').setStyle(ButtonStyle.Primary).setDisabled(p === 0),
-      new ButtonBuilder().setCustomId('lb_next').setLabel('▶').setStyle(ButtonStyle.Primary).setDisabled(p === pages.length - 1)
+      applyEmoji(new ButtonBuilder().setCustomId('lb_prev').setStyle(ButtonStyle.Primary).setDisabled(p === 0), 'previous', '◀'),
+      applyEmoji(new ButtonBuilder().setCustomId('lb_next').setStyle(ButtonStyle.Primary).setDisabled(p === pages.length - 1), 'next', '▶')
     );
 
     const msg = await message.channel.send({ embeds: [buildEmbed(page)], components: pages.length > 1 ? [buildRow(page)] : [] });

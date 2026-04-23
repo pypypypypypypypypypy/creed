@@ -62,26 +62,16 @@ module.exports = {
         .setTimestamp();
     };
 
+    const { applyEmoji } = require('../utils/buttonEmoji');
     const buildRow = () => {
       return new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('rolelist_prev')
-          .setLabel('<')
-          .setStyle(ButtonStyle.Primary)
-          .setDisabled(currentPage === 0),
-        new ButtonBuilder()
-          .setCustomId('rolelist_next')
-          .setLabel('>')
-          .setStyle(ButtonStyle.Primary)
-          .setDisabled(currentPage === pages.length - 1),
+        applyEmoji(new ButtonBuilder().setCustomId('rolelist_prev').setStyle(ButtonStyle.Primary).setDisabled(currentPage === 0), 'previous', '<'),
+        applyEmoji(new ButtonBuilder().setCustomId('rolelist_next').setStyle(ButtonStyle.Primary).setDisabled(currentPage === pages.length - 1), 'next', '>'),
         new ButtonBuilder()
           .setCustomId('rolelist_sort')
           .setEmoji('↕')
           .setStyle(ButtonStyle.Secondary),
-        new ButtonBuilder()
-          .setCustomId('rolelist_close')
-          .setLabel('X')
-          .setStyle(ButtonStyle.Danger)
+        applyEmoji(new ButtonBuilder().setCustomId('rolelist_close').setStyle(ButtonStyle.Danger), 'cancel', 'X')
       );
     };
 

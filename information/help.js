@@ -816,24 +816,12 @@ module.exports = {
     };
 
     // Shared button row builder
+    const { applyEmoji } = require('../utils/buttonEmoji');
     function buildRow(idx, total, disabled = false) {
-      return new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('help_prev')
-          .setLabel('<')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(disabled || idx === 0),
-        new ButtonBuilder()
-          .setCustomId('help_stop')
-          .setLabel('x')
-          .setStyle(ButtonStyle.Danger)
-          .setDisabled(disabled),
-        new ButtonBuilder()
-          .setCustomId('help_next')
-          .setLabel('>')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(disabled || idx === total - 1)
-      );
+      const prev = applyEmoji(new ButtonBuilder().setCustomId('help_prev').setStyle(ButtonStyle.Secondary).setDisabled(disabled || idx === 0), 'previous', '<');
+      const stop = applyEmoji(new ButtonBuilder().setCustomId('help_stop').setStyle(ButtonStyle.Danger).setDisabled(disabled), 'cancel', 'x');
+      const next = applyEmoji(new ButtonBuilder().setCustomId('help_next').setStyle(ButtonStyle.Secondary).setDisabled(disabled || idx === total - 1), 'next', '>');
+      return new ActionRowBuilder().addComponents(prev, stop, next);
     }
 
     // Build alias → key lookup

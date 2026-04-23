@@ -279,9 +279,9 @@ module.exports = {
       if (chunks.length === 1) return message.channel.send({ embeds: [buildEmbed(0)] });
 
       const buildRow = (i, disabled = false) => new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId('tz_prev').setLabel('<').setStyle(ButtonStyle.Secondary).setDisabled(disabled || i === 0),
-        new ButtonBuilder().setCustomId('tz_stop').setLabel('✕').setStyle(ButtonStyle.Danger).setDisabled(disabled),
-        new ButtonBuilder().setCustomId('tz_next').setLabel('>').setStyle(ButtonStyle.Secondary).setDisabled(disabled || i === chunks.length - 1),
+        require('../utils/buttonEmoji').applyEmoji(new ButtonBuilder().setCustomId('tz_prev').setStyle(ButtonStyle.Secondary).setDisabled(disabled || i === 0), 'previous', '<'),
+        require('../utils/buttonEmoji').applyEmoji(new ButtonBuilder().setCustomId('tz_stop').setStyle(ButtonStyle.Danger).setDisabled(disabled), 'cancel', '✕'),
+        require('../utils/buttonEmoji').applyEmoji(new ButtonBuilder().setCustomId('tz_next').setStyle(ButtonStyle.Secondary).setDisabled(disabled || i === chunks.length - 1), 'next', '>'),
       );
 
       let cur = 0;
