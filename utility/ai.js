@@ -38,6 +38,20 @@ module.exports = {
     if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
 
     const question = args.join(' ');
+
+    const blocked = [
+      /\bn[i1]gg(er|a)s?\b/i,
+      /\bf[a@]gg?(ot|y)?s?\b/i,
+      /\bk[i1]ke\b/i, /\bch[i1]nks?\b/i, /\bsp[i1]cs?\b/i, /\btr[a@]nn(y|ies)\b/i, /\bret[a@]rds?\b/i,
+      /\bcp\b|child p[o0]rn|underage (sex|porn|nude)/i,
+      /\b(rape|molest)\b/i,
+      /how (do|to|can) (i|you|one) (make|build|cook|synth|create) (a |an )?(bomb|meth|cocaine|fentanyl|nerve gas|ricin|sarin|nuke|nuclear|firearm|gun|silencer|suppressor)/i,
+      /(suicide|kill myself|kms|end my life)/i,
+    ];
+    if (blocked.some(re => re.test(question))) {
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That prompt was blocked by the content filter.`)] });
+    }
+
     const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Thinking...`)] });
 
     try {
