@@ -14,17 +14,17 @@ module.exports = {
   category: 'lastfm',
   help: [
     {
-        name: 'nowplaying',
-        description: 'View your current Last.fm track',
-        aliases: 'n/a',
-        parameters: 'n/a',
+        name: 'lfmnp',
+        description: 'View your current Last.fm now playing track',
+        aliases: 'np2',
+        parameters: '[user]',
         information: 'n/a',
-        usage: 'nowplaying',
-        example: 'nowplaying'
+        usage: 'lfmnp [user]',
+        example: 'lfmnp'
     }
 ],
 
-    name: 'nowplaying',
+    name: 'lfmnp',
   aliases: ['np2'],
   category: 'lastfm',
 
