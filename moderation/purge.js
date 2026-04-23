@@ -41,7 +41,20 @@ module.exports = {
     let filtered = fetched;
     const ids = args.map(parseMessageId).filter(Boolean);
 
-    if (/^\d+$/.test(sub)) filtered = fetched.first(Math.min(parseInt(sub, 10), 100));
+    const mentioned = message.mentions.users.filter(u => u.id !== client.user.id).first();
+    const userMentionMatch = args[0]?.match(/^<@!?(\d{17,20})>$/);
+    let targetUserId = null;
+    if (userMentionMatch) targetUserId = userMentionMatch[1];
+    else if (mentioned) targetUserId = mentioned.id;
+    else if (/^\d{17,20}$/.test(args[0] || '')) {
+      const u = await client.users.fetch(args[0]).catch(() => null);
+      if (u) targetUserId = u.id;
+    }
+
+    if (targetUserId) {
+      filtered = fetched.filter(m => m.author.id === targetUserId);
+    }
+    else if (/^\d+$/.test(sub)) filtered = fetched.first(Math.min(parseInt(sub, 10), 100));
     else if (sub === 'bots') filtered = fetched.filter(m => m.author.bot);
     else if (sub === 'humans') filtered = fetched.filter(m => !m.author.bot);
     else if (['embeds', 'embed'].includes(sub)) filtered = fetched.filter(m => m.embeds.length);
