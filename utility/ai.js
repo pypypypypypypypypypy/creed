@@ -4,6 +4,9 @@ const { warn, approve } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 const aiCooldowns = new Map();
+const aiGlobalHits = [];
+const GLOBAL_LIMIT = 25;
+const GLOBAL_WINDOW_MS = 60_000;
 
 module.exports = {
   category: 'utility',
@@ -44,6 +47,13 @@ module.exports = {
     if (now - last < 5000) {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please wait a few seconds before using \`,ai\` again.`)] });
     }
+
+    while (aiGlobalHits.length && now - aiGlobalHits[0] > GLOBAL_WINDOW_MS) aiGlobalHits.shift();
+    if (aiGlobalHits.length >= GLOBAL_LIMIT) {
+      const wait = Math.ceil((GLOBAL_WINDOW_MS - (now - aiGlobalHits[0])) / 1000);
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: AI is rate-limited globally. Try again in ${wait}s.`)] });
+    }
+    aiGlobalHits.push(now);
     aiCooldowns.set(message.author.id, now);
 
     const question = args.join(' ');
