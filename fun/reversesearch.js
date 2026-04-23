@@ -17,7 +17,7 @@ module.exports = {
 ],
 
     name: 'reversesearch',
-  aliases: ['rs', 'reverseimage', 'imagesearch'],
+  aliases: ['reverseimage', 'imagesearch'],
   category: 'fun',
 
   run: async (client, message, args) => {
