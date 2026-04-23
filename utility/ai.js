@@ -3,6 +3,8 @@ const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const fetch = require('node-fetch');
 
+const aiCooldowns = new Map();
+
 module.exports = {
   category: 'utility',
   help: [
@@ -36,6 +38,13 @@ module.exports = {
       .setColor(color);
 
     if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
+
+    const now = Date.now();
+    const last = aiCooldowns.get(message.author.id) || 0;
+    if (now - last < 5000) {
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please wait a few seconds before using \`,ai\` again.`)] });
+    }
+    aiCooldowns.set(message.author.id, now);
 
     const question = args.join(' ');
 

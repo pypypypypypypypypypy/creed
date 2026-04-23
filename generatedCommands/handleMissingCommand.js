@@ -2180,12 +2180,6 @@ async function handleSingleInfo(message, command, fullArgs) {
     return info(message, 'Code Runner', `Language: **${lang}**\nCode execution requires an external service. Connect a code runner API for live results.`), true;
   }
 
-  if (command === 'screenshot' || command === 'ss') {
-    const url = fullArgs[0];
-    if (!url || !url.startsWith('http')) return warn(message, 'Provide a valid URL to screenshot.'), true;
-    return info(message, 'Screenshot', `[View page](${url})\nScreenshot service not connected. Add a screenshot API to enable this.`), true;
-  }
-
   if (command === 'rotate') {
     const attachment = message.attachments.first();
     if (!attachment) return warn(message, 'Upload an image to rotate.'), true;
