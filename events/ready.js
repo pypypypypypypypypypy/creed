@@ -12,15 +12,11 @@ const COMMAND_DIRS = [
   'buttonrole', 'notify', 'timer', 'automod', 'message', 'music', 'info', 'leveling'
 ];
 
-// Names we care about — must match what uploademojis uploads to the server
+// Names we care about — must match what uploademojis uploads to the server.
+// NOTE: vm_* and other emojis that are managed as Application Emojis on the bot
+// are intentionally excluded so guild scans never overwrite emojis.json with
+// stale per-guild copies.
 const KNOWN_EMOJI_KEYS = {
-  add: 'add', approve: 'approve', warning: 'warn', deny: 'deny',
-  remove: 'remove', cooldown: 'cooldown', replyline: 'replyline',
-  vm_lock: 'vm_lock', vm_unlock: 'vm_unlock', vm_ghost: 'vm_ghost',
-  vm_reveal: 'vm_reveal', vm_claim: 'vm_claim', vm_disconnect: 'vm_disconnect',
-  vm_activity: 'vm_activity', vm_info: 'vm_info', vm_increase: 'vm_increase',
-  vm_decrease: 'vm_decrease',
-  slots: 'slots',
   slot_cherry: 'slot_cherry', slot_lemon: 'slot_lemon', slot_orange: 'slot_orange',
   slot_grape: 'slot_grape', slot_star: 'slot_star', slot_diamond: 'slot_diamond',
 };
