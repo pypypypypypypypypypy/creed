@@ -8,17 +8,18 @@ module.exports = {
   category: 'automod',
   help: [
     {
-        name: 'antiinvite',
-        description: 'Toggle anti-invite link protection',
+        name: 'antiinvitemod',
+        description: 'Toggle anti-invite link automod protection',
         aliases: 'n/a',
         parameters: 'n/a',
         information: 'MANAGE_GUILD',
-        usage: 'antiinvite',
-        example: 'antiinvite'
+        usage: 'antiinvitemod',
+        example: 'antiinvitemod'
     }
 ],
 
-    name: 'antiinvite',
+    name: 'antiinvitemod',
+    aliases: [],
 
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
