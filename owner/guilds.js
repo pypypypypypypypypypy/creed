@@ -2,22 +2,20 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentTyp
 const { isOwner } = require('../utils/owners');
 
 module.exports = {
-  category: 'owner',
-  help: [
-    {
-        name: 'guilds',
-        description: 'List all guilds the bot is in',
-        aliases: 'n/a',
-        parameters: 'n/a',
-        information: 'BOT_OWNER',
-        usage: 'guilds',
-        example: 'guilds'
-    }
-],
-
-    name: "guilds",
+  name: "guilds",
   aliases: ["serverlist", "slt"],
   category: "owner",
+  help: [
+    {
+      name: 'guilds',
+      description: 'List all guilds the bot is in',
+      aliases: 'serverlist, slt',
+      parameters: 'n/a',
+      information: 'BOT_OWNER',
+      usage: 'guilds',
+      example: 'guilds'
+    }
+  ],
 
   run: async (client, message, args) => {
     if (!isOwner(message.author.id)) return;
@@ -25,25 +23,21 @@ module.exports = {
     const perPage = 10;
     let page = 0;
 
-    const totalPages = Math.ceil(client.guilds.cache.size / perPage);
+    const sorted = [...client.guilds.cache.values()].sort((a, b) => (b.memberCount || 0) - (a.memberCount || 0));
+    const totalPages = Math.max(1, Math.ceil(sorted.length / perPage));
 
     function getDescription(pageIndex) {
       const start = pageIndex * perPage;
       const end = start + perPage;
-      return (
-        `Total Servers - ${client.guilds.cache.size}\n\n` +
-        client.guilds.cache
-          .sort((a, b) => b.memberCount - a.memberCount)
-          .map(r => r)
-          .map((r, i) => `**${i + 1}** - ${r.name} | ${r.memberCount} Members\nID - ${r.id}`)
-          .slice(start, end)
-          .join("\n\n")
+      const lines = sorted.slice(start, end).map((g, i) =>
+        `**${start + i + 1}** — ${g.name} | ${g.memberCount || 0} members\nID: \`${g.id}\``
       );
+      return `Total Servers: **${sorted.length}**\n\n${lines.join('\n\n') || '*No guilds*'}`;
     }
 
     function buildEmbed(pageIndex) {
       return new EmbedBuilder()
-        .setAuthor({ name: client.user.tag, iconURL: client.user.displayAvatarURL({ forceStatic: false }) })
+        .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
         .setColor('#7fa5a8')
         .setFooter({ text: `Page ${pageIndex + 1}/${totalPages}` })
         .setDescription(getDescription(pageIndex));
@@ -53,26 +47,34 @@ module.exports = {
       return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId('guilds_prev')
-          .setEmoji({ name: 'left', id: '905600769376530443' })
+          .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(disabled || pageIndex === 0),
         new ButtonBuilder()
           .setCustomId('guilds_stop')
-          .setEmoji({ name: 'x_square', id: '1440975468500357210' })
+          .setLabel('✕')
           .setStyle(ButtonStyle.Danger)
           .setDisabled(disabled),
         new ButtonBuilder()
           .setCustomId('guilds_next')
-          .setEmoji({ name: 'right', id: '905600782437589032' })
+          .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
-          .setDisabled(disabled || pageIndex === totalPages - 1)
+          .setDisabled(disabled || pageIndex >= totalPages - 1)
       );
     }
 
-    const msg = await message.channel.send({
-      embeds: [buildEmbed(page)],
-      components: [buildRow(page)],
-    });
+    let msg;
+    try {
+      msg = await message.channel.send({
+        embeds: [buildEmbed(page)],
+        components: totalPages > 1 ? [buildRow(page)] : [],
+      });
+    } catch (err) {
+      console.error('guilds command failed to send:', err);
+      return message.channel.send(`Failed to send guilds list: \`${err.message}\``).catch(() => {});
+    }
+
+    if (totalPages <= 1) return;
 
     const collector = msg.createMessageComponentCollector({
       componentType: ComponentType.Button,
@@ -81,7 +83,7 @@ module.exports = {
     });
 
     collector.on('collect', async interaction => {
-      await interaction.deferUpdate();
+      try { await interaction.deferUpdate(); } catch {}
 
       if (interaction.customId === 'guilds_stop') {
         collector.stop('user');
