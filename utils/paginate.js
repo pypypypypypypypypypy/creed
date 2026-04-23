@@ -41,7 +41,6 @@ async function paginate(message, pages, module) {
       .setDisabled(disabled || i === pages.length - 1);
     const pageBtn = new ButtonBuilder()
       .setCustomId('pag_page')
-      .setLabel(`${i + 1}/${pages.length}`)
       .setStyle(ButtonStyle.Secondary)
       .setDisabled(true);
     const stopBtn = new ButtonBuilder()
