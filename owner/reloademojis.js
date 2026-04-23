@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const { globSync } = require('glob');
 const { color } = require('../config.json');
 const { isOwner } = require('../utils/owners');
 
@@ -40,29 +40,24 @@ module.exports = {
 
     let reloaded = 0;
     let failed = 0;
-    await new Promise((resolve) => {
-      glob(`${path.join(__dirname, '..')}/**/*.js`, { ignore: '**/node_modules/**' }, (err, files) => {
-        if (err) return resolve();
-        client.commands.sweep(() => true);
-        if (client.aliases) client.aliases.sweep(() => true);
-        for (const file of files) {
-          try {
-            delete require.cache[require.resolve(file)];
-            const mod = require(file);
-            if (mod && mod.name) {
-              client.commands.set(mod.name, mod);
-              reloaded++;
-              if (Array.isArray(mod.aliases) && client.aliases) {
-                for (const a of mod.aliases) client.aliases.set(a, mod.name);
-              }
-            }
-          } catch (e) {
-            failed++;
+    const files = globSync(`${path.join(__dirname, '..')}/**/*.js`, { ignore: '**/node_modules/**' });
+    client.commands.sweep(() => true);
+    if (client.aliases) client.aliases.sweep(() => true);
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+        const mod = require(file);
+        if (mod && mod.name) {
+          client.commands.set(mod.name, mod);
+          reloaded++;
+          if (Array.isArray(mod.aliases) && client.aliases) {
+            for (const a of mod.aliases) client.aliases.set(a, mod.name);
           }
         }
-        resolve();
-      });
-    });
+      } catch (e) {
+        failed++;
+      }
+    }
 
     const stat = fs.statSync(emojisPath);
     const embed = new EmbedBuilder()
