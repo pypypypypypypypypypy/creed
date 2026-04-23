@@ -3,6 +3,7 @@ const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
+const { parseEmbed, buildBoostVars } = require('../utils/embedParser');
 
 module.exports = {
   name: 'boost',
@@ -33,7 +34,7 @@ module.exports = {
           { name: 'Message', value: msg ? msg.slice(0, 100) : 'Default', inline: true }
         )
         .addFields({ name: 'Subcommands', value: `\`${prefix}boost channel #channel\` — Set channel\n\`${prefix}boost message <text>\` — Set message\n\`${prefix}boost clear\` — Remove boost message\n\`${prefix}boost test\` — Preview boost message` })
-        .setFooter({ text: `Variables: {user}, {user.tag}, {guild}, {membercount}, {boostcount}` });
+        .setFooter({ text: `Variables: {user}, {user.tag}, {guild}, {membercount}, {boostcount}, {boosttier} — supports {embed}$v{...} syntax` });
       return message.channel.send({ embeds: [embed] });
     }
 
@@ -59,19 +60,16 @@ module.exports = {
 
     if (sub === 'test') {
       const channelId = db.get(`boost_channel_${message.guild.id}`);
-      const msgTemplate = db.get(`boost_message_${message.guild.id}`) || `🎉 Thank you **{user.tag}** for boosting **{guild}**! We now have **{boostcount}** boosts!`;
+      const msgTemplate = db.get(`boost_message_${message.guild.id}`) || `Thank you {user} for boosting **{guild}**! We now have **{boostcount}** boosts!`;
       const targetChannel = channelId ? message.guild.channels.cache.get(channelId) : message.channel;
 
       if (!targetChannel) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Boost channel not found.`)] });
 
-      const formatted = msgTemplate
-        .replace(/{user}/g, message.author.toString())
-        .replace(/{user\.tag}/g, message.author.tag || message.author.username)
-        .replace(/{guild}/g, message.guild.name)
-        .replace(/{membercount}/g, message.guild.memberCount)
-        .replace(/{boostcount}/g, message.guild.premiumSubscriptionCount);
-
-      targetChannel.send({ content: formatted }).catch(() => {});
+      const vars = buildBoostVars(message.member);
+      const payload = parseEmbed(msgTemplate, vars);
+      if (payload && (payload.content || (payload.embeds && payload.embeds.length))) {
+        targetChannel.send(payload).catch(() => {});
+      }
       if (targetChannel.id !== message.channel.id) {
         message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Test boost message sent to ${targetChannel}.`)] });
       }
