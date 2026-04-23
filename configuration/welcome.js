@@ -3,6 +3,7 @@ const db = require('../db');
 const { default_prefix, color } = require("../config.json");
 const { approve, warn } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
+const { parseEmbed, buildWelcomeVars } = require('../utils/embedParser');
 
 module.exports = {
   name: "welcome",
@@ -114,17 +115,12 @@ module.exports = {
       if (!chx) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: There is no **welcome channel** set`)] });
       let welcome = db.get(`welmessage_${message.guild.id}`);
       if (!welcome) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: There is no **welcome message** set`)] });
-      const ordinal = n => n + (['st','nd','rd'][((n%100-11)%10-1)]||'th');
-      welcome = welcome
-        .replace('{user}', message.member)
-        .replace('{user.name}', message.author.username)
-        .replace('{user.tag}', message.author.tag)
-        .replace('{user.id}', message.author.id)
-        .replace('{membercount}', message.guild.memberCount)
-        .replace('{membercount.ordinal}', ordinal(message.guild.memberCount))
-        .replace('{guild.name}', message.guild.name)
-        .replace('{guild.id}', message.guild.id);
-      client.channels.cache.get(chx).send(welcome);
+      const vars = buildWelcomeVars(message.member);
+      const payload = parseEmbed(welcome, vars);
+      const ch = client.channels.cache.get(chx);
+      if (ch && payload && (payload.content || (payload.embeds && payload.embeds.length))) {
+        ch.send(payload).catch(() => {});
+      }
       return message.channel.send({ embeds: [new EmbedBuilder().setColor("#a3eb7b").setDescription(`${approve} ${message.author}: Successfully tested your **welcome message** in <#${chx}>`)] });
     }
 
@@ -138,10 +134,14 @@ module.exports = {
           `\`{user.name}\` ＊ ${message.author.username}\n` +
           `\`{user.tag}\` ＊ ${message.author.tag}\n` +
           `\`{user.id}\` ＊ ${message.author.id}\n` +
+          `\`{user.avatar}\` ＊ avatar URL\n` +
           `\`{guild.name}\` ＊ ${message.guild.name}\n` +
           `\`{guild.id}\` ＊ ${message.guild.id}\n` +
+          `\`{guild.icon}\` ＊ icon URL\n` +
           `\`{membercount}\` ＊ ${message.guild.memberCount}\n` +
-          `\`{membercount.ordinal}\` ＊ ${ordinal(message.guild.memberCount)}`
+          `\`{membercount.ordinal}\` ＊ ${ordinal(message.guild.memberCount)}\n\n` +
+          `**Embed syntax:**\n\`\`\`{embed}$v{title: ...}$v{description: ...}$v{color: #CCCCFF}$v{footer: ...}\`\`\`\n` +
+          `Supported keys: \`content\`, \`title\`, \`description\`, \`color\`, \`url\`, \`thumbnail\`, \`image\`, \`author\`, \`author_url\`, \`author_icon\`, \`footer\`, \`footer_icon\`, \`timestamp\`, \`field\` (\`name && value && inline\`)`
         )] });
     }
 
