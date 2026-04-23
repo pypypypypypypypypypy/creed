@@ -41,13 +41,12 @@ module.exports = {
     const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Thinking...`)] });
 
     try {
-      if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set');
 
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${"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"}`,
         },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
