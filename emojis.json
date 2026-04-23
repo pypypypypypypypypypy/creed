@@ -35,5 +35,12 @@
   "slot_orange": "<:slot_orange:1493709776276684930>",
   "slot_grape": "<:slot_grape:1493709781083619389>",
   "slot_star": "<:slot_star:1493709786041028622>",
-  "slot_diamond": "<:slot_diamond:1493709791170658344>"
+  "slot_diamond": "<:slot_diamond:1493709791170658344>",
+  "previous": "◀",
+  "next": "▶",
+  "cancel": "✕",
+  "navigate": "🧭",
+  "success": "<:approve:1493709671029145721>",
+  "fail": "<:deny:1493709685486911552>",
+  "loading": "<a:loading:1493709900604375161>"
 }
