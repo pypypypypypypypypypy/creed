@@ -41,14 +41,16 @@ module.exports = {
     const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1361068178616090685> ${message.author}: Thinking...`)] });
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set');
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: question }],
           max_tokens: 500,
         }),
@@ -65,7 +67,7 @@ module.exports = {
           { name: 'Question', value: question.length > 1024 ? question.slice(0, 1021) + '...' : question },
           { name: 'Answer', value: answer.length > 1024 ? answer.slice(0, 1021) + '...' : answer }
         )
-        .setFooter({ text: 'Powered by OpenAI' })
+        .setFooter({ text: 'Powered by Groq' })
         .setTimestamp();
 
       await thinking.edit({ embeds: [embed] });
