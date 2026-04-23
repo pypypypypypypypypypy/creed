@@ -28,9 +28,10 @@ module.exports = {
 
     const membercountEmbed = new EmbedBuilder()
       .setColor(mentionedMember.displayHexColor || color)
-      .setAuthor(`${message.guild.name} statistics`, message.guild.iconURL({
-        forceStatic: false
-      }))
+      .setAuthor({
+        name: `${message.guild.name} statistics`,
+        iconURL: message.guild.iconURL({ forceStatic: false }) || undefined
+      })
       .setTimestamp()
       .addFields(
         {
