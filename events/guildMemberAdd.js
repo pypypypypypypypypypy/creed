@@ -2,6 +2,7 @@ const client = require('../bleed');
 const db = require('../db');
 const { color } = require("../config.json");
 const { EmbedBuilder } = require('discord.js');
+const { parseEmbed, buildWelcomeVars } = require('../utils/embedParser');
 
 client.on("guildMemberAdd", async member => {
   const antiNew = db.get(`anti-new_${member.guild.id}`);
@@ -41,27 +42,19 @@ client.on("guildMemberAdd", async member => {
   }
 
   const chx = db.get(`welchannel_${member.guild.id}`);
-  if (!chx) return;
-  let welcome = db.get(`welmessage_${member.guild.id}`);
-  if (!welcome) return;
-
-  welcome = welcome
-    .replace('{user}', member)
-    .replace('{user.name}', member.user.username)
-    .replace('{user.tag}', member.user.tag)
-    .replace('{user.id}', member.id)
-    .replace('{membercount}', member.guild.memberCount)
-    .replace('{guild.name}', member.guild.name)
-    .replace('{guild.id}', member.guild.id);
-
-  const count = member.guild.memberCount;
-  const sfx = (count % 10 === 1 && count % 100 !== 11) ? 'st' :
-               (count % 10 === 2 && count % 100 !== 12) ? 'nd' :
-               (count % 10 === 3 && count % 100 !== 13) ? 'rd' : 'th';
-  welcome = welcome.replace('{membercount.ordinal}', `${count}${sfx}`);
-
-  const welChannel = client.channels.cache.get(chx);
-  if (welChannel) welChannel.send(welcome).catch(() => {});
+  if (chx) {
+    const welcome = db.get(`welmessage_${member.guild.id}`);
+    if (welcome) {
+      const welChannel = client.channels.cache.get(chx);
+      if (welChannel) {
+        const vars = buildWelcomeVars(member);
+        const payload = parseEmbed(welcome, vars);
+        if (payload && (payload.content || (payload.embeds && payload.embeds.length))) {
+          welChannel.send(payload).catch(() => {});
+        }
+      }
+    }
+  }
 
   const joinpingConfig = db.get(`joinping_${member.guild.id}`);
   if (joinpingConfig && joinpingConfig.channel) {
