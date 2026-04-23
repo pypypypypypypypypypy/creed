@@ -11,10 +11,10 @@ function getInfo(xp) {
 
 module.exports = {
   name: 'levels',
-  aliases: ['leaderboard', 'lb', 'lvls'],
+  aliases: ['lvls'],
   category: 'leveling',
   help: [
-    { name: 'levels', description: 'View the server XP leaderboard', aliases: 'leaderboard, lb, lvls', parameters: 'n/a', information: 'n/a', usage: 'levels', example: 'levels' },
+    { name: 'levels', description: 'View the server XP leaderboard', aliases: 'lvls', parameters: 'n/a', information: 'n/a', usage: 'levels', example: 'levels' },
     { name: 'levels enable', description: 'Enable the leveling system', aliases: 'n/a', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'levels enable', example: 'levels enable' },
     { name: 'levels disable', description: 'Disable the leveling system', aliases: 'n/a', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'levels disable', example: 'levels disable' },
     { name: 'levels channel <#channel|none>', description: 'Set or clear the level-up announcement channel', aliases: 'n/a', parameters: '<#channel|none>', information: 'MANAGE_GUILD', usage: 'levels channel <#channel>', example: 'levels channel #general' },
