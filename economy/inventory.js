@@ -9,7 +9,7 @@ module.exports = {
     {
         name: 'inventory',
         description: "View your or another user's inventory",
-        aliases: 'inv, bag',
+        aliases: 'bag',
         parameters: '[user]',
         information: 'n/a',
         usage: 'inventory [user]',
@@ -18,7 +18,7 @@ module.exports = {
 ],
 
     name: 'inventory',
-  aliases: ['inv', 'bag'],
+  aliases: ['bag'],
 
   run: async (client, message, args) => {
     const target = message.mentions.members.first() || message.member;
