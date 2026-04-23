@@ -93,20 +93,47 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.member?.permissions?.has(PermissionFlagsBits.Administrator)) {
       return interaction.reply({ embeds: [errEmbed(`${interaction.user}: Only administrators can run automatic setup.`)], ephemeral: true });
     }
-    const setupCmd = client.commands.get('setup');
-    if (!setupCmd) {
-      return interaction.reply({ embeds: [errEmbed(`${interaction.user}: Setup command not available.`)], ephemeral: true });
-    }
-    await interaction.reply({ embeds: [okEmbed(`${interaction.user}: Running automatic setup...`)], ephemeral: true });
+    await interaction.reply({ embeds: [okEmbed(`${interaction.user}: Running automatic setup, please wait...`)], ephemeral: true });
+
+    const sink = { messages: [] };
+    const fakeChannel = {
+      ...interaction.channel,
+      send: async (opts) => {
+        sink.messages.push(opts);
+        return { id: 'fake', delete: async () => {}, edit: async () => {} };
+      },
+    };
     const fakeMessage = {
       author: interaction.user,
       member: interaction.member,
       guild: interaction.guild,
-      channel: interaction.channel,
+      channel: fakeChannel,
       mentions: { users: new Map(), roles: new Map(), channels: new Map(), members: new Map() },
-      reply: (opts) => interaction.followUp({ ...(typeof opts === 'string' ? { content: opts } : opts), ephemeral: true }).catch(() => {}),
+      reply: async (opts) => { sink.messages.push(opts); return { id: 'fake' }; },
     };
-    try { await setupCmd.run(client, fakeMessage, []); } catch (e) { console.error('auto_setup error:', e); }
+
+    const steps = [
+      { label: 'Base setup (jail + logs)', cmd: 'setup', args: [] },
+      { label: 'VoiceMaster', cmd: 'voicemaster', args: ['setup'] },
+      { label: 'Antinuke', cmd: 'antinuke', args: ['enable'] },
+    ];
+
+    const summary = [];
+    for (const step of steps) {
+      const cmd = client.commands.get(step.cmd);
+      if (!cmd) { summary.push(`• ${step.label} — not available`); continue; }
+      try {
+        await cmd.run(client, fakeMessage, step.args);
+        summary.push(`• ${step.label} — done`);
+      } catch (e) {
+        console.error(`auto_setup ${step.cmd} error:`, e);
+        summary.push(`• ${step.label} — failed (${e.message})`);
+      }
+    }
+
+    try {
+      await interaction.followUp({ embeds: [okEmbed(`${interaction.user}: Automatic setup complete.\n${summary.join('\n')}`)], ephemeral: true });
+    } catch {}
     return;
   }
 
