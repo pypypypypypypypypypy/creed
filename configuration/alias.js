@@ -5,10 +5,10 @@ const { warn, approve } = require('../emojis.json');
 
 module.exports = {
   name: 'alias',
-  aliases: ['aliases'],
+  aliases: [],
   category: 'configuration',
   help: [
-    { name: 'alias', description: 'Manage command aliases', aliases: 'aliases', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'alias', example: 'alias' },
+    { name: 'alias', description: 'Manage command aliases', aliases: 'n/a', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'alias', example: 'alias' },
     { name: 'alias add', description: 'Add a command alias', aliases: 'n/a', parameters: '(command) (alias)', information: 'MANAGE_GUILD', usage: 'alias add (command) (alias)', example: 'alias add ban b' },
     { name: 'alias remove', description: 'Remove a command alias', aliases: 'n/a', parameters: '(alias)', information: 'MANAGE_GUILD', usage: 'alias remove (alias)', example: 'alias remove b' },
     { name: 'alias list', description: 'List all custom aliases', aliases: 'n/a', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'alias list', example: 'alias list' },
