@@ -121,17 +121,20 @@ module.exports = {
     const currentEmojis = JSON.parse(fs.readFileSync(emojiJsonPath, 'utf8'));
     const existing = await message.guild.emojis.fetch().catch(() => null);
     const results = [];
-    let ok = 0, fail = 0, replaced = 0;
+    let ok = 0, fail = 0, replaced = 0, quotaHit = false;
 
-    for (const entry of entries) {
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    let lastProgressEdit = 0;
+
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
       const base = path.basename(entry.entryName, path.extname(entry.entryName));
-      const ext = path.extname(entry.entryName).toLowerCase();
       const name = sanitizeName(base);
       const data = entry.getData();
 
       if (existing) {
         const dupe = existing.find(e => e.name === name);
-        if (dupe) { await dupe.delete('Replaced by ,uploademojis').catch(() => {}); replaced++; }
+        if (dupe) { await dupe.delete('Replaced by ,uploademojis').catch(() => {}); replaced++; await sleep(250); }
       }
 
       try {
@@ -143,7 +146,21 @@ module.exports = {
         results.push(`${tag} \`${name}\``);
       } catch (e) {
         fail++;
-        results.push(`FAIL \`${name}\` — ${e.message.slice(0, 80)}`);
+        const msg = (e && e.message) || 'unknown';
+        results.push(`FAIL \`${name}\` — ${msg.slice(0, 80)}`);
+        if (/Maximum number of emojis|50138|30008/i.test(msg)) {
+          quotaHit = true;
+          results.push(`Stopped: server emoji slots are full.`);
+          break;
+        }
+      }
+
+      await sleep(500);
+
+      const nowT = Date.now();
+      if (nowT - lastProgressEdit > 4000 || i === entries.length - 1) {
+        lastProgressEdit = nowT;
+        await status.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Progress: **${i + 1}/${entries.length}** · ✅ ${ok} · ❌ ${fail}`)] }).catch(() => {});
       }
     }
 
@@ -154,7 +171,7 @@ module.exports = {
     const push = await pushEmojiJsonToGitHub(newContent);
 
     const description =
-      `**${ok}** uploaded · **${fail}** failed · **${replaced}** replaced\n\n` +
+      `**${ok}** uploaded · **${fail}** failed · **${replaced}** replaced${quotaHit ? ' · **server slot limit reached**' : ''}\n\n` +
       results.slice(0, 30).join('\n') +
       (results.length > 30 ? `\n…and ${results.length - 30} more` : '') +
       `\n\n${push.ok ? 'emojis.json pushed to GitHub' : `GitHub push: ${push.reason}`}`;

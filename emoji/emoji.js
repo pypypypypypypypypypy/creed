@@ -189,13 +189,25 @@ module.exports = {
     if (sub === 'removemany') {
       const emojiArgs = args.slice(1);
       if (!emojiArgs.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide emojis.`)] });
+
+      const targets = emojiArgs
+        .map(a => parseEmoji(a))
+        .filter(Boolean)
+        .map(p => message.guild.emojis.cache.get(p.id))
+        .filter(Boolean);
+
+      if (!targets.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No matching emojis found.`)] });
+
+      const status = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Removing **${targets.length}** emoji(s)...`)] });
+
       let removed = 0;
-      for (const emojiArg of emojiArgs) {
-        const parsed = parseEmoji(emojiArg);
-        const emoji = parsed ? message.guild.emojis.cache.get(parsed.id) : null;
-        if (emoji) { await emoji.delete().catch(() => {}); removed++; }
+      const BATCH = 5;
+      for (let i = 0; i < targets.length; i += BATCH) {
+        const slice = targets.slice(i, i + BATCH);
+        await Promise.all(slice.map(e => e.delete().then(() => removed++).catch(() => {})));
       }
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}** emoji(s).`)] });
+
+      return status.edit({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Removed **${removed}**/${targets.length} emoji(s).`)] });
     }
 
     if (['removeduplicates', 'rmdups'].includes(sub)) {
