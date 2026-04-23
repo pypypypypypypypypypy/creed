@@ -18,7 +18,7 @@ module.exports = {
 ],
 
     name: 'lockdown',
-  aliases: ['lock'],
+  aliases: [],
 
   run: async (client, message, args) => {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageChannels))
