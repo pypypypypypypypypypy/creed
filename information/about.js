@@ -14,12 +14,7 @@ function getTotalCommandCount(client) {
   return names.size;
 }
 
-function compact(n) {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}b`;
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}m`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
-  return `${n}`;
-}
+const fmt = (n) => Number(n).toLocaleString('en-US');
 
 module.exports = {
   category: 'information',
@@ -58,7 +53,7 @@ module.exports = {
       .addFields(
         {
           name: 'Bot',
-          value: `**Users:** \`${compact(totalUsers)}\`\n**Servers:** \`${compact(totalServers)}\`\nCreated: <t:${createdTs}:R>`,
+          value: `**Users:** \`${fmt(totalUsers)}\`\n**Servers:** \`${fmt(totalServers)}\`\nCreated: <t:${createdTs}:R>`,
           inline: false,
         },
         {
