@@ -55,7 +55,7 @@ module.exports = {
           { name: 'Time', value: `<t:${Math.floor(inc.timestamp / 1000)}:F>`, inline: false },
         );
       if (inc.resolvedAt) embed.addFields({ name: 'Resolved At', value: `<t:${Math.floor(inc.resolvedAt / 1000)}:F>`, inline: true });
-      if (inc.resolveReason) embed.addFields({ name: 'Drown Reason', value: inc.resolveReason, inline: false });
+      if (inc.resolveReason) embed.addFields({ name: 'Bored Reason', value: inc.resolveReason, inline: false });
       return message.channel.send({ embeds: [embed] });
     }
 

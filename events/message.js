@@ -22,9 +22,9 @@ client.on("messageCreate", async message => {
     return;
   }
 
-  global.__drownMsgCount = (global.__drownMsgCount || 0) + 1;
-  if (!global.__drownUsers) global.__drownUsers = new Set();
-  global.__drownUsers.add(message.author.id);
+  global.__boredMsgCount = (global.__boredMsgCount || 0) + 1;
+  if (!global.__boredUsers) global.__boredUsers = new Set();
+  global.__boredUsers.add(message.author.id);
 
   // Sticky messages
   if (global.stickyMessages) {
@@ -166,20 +166,20 @@ client.on("messageCreate", async message => {
   // ,live — owner streaming toggle
   {
     const { ActivityType } = require('discord.js');
-    let isLive = global.__drownIsLive || false;
+    let isLive = global.__boredIsLive || false;
     const stripped = message.content.slice(prefix.length).trim().toLowerCase();
     if (stripped === 'live' && message.author.id === '370268185410404353') {
       if (isLive) {
-        global.__drownIsLive = false;
+        global.__boredIsLive = false;
         await client.user.setPresence({ activities: [], status: 'online' });
         return message.channel.send('📴 Stream ended.');
       } else {
-        global.__drownIsLive = true;
+        global.__boredIsLive = true;
         await client.user.setPresence({
           status: 'online',
-          activities: [{ name: 'Drown', type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' }],
+          activities: [{ name: 'Bored', type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' }],
         });
-        return message.channel.send('🟣 Now streaming **Drown**.');
+        return message.channel.send('🟣 Now streaming **Bored**.');
       }
     }
   }
@@ -216,7 +216,7 @@ client.on("messageCreate", async message => {
     }
 
     try {
-      global.__drownCmdCount = (global.__drownCmdCount || 0) + 1;
+      global.__boredCmdCount = (global.__boredCmdCount || 0) + 1;
       await command.run(client, message, args);
     } catch (err) {
       console.error(`Command error [${cmd}]:`, err.message);

@@ -24,7 +24,7 @@ function buildStatsEmbed(client) {
         `**Users:** \`${compact(totalUsers)}\``,
         `**Servers:** \`${compact(client.guilds.cache.size)}\``,
         `**Ping:** \`${client.ws.ping}ms\``,
-        `**People used:** \`${compact(global.__drownUsers?.size || 0)}\``,
+        `**People used:** \`${compact(global.__boredUsers?.size || 0)}\``,
       ].join('\n'),
       inline: false,
     })

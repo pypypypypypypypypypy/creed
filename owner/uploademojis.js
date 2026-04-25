@@ -61,16 +61,16 @@ async function pushEmojiJsonToGitHub(content) {
   const token = process.env.DROWN_GITHUB_TOKEN || process.env.GITHUB_TOKEN;
   if (!token) return { ok: false, reason: 'no token' };
   const owner = process.env.DROWN_GITHUB_OWNER || 'abannition';
-  const repo = process.env.DROWN_GITHUB_REPO || 'drown';
+  const repo = process.env.DROWN_GITHUB_REPO || 'bored';
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/emojis.json`;
   try {
-    const getRes = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot' } });
+    const getRes = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bored-bot' } });
     const sha = getRes.ok ? (await getRes.json()).sha : null;
     const body = { message: 'Auto-update emojis.json from ,uploademojis', content: Buffer.from(content).toString('base64'), branch: 'main' };
     if (sha) body.sha = sha;
     const putRes = await fetch(apiUrl, {
       method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot', 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bored-bot', 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     return { ok: putRes.ok, reason: putRes.ok ? 'pushed' : `HTTP ${putRes.status}` };

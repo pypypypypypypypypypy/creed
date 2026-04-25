@@ -89,7 +89,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.isStringSelectMenu()) return;
 
   // Auto Setup button from guildCreate welcome message
-  if (interaction.isButton() && interaction.customId === 'drown_auto_setup') {
+  if (interaction.isButton() && interaction.customId === 'bored_auto_setup') {
     if (!interaction.member?.permissions?.has(PermissionFlagsBits.Administrator)) {
       return interaction.reply({ embeds: [errEmbed(`${interaction.user}: Only administrators can run automatic setup.`)], ephemeral: true });
     }

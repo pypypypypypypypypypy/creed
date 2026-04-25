@@ -3,7 +3,7 @@ const db = require('../db');
 const { default_prefix, color } = require("../config.json");
 const { EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-const DOCS_URL = 'https://drown.up.railway.app/docs';
+const DOCS_URL = 'https://bored.up.railway.app/docs';
 const DISCORD_URL = 'https://discord.gg/VWXFBA5AZH';
 
 client.on("guildCreate", async guild => {
@@ -45,7 +45,7 @@ client.on("guildCreate", async guild => {
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setLabel('Documentation').setURL(DOCS_URL).setStyle(ButtonStyle.Link),
     new ButtonBuilder().setLabel('Discord Server').setURL(DISCORD_URL).setStyle(ButtonStyle.Link),
-    new ButtonBuilder().setLabel('Automatic Setup').setCustomId('drown_auto_setup').setStyle(ButtonStyle.Primary),
+    new ButtonBuilder().setLabel('Automatic Setup').setCustomId('bored_auto_setup').setStyle(ButtonStyle.Primary),
   );
 
   channelToSend.send({ embeds: [embed], components: [row] }).catch(() => {});

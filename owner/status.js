@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const text = args.join(' ');
-    if (!text) return message.channel.send('❌ Example: `,status playing drown`');
+    if (!text) return message.channel.send('❌ Example: `,status playing bored`');
 
     client.user.setPresence({ activities: [{ name: text, type: ACTIVITY_MAP[type] }], status: 'online' });
     return message.channel.send(`✅ Status set to **${LABELS[type]} ${text}**.`);

@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const lines = [];
-    lines.push(`drown — command export`);
+    lines.push(`bored — command export`);
     lines.push(`generated: ${new Date().toISOString()}`);
     lines.push(`total commands: ${total}`);
     lines.push(`categories: ${Object.keys(byCategory).length}`);
@@ -63,7 +63,7 @@ module.exports = {
     }
 
     const buf = Buffer.from(lines.join('\n'), 'utf8');
-    const file = new AttachmentBuilder(buf, { name: `drown-commands-${Date.now()}.txt` });
+    const file = new AttachmentBuilder(buf, { name: `bored-commands-${Date.now()}.txt` });
 
     const embed = new EmbedBuilder()
       .setColor(color)

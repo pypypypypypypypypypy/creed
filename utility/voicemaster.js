@@ -76,7 +76,7 @@ function buildInterface(client, prefix) {
 
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: 'drown', iconURL: client.user.displayAvatarURL(), url: link })
+    .setAuthor({ name: 'bored', iconURL: client.user.displayAvatarURL(), url: link })
     .setThumbnail(client.user.displayAvatarURL({ size: 2048 }))
     .setTitle('VoiceMaster Interface')
     .setDescription('Click the buttons below to control your voice channel')

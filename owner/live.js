@@ -33,13 +33,13 @@ module.exports = {
       status: 'online',
       activities: [
         {
-          name: 'Drown',
+          name: 'Bored',
           type: ActivityType.Streaming,
           url: 'https://www.twitch.tv/discord',
         },
       ],
     });
 
-    return message.channel.send('🟣 Now live — streaming **Drown**.');
+    return message.channel.send('🟣 Now live — streaming **Bored**.');
   },
 };

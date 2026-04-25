@@ -67,7 +67,7 @@ async function isNsfwPage(url) {
     const res = await fetch(url, {
       timeout: 8000,
       redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DrownBot/1.0)' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BoredBot/1.0)' },
     });
     if (!res.ok) return false;
     const ct = (res.headers.get('content-type') || '').toLowerCase();
