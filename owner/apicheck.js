@@ -140,11 +140,17 @@ async function checkFortnite() {
   if (!present(key)) return { skip: true, detail: 'no api key' };
   return timed(async () => {
     // fortnite-api.com — same service the bot actually uses (see fun/fortnite.js, information/itemshop.js)
-    const res = await fetch('https://fortnite-api.com/v2/stats/br/v2?name=Ninja&accountType=epic', {
+    // We hit /cosmetics/br/new which doesn't depend on a user/account so it's a clean auth probe.
+    const res = await fetch('https://fortnite-api.com/v2/cosmetics/br/new', {
       headers: { Authorization: key, 'User-Agent': 'drown-bot' },
     });
-    if (res.status === 401 || res.status === 403) throw new Error(`unauthorized (HTTP ${res.status})`);
-    // 404 is fine — means auth succeeded but the test player wasn't found
+    if (res.status === 401) throw new Error(`unauthorized (HTTP 401)`);
+    if (res.status === 403) {
+      // 403 with "api key" in the body means bad key; otherwise it's just a permission quirk.
+      const body = await res.text().catch(() => '');
+      if (/api[\s_-]?key|invalid|unauthor/i.test(body)) throw new Error('invalid api key');
+      return 'api key valid (auth ok)';
+    }
     if (!res.ok && res.status !== 404) throw new Error(`HTTP ${res.status}`);
     return 'api key valid';
   });
