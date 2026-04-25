@@ -24,8 +24,8 @@ const { approve, warn, deny } = require('../emojis.json');
 
 const DEFAULT_PUBLIC_NODES = [
   { id: 'ajieblogs', host: 'lava-v4.ajieblogs.eu.org', port: 80, authorization: 'https://dsc.gg/ajidevserver', secure: false },
-  { id: 'jirayu', host: 'lavalink.jirayu.net', port: 13592, authorization: 'youshallnotpass', secure: false },
   { id: 'serenetia', host: 'lavalinkv4.serenetia.com', port: 443, authorization: 'https://dsc.gg/ajidevserver', secure: true },
+  { id: 'inza', host: 'lavalink.inza.fun', port: 443, authorization: 'saher.inzas.fun', secure: true },
 ];
 
 function resolveNodes() {
@@ -130,6 +130,25 @@ module.exports = (client) => {
   console.log(`[music] Lavalink configured with ${nodes.length} node(s):`);
   for (const n of nodes) console.log(`         - ${n.id}: ${n.host}:${n.port} (secure=${n.secure})`);
   console.log('[music] Will connect on ready.');
+
+  // lavalink-client throws uncaught errors from inside _LavalinkNode.open
+  // (e.g. when a node returns garbage instead of /v4/info JSON). Without a
+  // global handler, ONE bad node crashes the whole bot. Swallow them — the
+  // manager will move on to other nodes / retry on its own.
+  const swallow = (reason) => {
+    const txt = reason?.stack || reason?.message || String(reason);
+    if (/lavalink|v4\/info|ON-OPEN-FETCH/i.test(txt)) {
+      console.warn('[music] swallowed Lavalink node error:', (reason?.message || String(reason)).slice(0, 200));
+      return true;
+    }
+    return false;
+  };
+  process.on('unhandledRejection', (reason) => { swallow(reason); });
+  process.on('uncaughtException', (err) => {
+    if (!swallow(err)) {
+      console.error('[uncaughtException]', err);
+    }
+  });
 };
 
 function formatMs(ms) {
