@@ -81,9 +81,18 @@ async function runStats(message, args) {
   let json;
   try {
     json = await getJson(`${FN}/v2/stats/br/v2?name=${encodeURIComponent(name)}&accountType=${platform}`, true);
-  } catch (e) { return deny(message, e.noKey ? e.message : `Failed: ${e.message}`); }
+  } catch (e) {
+    if (e.noKey) return deny(message, e.message);
+    if (/not public|private|forbidden/i.test(e.message)) {
+      return warn(message, `**${name}**'s Fortnite stats are set to private. They need to enable public stats in Fortnite → Settings → Account → Show on Career Leaderboard.`);
+    }
+    if (/not found|404/i.test(e.message)) {
+      return warn(message, `Couldn't find a Fortnite player named **${name}** on **${platform}**. Try another platform: \`epic\`, \`psn\`, or \`xbl\`.`);
+    }
+    return deny(message, `Failed: ${e.message}`);
+  }
   const s = json.data?.stats?.all?.overall;
-  if (!s) return warn(message, 'No stats found (the player may have stats hidden).');
+  if (!s) return warn(message, `**${name}** has no stats on record (they may have private stats or have never played BR).`);
   const embed = new EmbedBuilder()
     .setColor(color)
     .setTitle(`Fortnite — ${json.data.account.name}`)
