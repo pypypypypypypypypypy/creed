@@ -1,42 +1,21 @@
 const { EmbedBuilder } = require('discord.js');
-const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
-const { default_prefix } = require('../config.json');
 
 module.exports = {
   category: 'music',
-  help: [
-    {
-        name: 'volume',
-        description: 'Set the music volume',
-        aliases: 'vol',
-        parameters: '(1-100)',
-        information: 'n/a',
-        usage: 'volume (1-100)',
-        example: 'volume 1-100'
-    }
-],
-
-    name: 'volume',
+  help: [{ name: 'volume', description: 'Set or view the music volume (0-200)', aliases: 'vol', parameters: '(0-200)', information: 'n/a', usage: 'volume (0-200)', example: 'volume 75' }],
+  name: 'volume',
   aliases: ['vol'],
 
   run: async (client, message, args) => {
-    let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
-
-    if (!message.member.voice.channel) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
-    }
-
-    const vol = parseInt(args[0]);
-    if (isNaN(vol) || vol < 0 || vol > 200) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}volume <0-200>\``)] });
-    }
-
-    if (client.musicQueue && client.musicQueue.get(message.guild.id)) {
-      client.musicQueue.get(message.guild.id).volume = vol;
-    }
-
-    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: 🔊 Volume set to **${vol}%**.`)] });
-  }
+    const queue = client.distube.getQueue(message.guild);
+    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Current volume: \`${queue.volume}%\``)] });
+    const v = parseInt(args[0], 10);
+    if (Number.isNaN(v) || v < 0 || v > 200)
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Volume must be between 0 and 200.`)] });
+    queue.setVolume(v);
+    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Volume set to \`${v}%\`.`)] });
+  },
 };

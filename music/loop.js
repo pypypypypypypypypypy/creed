@@ -1,36 +1,23 @@
 const { EmbedBuilder } = require('discord.js');
-const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 
+const MODES = { off: 0, none: 0, song: 1, track: 1, queue: 2, all: 2 };
+
 module.exports = {
   category: 'music',
-  help: [
-    {
-        name: 'loop',
-        description: 'Toggle loop mode for the current track or queue',
-        aliases: 'n/a',
-        parameters: '[track/queue/off]',
-        information: 'n/a',
-        usage: 'loop [track/queue/off]',
-        example: 'loop track/queue/off'
-    }
-],
-
-    name: 'loop',
+  help: [{ name: 'loop', description: 'Set the loop mode (off / song / queue)', aliases: 'repeat', parameters: '(off | song | queue)', information: 'n/a', usage: 'loop (off | song | queue)', example: 'loop song' }],
+  name: 'loop',
   aliases: ['repeat'],
 
   run: async (client, message, args) => {
-    if (!message.member.voice.channel)
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You need to be in a voice channel.`)] });
-
-    const key = `music_loop_${message.guild.id}`;
-    const modes = ['off', 'track', 'queue'];
-    const current = db.get(key) || 'off';
-    const next = modes[(modes.indexOf(current) + 1) % modes.length];
-    db.set(key, next);
-
-    const labels = { off: '🔁 Loop: **Off**', track: '🔂 Loop: **Track**', queue: '🔁 Loop: **Queue**' };
-    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: ${labels[next]}`)] });
-  }
+    const queue = client.distube.getQueue(message.guild);
+    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    const arg = (args[0] || '').toLowerCase();
+    if (!(arg in MODES))
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Mode must be \`off\`, \`song\`, or \`queue\`.`)] });
+    queue.setRepeatMode(MODES[arg]);
+    const label = ['off', 'song', 'queue'][MODES[arg]];
+    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Loop set to \`${label}\`.`)] });
+  },
 };

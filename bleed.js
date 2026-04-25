@@ -26,7 +26,7 @@ client.db = require('./db');
 
 module.exports = client;
 
-["command", "event"].forEach(handler => {
+["command", "event", "music"].forEach(handler => {
   require(`./handlers/${handler}`)(client);
 });
 
