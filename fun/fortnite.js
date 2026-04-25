@@ -122,7 +122,7 @@ async function runNews(message) {
 
 async function runMap(message) {
   let json;
-  try { json = await getJson(`${FN}/v2/map`); }
+  try { json = await getJson(`${FN}/v1/map`); }
   catch (e) { return deny(message, `Failed: ${e.message}`); }
   const map = json.data;
   if (!map?.images?.blank) return warn(message, 'Map data unavailable.');
