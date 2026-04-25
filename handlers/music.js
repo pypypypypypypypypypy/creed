@@ -44,9 +44,59 @@ try {
   console.log('Could not generate voice dependency report:', e.message);
 }
 
+// Parse YOUTUBE_COOKIES env var into the array-of-cookie-objects format
+// the YouTubePlugin expects. Accepts either:
+//   1. A JSON array (already in plugin format), or
+//   2. A raw "Cookie:" header string copied from browser devtools
+//      (e.g. "VISITOR_INFO1_LIVE=abc; SID=xyz; ..."), which we convert.
+// Without cookies, YouTube returns HTTP 429 from cloud-host IPs.
+function loadYoutubeCookies() {
+  const raw = process.env.YOUTUBE_COOKIES;
+  if (!raw) {
+    console.warn('[music] YOUTUBE_COOKIES not set — YouTube playback will likely be rate-limited (HTTP 429) on cloud hosts.');
+    return undefined;
+  }
+  const trimmed = raw.trim();
+  try {
+    if (trimmed.startsWith('[')) {
+      const parsed = JSON.parse(trimmed);
+      console.log(`[music] Loaded ${parsed.length} YouTube cookies from JSON.`);
+      return parsed;
+    }
+    const cookies = trimmed
+      .split(';')
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(pair => {
+        const eq = pair.indexOf('=');
+        if (eq < 0) return null;
+        return {
+          name: pair.slice(0, eq).trim(),
+          value: pair.slice(eq + 1).trim(),
+          domain: '.youtube.com',
+          path: '/',
+          secure: true,
+          httpOnly: true,
+        };
+      })
+      .filter(Boolean);
+    console.log(`[music] Loaded ${cookies.length} YouTube cookies from header string.`);
+    return cookies;
+  } catch (e) {
+    console.error('[music] Failed to parse YOUTUBE_COOKIES:', e.message);
+    return undefined;
+  }
+}
+
 module.exports = (client) => {
+  const youtubeCookies = loadYoutubeCookies();
+
   const distube = new DisTube(client, {
-    plugins: [new YouTubePlugin(), new SpotifyPlugin(), new SoundCloudPlugin()],
+    plugins: [
+      new YouTubePlugin(youtubeCookies ? { cookies: youtubeCookies } : {}),
+      new SpotifyPlugin(),
+      new SoundCloudPlugin(),
+    ],
     emitNewSongOnly: true,
     savePreviousSongs: true,
     ffmpeg: { path: ffmpegPath },
