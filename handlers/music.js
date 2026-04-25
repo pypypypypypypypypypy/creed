@@ -32,6 +32,18 @@ try {
   if (staticPath) ffmpegPath = staticPath;
 } catch { /* ffmpeg-static not installed — use system ffmpeg */ }
 
+// Print which opus / encryption / ffmpeg libraries discord.js voice detected.
+// This is the single most useful diagnostic for "joins voice but no audio" issues.
+try {
+  const { generateDependencyReport } = require('@discordjs/voice');
+  console.log('--- @discordjs/voice dependency report ---');
+  console.log(generateDependencyReport());
+  console.log('ffmpeg path resolved to:', ffmpegPath);
+  console.log('-------------------------------------------');
+} catch (e) {
+  console.log('Could not generate voice dependency report:', e.message);
+}
+
 module.exports = (client) => {
   const distube = new DisTube(client, {
     plugins: [new YouTubePlugin(), new SpotifyPlugin(), new SoundCloudPlugin()],
@@ -91,11 +103,31 @@ module.exports = (client) => {
     .on('error', (error, queue) => {
       const ch = queue?.textChannel;
       const msg = (error?.message || String(error)).slice(0, 1500);
-      console.error('[DisTube]', error);
+      console.error('[DisTube error]', error?.stack || error);
       ch?.send({
         embeds: [embed(`${deny} Music error: \`${msg}\``, '#ff5555')],
       }).catch(() => {});
+    })
+    .on('searchNoResult', (message, query) => {
+      console.warn('[DisTube] no search results for:', query);
+      message?.channel?.send({
+        embeds: [embed(`${deny} No results found for \`${query}\`.`, '#ff5555')],
+      }).catch(() => {});
+    })
+    .on('noRelated', (queue) => {
+      console.warn('[DisTube] no related songs');
+      queue?.textChannel?.send({
+        embeds: [embed(`${warn} No related songs to play next.`, '#efa23a')],
+      }).catch(() => {});
     });
+
+  // Catch unhandled stream / extractor errors that don't surface via the DisTube error event
+  process.on('unhandledRejection', (reason) => {
+    const txt = reason?.stack || reason?.message || String(reason);
+    if (/distube|ytdl|youtube|ffmpeg|opus/i.test(txt)) {
+      console.error('[unhandledRejection — music subsystem]', txt);
+    }
+  });
 
   console.log('DisTube initialized.');
 };
