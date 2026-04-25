@@ -139,11 +139,13 @@ async function checkFortnite() {
   const key = process.env.FORTNITE_API_KEY;
   if (!present(key)) return { skip: true, detail: 'no api key' };
   return timed(async () => {
-    const res = await fetch('https://fortniteapi.io/v1/status', {
+    // fortnite-api.com — same service the bot actually uses (see fun/fortnite.js, information/itemshop.js)
+    const res = await fetch('https://fortnite-api.com/v2/stats/br/v2?name=Ninja&accountType=epic', {
       headers: { Authorization: key, 'User-Agent': 'drown-bot' },
     });
     if (res.status === 401 || res.status === 403) throw new Error(`unauthorized (HTTP ${res.status})`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    // 404 is fine — means auth succeeded but the test player wasn't found
+    if (!res.ok && res.status !== 404) throw new Error(`HTTP ${res.status}`);
     return 'api key valid';
   });
 }
