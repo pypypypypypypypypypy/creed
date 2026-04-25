@@ -22,7 +22,7 @@ module.exports = {
     const botName = client.user.username;
 
     const embed = new EmbedBuilder()
-      .setColor('#5865F2')
+      .setColor(color)
       .setTitle(`${botName} Support`)
       .setDescription(
         `If you are currently facing issues with ${botName}, or have billing problems, feel free to open a ticket depending on your issue. Remember that staff work voluntarily, always be respectful.\n\n` +
@@ -96,7 +96,7 @@ module.exports = {
       if (!ticketChannel) return interaction.editReply({ content: 'Failed to create ticket channel.' });
 
       const ticketEmbed = new EmbedBuilder()
-        .setColor('#5865F2')
+        .setColor(color)
         .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL({ forceStatic: false }) })
         .setTitle(`${botName} Support Ticket`)
         .setDescription(

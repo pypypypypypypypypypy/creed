@@ -110,7 +110,7 @@ function caseNumber(guildId) {
 
 async function buildPanelMessage(guild, panel, options) {
   const embed = new EmbedBuilder()
-    .setColor(panel.color || '#5865F2')
+    .setColor(panel.color || color)
     .setTitle(panel.title || `${guild.name} Support`)
     .setDescription(panel.description || 'Click below to open a ticket.');
 
@@ -291,7 +291,7 @@ async function openTicket(interaction, guild, member, optionId) {
 
   const greetingMsg = opt && opt.greetingMessage;
   const greetEmbed = new EmbedBuilder()
-    .setColor((opt && opt.embedColor) ? opt.embedColor : '#5865F2')
+    .setColor((opt && opt.embedColor) ? opt.embedColor : color)
     .setTitle(greetingMsg ? undefined : `Ticket #${caseNum}`)
     .setDescription(
       greetingMsg
@@ -389,7 +389,7 @@ async function logTicketEvent(guild, guildId, opt, panel, event, ticketData, act
   const eventLabels = { open: 'Ticket Opened', close: 'Ticket Closed', delete: 'Ticket Deleted', reopen: 'Ticket Reopened', claim: 'Ticket Claimed' };
 
   const embed = new EmbedBuilder()
-    .setColor(eventColors[event] || '#5865F2')
+    .setColor(eventColors[event] || color)
     .setTitle(eventLabels[event] || event)
     .addFields(
       { name: 'Case', value: `#${String(ticketData.caseId).padStart(4, '0')}`, inline: true },
@@ -426,7 +426,7 @@ async function handlePanelManagement(message, args, guildId) {
       title: `${message.guild.name} Support`,
       description: 'Click below to open a ticket.',
       type: 'button',
-      color: '#5865F2',
+      color: color,
       categoryId: null,
       logChannelId: null,
       channelId: null,
@@ -960,8 +960,8 @@ async function handleClaim(message, channel, reason, guildId, member) {
 
   const claimMsg = opt && opt.claimMessage;
   const embed = claimMsg
-    ? new EmbedBuilder().setColor('#5865F2').setDescription(resolveVars(claimMsg, { ticket, member, guild: message.guild, opt }))
-    : new EmbedBuilder().setColor('#5865F2').setDescription(`📥 ${member} has **claimed** this ticket.${reason ? ` Reason: ${reason}` : ''}`);
+    ? new EmbedBuilder().setColor(color).setDescription(resolveVars(claimMsg, { ticket, member, guild: message.guild, opt }))
+    : new EmbedBuilder().setColor(color).setDescription(`📥 ${member} has **claimed** this ticket.${reason ? ` Reason: ${reason}` : ''}`);
 
   await channel.send({ embeds: [embed] });
   if (channel.id !== message.channel.id) await message.channel.send({ embeds: [okEmbed(`${message.author}: Claimed ticket ${channel}.`)] });
@@ -1502,7 +1502,7 @@ module.exports.handleTicketInteraction = async function(interaction, client) {
       }
     }
 
-    const embed = new EmbedBuilder().setColor('#5865F2').setDescription(`📥 ${interaction.user} has **claimed** this ticket.`);
+    const embed = new EmbedBuilder().setColor(color).setDescription(`📥 ${interaction.user} has **claimed** this ticket.`);
     await channel.send({ embeds: [embed] });
     await logTicketEvent(guild, guildId, opt, null, 'claim', ticket, member);
     return interaction.editReply({ content: '✅ Ticket claimed.' });
@@ -1645,7 +1645,7 @@ module.exports.handleTicketInteraction = async function(interaction, client) {
 
     if (newOpt.openCategoryId) await channel.setParent(newOpt.openCategoryId, { lockPermissions: false }).catch(() => {});
 
-    const embed = new EmbedBuilder().setColor('#5865F2').setDescription(`📦 Ticket moved to option **${newOpt.label}** by ${interaction.user}.`);
+    const embed = new EmbedBuilder().setColor(color).setDescription(`📦 Ticket moved to option **${newOpt.label}** by ${interaction.user}.`);
     await channel.send({ embeds: [embed] });
     return interaction.update({ content: '✅ Ticket moved.', components: [], embeds: [] });
   }
@@ -1837,7 +1837,7 @@ async function handlePanelButton(interaction, customId, guildId) {
           new TextInputBuilder().setCustomId('description').setLabel('Panel Description').setStyle(TextInputStyle.Paragraph).setValue(panel.description || '').setRequired(false)
         ),
         new ActionRowBuilder().addComponents(
-          new TextInputBuilder().setCustomId('color').setLabel('Embed Color (hex, e.g. #5865F2)').setStyle(TextInputStyle.Short).setValue(panel.color || '#5865F2').setRequired(false)
+          new TextInputBuilder().setCustomId('color').setLabel('Embed Color (hex, e.g. #5865F2)').setStyle(TextInputStyle.Short).setValue(panel.color || color).setRequired(false)
         )
       );
     return interaction.showModal(modal);
