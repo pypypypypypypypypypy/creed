@@ -61,17 +61,25 @@ module.exports = {
           { label: 'SPOTIFY_CLIENT_SECRET', ok: present(env.SPOTIFY_CLIENT_SECRET) },
         ],
       },
-      {
-        title: 'Lavalink (music)',
-        required: false,
-        checks: [
-          {
-            label: 'Nodes (LAVALINK_NODES or HOST+PORT+PASSWORD)',
-            ok: present(env.LAVALINK_NODES) || (present(env.LAVALINK_HOST) && present(env.LAVALINK_PORT) && present(env.LAVALINK_PASSWORD)),
-          },
-          { label: 'Secure flag (LAVALINK_SECURE)', ok: present(env.LAVALINK_SECURE), optional: true },
-        ],
-      },
+      (() => {
+        const hasCustom =
+          present(env.LAVALINK_NODES) ||
+          (present(env.LAVALINK_HOST) && present(env.LAVALINK_PORT) && present(env.LAVALINK_PASSWORD));
+        return {
+          title: 'Lavalink (music)',
+          required: false,
+          checks: [
+            {
+              label: hasCustom
+                ? 'Nodes — custom config detected'
+                : 'Nodes — using built-in public defaults',
+              ok: true,
+            },
+            { label: 'Custom override (LAVALINK_NODES or HOST+PORT+PASSWORD)', ok: hasCustom, optional: true },
+            { label: 'Secure flag (LAVALINK_SECURE)', ok: present(env.LAVALINK_SECURE), optional: true },
+          ],
+        };
+      })(),
       {
         title: 'Last.fm',
         required: false,
