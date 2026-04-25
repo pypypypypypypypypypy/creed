@@ -5,34 +5,67 @@
 // extraction server-side, which avoids the HTTP 429 bot-detection that
 // kills client-side ytdl on cloud hosts (Railway, Fly, Render, etc.).
 //
-// Connect to a public node by default; override per-deploy via env vars:
-//   LAVALINK_HOST     (default: lavalink.jirayu.net)
-//   LAVALINK_PORT     (default: 13592)
-//   LAVALINK_PASSWORD (default: youshallnotpass)
-//   LAVALINK_SECURE   (default: false; "true" to use wss:// + https://)
+// Three ways to configure the nodes (most specific wins):
 //
-// Public node list (rotate if any go down):
-//   lavalink.jirayu.net:13592   pass: youshallnotpass            secure: false
-//   lava-v4.ajieblogs.eu.org:80 pass: https://dsc.gg/ajidevserver secure: false
+//   1. LAVALINK_NODES — comma-separated list of full node specs:
+//        host:port:password:secure   (secure = true|false)
+//      e.g. "node1.example.com:443:mypass:true,node2.example.com:2333:mypass:false"
+//
+//   2. Single node via individual vars:
+//        LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD, LAVALINK_SECURE
+//
+//   3. Default public node fallbacks (used when no env vars are set).
+//      Public nodes are flaky — host your own if you need reliability.
 
 const { LavalinkManager } = require('lavalink-client');
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 const { approve, warn, deny } = require('../emojis.json');
 
+const DEFAULT_PUBLIC_NODES = [
+  { id: 'ajieblogs', host: 'lava-v4.ajieblogs.eu.org', port: 80, authorization: 'https://dsc.gg/ajidevserver', secure: false },
+  { id: 'jirayu', host: 'lavalink.jirayu.net', port: 13592, authorization: 'youshallnotpass', secure: false },
+  { id: 'serenetia', host: 'lavalinkv4.serenetia.com', port: 443, authorization: 'https://dsc.gg/ajidevserver', secure: true },
+];
+
+function resolveNodes() {
+  if (process.env.LAVALINK_NODES) {
+    const list = process.env.LAVALINK_NODES.split(',').map(s => s.trim()).filter(Boolean);
+    const nodes = [];
+    for (let i = 0; i < list.length; i++) {
+      const [host, port, password, secure] = list[i].split(':');
+      if (!host || !port) continue;
+      nodes.push({
+        id: `node${i + 1}`,
+        host,
+        port: Number(port),
+        authorization: password || 'youshallnotpass',
+        secure: String(secure || 'false').toLowerCase() === 'true',
+        retryAmount: 5,
+        retryDelay: 10_000,
+      });
+    }
+    if (nodes.length) return nodes;
+  }
+  if (process.env.LAVALINK_HOST) {
+    return [{
+      id: 'main',
+      host: process.env.LAVALINK_HOST,
+      port: Number(process.env.LAVALINK_PORT) || 2333,
+      authorization: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
+      secure: String(process.env.LAVALINK_SECURE || 'false').toLowerCase() === 'true',
+      retryAmount: 5,
+      retryDelay: 10_000,
+    }];
+  }
+  return DEFAULT_PUBLIC_NODES.map(n => ({ ...n, retryAmount: 5, retryDelay: 10_000 }));
+}
+
 module.exports = (client) => {
-  const node = {
-    id: 'main',
-    host: process.env.LAVALINK_HOST || 'lavalink.jirayu.net',
-    port: Number(process.env.LAVALINK_PORT) || 13592,
-    authorization: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
-    secure: String(process.env.LAVALINK_SECURE || 'false').toLowerCase() === 'true',
-    retryAmount: 5,
-    retryDelay: 10_000,
-  };
+  const nodes = resolveNodes();
 
   const manager = new LavalinkManager({
-    nodes: [node],
+    nodes,
     sendToShard: (guildId, payload) =>
       client.guilds.cache.get(guildId)?.shard?.send(payload),
     autoSkip: true,
@@ -94,7 +127,9 @@ module.exports = (client) => {
       }).catch(() => {});
     });
 
-  console.log(`[music] Lavalink configured (${node.host}:${node.port}, secure=${node.secure}). Will connect on ready.`);
+  console.log(`[music] Lavalink configured with ${nodes.length} node(s):`);
+  for (const n of nodes) console.log(`         - ${n.id}: ${n.host}:${n.port} (secure=${n.secure})`);
+  console.log('[music] Will connect on ready.');
 };
 
 function formatMs(ms) {

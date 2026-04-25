@@ -20,7 +20,7 @@ module.exports = {
     if (!query) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a song name or URL.`)] });
 
     if (!client.lavalink?.useable) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#ff5555').setDescription(`${deny} ${message.author}: Music server is not connected yet — try again in a few seconds.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#ff5555').setDescription(`${deny} ${message.author}: All music servers are offline. The default public Lavalink nodes are down — set \`LAVALINK_HOST\`/\`LAVALINK_PORT\`/\`LAVALINK_PASSWORD\` env vars to point at a working node, then redeploy.`)] });
     }
 
     try {
