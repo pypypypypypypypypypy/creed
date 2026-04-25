@@ -132,7 +132,10 @@ client.on("messageCreate", async message => {
   if (prefix === null) prefix = default_prefix;
 
   const args1 = message.content.trim().split(/ +/g);
-  if (args1.length === 1 && message.mentions.users.has(client.user.id)) {
+  const isReply = !!message.reference?.messageId;
+  const mentionRegex = new RegExp(`^<@!?${client.user.id}>$`);
+  const isDirectBotMention = mentionRegex.test(message.content.trim());
+  if (!isReply && isDirectBotMention && args1.length === 1 && message.mentions.users.has(client.user.id)) {
     const emojis = getEmojis();
     const prefixEmbed = new EmbedBuilder()
       .setColor(color)
