@@ -127,6 +127,101 @@ module.exports = {
 
     const sub = (args[0] || '').toLowerCase();
 
+    // ── HELP / MENU ──────────────────────────────────────────────────────────
+    if (!sub || sub === 'help' || sub === 'menu' || sub === 'commands' || sub === 'h') {
+      const linkedUser = (db.users || []).find(u => u.userID === message.author.id);
+      const linkedLine = linkedUser
+        ? `Linked to **${linkedUser.lastFM}**.`
+        : `You haven't linked a Last.fm account yet — start with \`${prefix}lastfm set <username>\`.`;
+
+      const groups = [
+        {
+          name: 'Account',
+          value: [
+            `\`${prefix}lastfm set <user>\` — link your Last.fm`,
+            `\`${prefix}lastfm unlink\` — unlink (alias: \`logout\`)`,
+            `\`${prefix}lastfm whois [@user]\` — view a user's profile`,
+            `\`${prefix}lastfm color <hex>\` — set embed color`,
+            `\`${prefix}lastfm mode <template>\` — custom embed template`,
+            `\`${prefix}lastfm variables\` — list embed variables`,
+            `\`${prefix}lastfm embed view|reset\` — manage embed settings`,
+            `\`${prefix}lastfm customcommand <cmd>\` — alias for \`${prefix}fm\``,
+            `\`${prefix}lastfm customreactions <up> <down>\` — set fm reactions`,
+            `\`${prefix}lastfm addfriends <users…>\` / \`removefriends\``,
+          ].join('\n'),
+        },
+        {
+          name: 'Now Playing & Search',
+          value: [
+            `\`${prefix}lastfm nowplaying [user]\` — current track (aliases: \`np\`, \`playing\`)`,
+            `\`${prefix}lastfm artist [artist]\` — artist info & your plays`,
+            `\`${prefix}lastfm track [artist - track]\` — track info & your plays`,
+            `\`${prefix}lastfm album [artist - album]\` — album info & your plays`,
+            `\`${prefix}lastfm overview [artist]\` — full breakdown for an artist`,
+          ].join('\n'),
+        },
+        {
+          name: 'Stats',
+          value: [
+            `\`${prefix}lastfm count\` — your total scrobbles`,
+            `\`${prefix}lastfm plays <artist>\` — plays for an artist`,
+            `\`${prefix}lastfm playstrack <artist - track>\``,
+            `\`${prefix}lastfm playsalbum <artist - album>\``,
+            `\`${prefix}lastfm milestone <number>\` — your Nth scrobble`,
+            `\`${prefix}lastfm streak\` — current daily-listening streak`,
+            `\`${prefix}lastfm discoverydate <artist>\` — when you first heard them`,
+          ].join('\n'),
+        },
+        {
+          name: 'Top Charts',
+          value: [
+            `\`${prefix}lastfm topartists [user]\` (alias: \`ta\`)`,
+            `\`${prefix}lastfm topalbums [user]\` (alias: \`tal\`)`,
+            `\`${prefix}lastfm toptracks [user]\` (alias: \`tt\`)`,
+            `\`${prefix}lastfm toptentracks [artist]\``,
+            `\`${prefix}lastfm toptenalbums [artist]\``,
+            `\`${prefix}lastfm collage [3x3] [period]\` — image collage`,
+          ].join('\n'),
+        },
+        {
+          name: 'Recent & Favorites',
+          value: [
+            `\`${prefix}lastfm recent [n]\` — recent scrobbles`,
+            `\`${prefix}lastfm recentfor <artist>\` — recent by an artist`,
+            `\`${prefix}lastfm favorites\` — loved tracks (alias: \`loved\`)`,
+            `\`${prefix}lastfm recommendation\` — picks based on your taste`,
+          ].join('\n'),
+        },
+        {
+          name: 'Server / Social',
+          value: [
+            `\`${prefix}lastfm whoknows <artist>\` — who in the server listens (alias: \`wk\`)`,
+            `\`${prefix}lastfm wktrack <artist - track>\``,
+            `\`${prefix}lastfm wkalbum <artist - album>\``,
+            `\`${prefix}lastfm globalwhoknows <artist>\` (alias: \`gwk\`)`,
+            `\`${prefix}lastfm friendwhoknows <artist>\``,
+            `\`${prefix}lastfm servertracks|serverartists|serveralbums\``,
+            `\`${prefix}lastfm scoreboard\` — server scrobble leaderboard`,
+            `\`${prefix}lastfm taste @user\` — compatibility with another user`,
+            `\`${prefix}lastfm affinity\` — most musically similar members`,
+            `\`${prefix}lastfm crowns [@user]\` / \`mostcrowns\``,
+          ].join('\n'),
+        },
+        {
+          name: 'External Links',
+          value: `\`${prefix}lastfm youtube|spotify|soundcloud|itunes\` — search current track on the chosen platform`,
+        },
+      ];
+
+      const embed = new EmbedBuilder()
+        .setColor(color)
+        .setAuthor({ name: 'Last.fm — Subcommands', iconURL: 'https://cdn-icons-png.flaticon.com/512/2111/2111624.png' })
+        .setDescription(`${linkedLine}\nTip: most subcommands accept an optional \`[user]\` argument (Discord mention or Last.fm username).`)
+        .addFields(groups)
+        .setFooter({ text: `Quick alias: ${prefix}fm = ${prefix}lastfm nowplaying` });
+      return message.channel.send({ embeds: [embed] });
+    }
+
     // ── SET ──────────────────────────────────────────────────────────────────
     if (sub === 'set') {
       const fmUser = args[1];
