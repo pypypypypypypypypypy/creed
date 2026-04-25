@@ -1,23 +1,35 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const db = require('../db');
-function getEmojis(){try{delete require.cache[require.resolve('../emojis.json')];return require('../emojis.json');}catch{return{};}}
-function ok(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve||'✅'} ${message.author}: ${text}`)]});}
-function deny(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#fe6464').setDescription(`${e.deny||'❌'} ${message.author}: ${text}`)]});}
-function warn(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn||'⚠️'} ${message.author}: ${text}`)]});}
-function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTitle(title).setTimestamp();if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
-function needPerm(message,flag,label){if(!flag)return true;if(message.member.permissions.has(PermissionFlagsBits[flag])||message.member.permissions.has(PermissionFlagsBits.Administrator))return true;warn(message,`You're missing permission: \`${label}\``);return false;}
-function getChannel(message,args){return message.mentions.channels.first()||message.guild.channels.cache.get(args[0])||null;}
-function getMember(message,args){return message.mentions.members.first()||message.guild.members.cache.get(args[0])||null;}
+const { EmbedBuilder } = require('discord.js');
+const { color } = require('../config.json');
+const { warn, approve } = require('../emojis.json');
+const { formatMs } = require('../handlers/music');
+
+function parseTime(str) {
+  if (!str) return null;
+  if (/^\d+$/.test(str)) return parseInt(str) * 1000;
+  const parts = str.split(':').map(p => parseInt(p));
+  if (parts.some(isNaN)) return null;
+  let s = 0;
+  if (parts.length === 2) s = parts[0] * 60 + parts[1];
+  else if (parts.length === 3) s = parts[0] * 3600 + parts[1] * 60 + parts[2];
+  else return null;
+  return s * 1000;
+}
 
 module.exports = {
-  name: 'seek',
   category: 'music',
-  usage: 'seek',
-  help: [
-    { name: 'seek', description: 'seek command (ported from bleed.bot)', aliases: 'n/a', parameters: '[args]', information: 'n/a', usage: 'seek [args]', example: 'seek' }
-  ],
-
+  help: [{ name: 'seek', description: 'Seek to a position in the current track (e.g. 1:30 or 90)', aliases: 'n/a', parameters: '<time>', information: 'n/a', usage: 'seek <time>', example: 'seek 1:30' }],
+  name: 'seek',
   run: async (client, message, args) => {
-    return info(message, 'seek', 'This command was registered as a stub from bleed.bot. Configure or extend its behavior as needed.');
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    const current = player?.queue?.current;
+    if (!current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (!message.member.voice.channel || message.member.voice.channel.id !== player.voiceChannelId)
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Join the voice channel I'm in to control playback.`)] });
+    const ms = parseTime(args[0]);
+    if (ms === null) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a time like \`1:30\` or \`90\`.`)] });
+    if (current.info.duration && ms > current.info.duration)
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That's beyond the track length (${formatMs(current.info.duration)}).`)] });
+    await player.seek(ms);
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Seeked to \`${formatMs(ms)}\`.`)] });
   }
 };

@@ -1,10 +1,11 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ChannelType, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const db = require('../db');
+const fetch = require('node-fetch');
 function getEmojis(){try{delete require.cache[require.resolve('../emojis.json')];return require('../emojis.json');}catch{return{};}}
 function ok(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve||'✅'} ${message.author}: ${text}`)]});}
 function deny(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#fe6464').setDescription(`${e.deny||'❌'} ${message.author}: ${text}`)]});}
 function warn(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn||'⚠️'} ${message.author}: ${text}`)]});}
-function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTitle(title).setTimestamp();if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
+function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTimestamp();if(title)em.setTitle(title);if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
 function needPerm(message,flag,label){if(!flag)return true;if(message.member.permissions.has(PermissionFlagsBits[flag])||message.member.permissions.has(PermissionFlagsBits.Administrator))return true;warn(message,`You're missing permission: \`${label}\``);return false;}
 function getChannel(message,args){return message.mentions.channels.first()||message.guild.channels.cache.get(args[0])||null;}
 function getMember(message,args){return message.mentions.members.first()||message.guild.members.cache.get(args[0])||null;}
@@ -13,11 +14,17 @@ module.exports = {
   name: 'previousreaction',
   category: 'reaction',
   usage: 'previousreaction',
-  help: [
-    { name: 'previousreaction', description: 'previousreaction command (ported from bleed.bot)', aliases: 'n/a', parameters: '[args]', information: 'n/a', usage: 'previousreaction [args]', example: 'previousreaction' }
-  ],
-
+  help: [{ name: 'previousreaction', description: 'React to the last message in this channel with the same reactions it had previously', aliases: 'prevreaction', parameters: 'n/a', information: 'n/a', usage: 'previousreaction', example: 'previousreaction' }],
+  aliases: ['prevreaction'],
   run: async (client, message, args) => {
-    return info(message, 'previousreaction', 'This command was registered as a stub from bleed.bot. Configure or extend its behavior as needed.');
+    const msgs = await message.channel.messages.fetch({ limit: 5 });
+    const target = [...msgs.values()].find(m => m.id !== message.id && m.reactions.cache.size > 0);
+    if (!target) return warn(message, 'No recent message with reactions found.');
+    let added = 0;
+    for (const reaction of target.reactions.cache.values()) {
+      try { await target.react(reaction.emoji.id ? `<:${reaction.emoji.name}:${reaction.emoji.id}>` : reaction.emoji.name); added++; }
+      catch {}
+    }
+    return ok(message, `Re-applied ${added} reaction(s) to <https://discord.com/channels/${message.guild.id}/${target.channel.id}/${target.id}>.`);
   }
 };
