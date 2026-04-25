@@ -1,25 +1,28 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ChannelType, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const db = require('../db');
+const fetch = require('node-fetch');
 function getEmojis(){try{delete require.cache[require.resolve('../emojis.json')];return require('../emojis.json');}catch{return{};}}
 function ok(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve||'✅'} ${message.author}: ${text}`)]});}
 function deny(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#fe6464').setDescription(`${e.deny||'❌'} ${message.author}: ${text}`)]});}
 function warn(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn||'⚠️'} ${message.author}: ${text}`)]});}
-function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTitle(title).setTimestamp();if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
+function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTimestamp();if(title)em.setTitle(title);if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
 function needPerm(message,flag,label){if(!flag)return true;if(message.member.permissions.has(PermissionFlagsBits[flag])||message.member.permissions.has(PermissionFlagsBits.Administrator))return true;warn(message,`You're missing permission: \`${label}\``);return false;}
 function getChannel(message,args){return message.mentions.channels.first()||message.guild.channels.cache.get(args[0])||null;}
 function getMember(message,args){return message.mentions.members.first()||message.guild.members.cache.get(args[0])||null;}
 
 module.exports = {
-  name: 'cleanup',
-  category: 'moderation',
-  usage: 'cleanup',
-  help: [
-    { name: 'cleanup', description: 'Remove messages from bots.', aliases: 'n/a', parameters: '<amount>', information: 'n/a', usage: 'cleanup <amount>', example: 'cleanup' }
-  ],
-
+  name: 'cleanup', category: 'moderation', usage: 'cleanup [count]',
+  help: [{ name: 'cleanup', description: "Delete the bot's recent messages and command invocations", aliases: 'n/a', parameters: '[count]', information: 'MANAGE_MESSAGES', usage: 'cleanup [count]', example: 'cleanup 50' }],
   run: async (client, message, args) => {
-
     if (!needPerm(message, 'ManageMessages', 'manage_messages')) return;
-    return info(message, `cleanup`, `Remove messages from bots. (params: amount)`);
+    const limit = Math.min(Math.max(parseInt(args[0]) || 50, 1), 100);
+    try {
+      const msgs = await message.channel.messages.fetch({ limit });
+      const prefix = require('../config.json').default_prefix;
+      const toDel = msgs.filter(m => m.author.id === client.user.id || (m.content && m.content.startsWith(prefix)));
+      const deleted = await message.channel.bulkDelete(toDel, true);
+      const reply = await message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`Cleaned up ${deleted.size} message(s).`)] });
+      setTimeout(() => reply.delete().catch(() => {}), 5000);
+    } catch (e) { return deny(message, `Failed: ${e.message}`); }
   }
 };

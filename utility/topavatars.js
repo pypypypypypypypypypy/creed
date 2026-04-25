@@ -1,24 +1,28 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ChannelType, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const db = require('../db');
+const fetch = require('node-fetch');
 function getEmojis(){try{delete require.cache[require.resolve('../emojis.json')];return require('../emojis.json');}catch{return{};}}
 function ok(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve||'✅'} ${message.author}: ${text}`)]});}
 function deny(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#fe6464').setDescription(`${e.deny||'❌'} ${message.author}: ${text}`)]});}
 function warn(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn||'⚠️'} ${message.author}: ${text}`)]});}
-function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTitle(title).setTimestamp();if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
+function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTimestamp();if(title)em.setTitle(title);if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
 function needPerm(message,flag,label){if(!flag)return true;if(message.member.permissions.has(PermissionFlagsBits[flag])||message.member.permissions.has(PermissionFlagsBits.Administrator))return true;warn(message,`You're missing permission: \`${label}\``);return false;}
 function getChannel(message,args){return message.mentions.channels.first()||message.guild.channels.cache.get(args[0])||null;}
 function getMember(message,args){return message.mentions.members.first()||message.guild.members.cache.get(args[0])||null;}
 
 module.exports = {
-  name: 'topavatars',
-  category: 'utility',
-  usage: 'topavatars',
-  help: [
-    { name: 'topavatars', description: 'Get a leaderboard with the users that have the most avatar changes', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'topavatars', example: 'topavatars' }
-  ],
-
+  name: 'topavatars', category: 'utility', usage: 'topavatars',
+  help: [{ name: 'topavatars', description: 'Top members ranked by stored avatar history count', aliases: 'n/a', parameters: 'n/a', information: 'n/a', usage: 'topavatars', example: 'topavatars' }],
   run: async (client, message, args) => {
-
-    return info(message, `topavatars`, `Get a leaderboard with the users that have the most avatar changes`);
+    await message.guild.members.fetch().catch(() => {});
+    const ranked = [];
+    for (const m of message.guild.members.cache.values()) {
+      const count = (db.get(`avatarhistory_${m.id}`) || []).length;
+      if (count > 0) ranked.push({ tag: m.user.tag, count });
+    }
+    ranked.sort((a,b) => b.count - a.count);
+    if (!ranked.length) return info(message, 'Top avatars', 'No avatar history tracked yet.');
+    const lines = ranked.slice(0, 15).map((r, i) => `**${i+1}.** ${r.tag} — ${r.count}`);
+    return info(message, 'Top avatars', lines.join('\n'));
   }
 };

@@ -1,24 +1,23 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ChannelType, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const db = require('../db');
+const fetch = require('node-fetch');
 function getEmojis(){try{delete require.cache[require.resolve('../emojis.json')];return require('../emojis.json');}catch{return{};}}
 function ok(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve||'✅'} ${message.author}: ${text}`)]});}
 function deny(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#fe6464').setDescription(`${e.deny||'❌'} ${message.author}: ${text}`)]});}
 function warn(message,text){const e=getEmojis();return message.channel.send({embeds:[new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn||'⚠️'} ${message.author}: ${text}`)]});}
-function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTitle(title).setTimestamp();if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
+function info(message,title,desc,fields){const em=new EmbedBuilder().setColor('#3498db').setTimestamp();if(title)em.setTitle(title);if(desc)em.setDescription(desc);if(fields&&fields.length)em.addFields(fields);return message.channel.send({embeds:[em]});}
 function needPerm(message,flag,label){if(!flag)return true;if(message.member.permissions.has(PermissionFlagsBits[flag])||message.member.permissions.has(PermissionFlagsBits.Administrator))return true;warn(message,`You're missing permission: \`${label}\``);return false;}
 function getChannel(message,args){return message.mentions.channels.first()||message.guild.channels.cache.get(args[0])||null;}
 function getMember(message,args){return message.mentions.members.first()||message.guild.members.cache.get(args[0])||null;}
 
 module.exports = {
-  name: 'getbotinvite',
-  category: 'information',
-  usage: 'getbotinvite',
-  help: [
-    { name: 'getbotinvite', description: 'Get an invite of a bot', aliases: 'n/a', parameters: '<user>', information: 'n/a', usage: 'getbotinvite <user>', example: 'getbotinvite' }
-  ],
-
+  name: 'getbotinvite', category: 'information', usage: 'getbotinvite [bot]',
+  help: [{ name: 'getbotinvite', description: 'Get an invite link for this bot or another bot in the server', aliases: 'botinvite, invite', parameters: '[bot]', information: 'n/a', usage: 'getbotinvite [bot]', example: 'getbotinvite @bot' }],
+  aliases: ['botinvite'],
   run: async (client, message, args) => {
-
-    return info(message, `getbotinvite`, `Get an invite of a bot (params: user)`);
+    const target = getMember(message, args)?.user || client.user;
+    if (!target.bot) return warn(message, 'That user is not a bot.');
+    const url = `https://discord.com/oauth2/authorize?client_id=${target.id}&scope=bot+applications.commands&permissions=8`;
+    return info(message, `${target.tag}`, `[Invite link](${url})`);
   }
 };
