@@ -22,11 +22,10 @@ function fail(message, text) {
 
 module.exports = {
   name: 'role',
-  aliases: ['roles'],
+  aliases: ['r'],
   category: 'moderation',
   help: [
-    { name: 'role add', description: 'Add a role to a member', aliases: 'set, give', parameters: '(member) (role)', information: 'MANAGE_ROLES', usage: 'role add @user @role', example: 'role add @user @Member' },
-    { name: 'role remove', description: 'Remove a role from a member', aliases: 'rmv, take', parameters: '(member) (role)', information: 'MANAGE_ROLES', usage: 'role remove @user @role', example: 'role remove @user @Muted' },
+    { name: 'role', description: 'Toggle a role on a member (adds if missing, removes if present)', aliases: 'r', parameters: '(member) (role)', information: 'MANAGE_ROLES', usage: 'role @user @role', example: 'role @user @Member' },
     { name: 'role create', description: 'Create a new role', aliases: 'make', parameters: '(name)', information: 'MANAGE_ROLES', usage: 'role create Staff', example: 'role create Staff' },
     { name: 'role delete', description: 'Delete a role', aliases: 'del', parameters: '(role)', information: 'MANAGE_ROLES', usage: 'role delete @role', example: 'role delete @OldRole' },
     { name: 'role color', description: 'Set a role color', aliases: 'colour, topcolor, topcolour, tc', parameters: '(role) (#hex)', information: 'MANAGE_ROLES', usage: 'role color @role #5865f2', example: 'role color @Member #5865f2' },
@@ -45,17 +44,17 @@ module.exports = {
       return paginate(message, module.exports.help.map(h => ({ ...h, usage: `${prefix}${h.usage}` })), 'moderation');
     }
 
-    if (!['add','set','give','remove','rmv','take','create','make','delete','del','edit','editname','rename','color','colour','topcolor','topcolour','tc','hoist','mentionable','mention','bots','humans','has','icon','restore','cancel','kill'].includes(sub)) {
+    if (!['create','make','delete','del','edit','editname','rename','color','colour','topcolor','topcolour','tc','hoist','mentionable','mention','bots','humans','has','icon','restore','cancel','kill'].includes(sub)) {
       args.unshift(sub);
-      sub = 'add';
+      sub = 'toggle';
     }
 
-    if (['add', 'set', 'give', 'remove', 'rmv', 'take'].includes(sub)) {
+    if (sub === 'toggle') {
       const member = getMember(message, args[1]);
       const role = getRole(message, args.slice(2));
-      if (!member || !role) return fail(message, `Usage: \`${prefix}role ${sub} @member @role\``);
+      if (!member || !role) return fail(message, `Usage: \`${prefix}role @member @role\``);
       if (role.position >= message.member.roles.highest.position && message.guild.ownerId !== message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot manage a role higher than yours.`)] });
-      if (['remove', 'rmv', 'take'].includes(sub)) {
+      if (member.roles.cache.has(role.id)) {
         await member.roles.remove(role).catch(() => null);
         return ok(message, `Removed ${role} from ${member}.`);
       }
