@@ -20,7 +20,7 @@ module.exports = {
   category: 'utility',
 
   run: async (client, message, args) => {
-    const cmdCount = Math.floor(client.commands.size / 10) * 10;
+    const cmdCount = client.commands.size;
 
     const rulesEmbed = new EmbedBuilder()
       .setColor(color)

@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { warn, approve } = require('../emojis.json');
+const { warn } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 const aiCooldowns = new Map();
@@ -8,39 +8,49 @@ const aiGlobalHits = [];
 const GLOBAL_LIMIT = 25;
 const GLOBAL_WINDOW_MS = 60_000;
 
+const CHATGPT_EMOJI_ID = '1497623180393582835';
+const CHATGPT_ICON = `https://cdn.discordapp.com/emojis/${CHATGPT_EMOJI_ID}.png`;
+
+const SYSTEM_PROMPT =
+  'You are a concise assistant inside a Discord chat. ' +
+  'Reply in as few words as possible — usually 1–4 short sentences, or a tight numbered list of 2–4 bullets when listing steps. ' +
+  'No filler, no preamble, no apologies, no "as an AI", no closing remarks. ' +
+  'Use **bold** only for key terms. Skip headings. Get straight to the answer.';
+
 module.exports = {
   category: 'utility',
   help: [
     {
-        name: 'ai',
-        description: 'Ask the AI a question',
-        aliases: 'n/a',
-        parameters: '(question)',
-        information: 'n/a',
-        usage: 'ai (question)',
-        example: 'ai question'
+      name: 'ai',
+      description: 'Ask the AI a question',
+      aliases: 'ask, chatgpt',
+      parameters: '(question)',
+      information: 'n/a',
+      usage: 'ai (question)',
+      example: 'ai how to cook a bagel'
     }
-],
+  ],
 
-    name: 'ai',
+  name: 'ai',
   aliases: ['ask', 'chatgpt'],
 
   run: async (client, message, args) => {
-    const helpEmbed = new EmbedBuilder()
-      .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
-      .setTitle('Command: ai')
-      .setDescription('Ask the AI a question.')
-      .addFields(
-        { name: '**Aliases**', value: 'ask, chatgpt', inline: true },
-        { name: '**Parameters**', value: '[question]', inline: true },
-        { name: '**Information**', value: 'N/A', inline: true },
-        { name: '**Usage**', value: '```Syntax: ai <question>\nExample: ai What is the capital of France?```' }
-      )
-      .setFooter({ text: 'Module: utility' })
-      .setTimestamp()
-      .setColor(color);
-
-    if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
+    if (!args[0]) {
+      const helpEmbed = new EmbedBuilder()
+        .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
+        .setTitle('Command: ai')
+        .setDescription('Ask the AI a question.')
+        .addFields(
+          { name: '**Aliases**', value: 'ask, chatgpt', inline: true },
+          { name: '**Parameters**', value: '[question]', inline: true },
+          { name: '**Information**', value: 'N/A', inline: true },
+          { name: '**Usage**', value: '```Syntax: ai <question>\nExample: ai how to cook a bagel```' }
+        )
+        .setFooter({ text: 'Module: utility' })
+        .setTimestamp()
+        .setColor(color);
+      return message.channel.send({ embeds: [helpEmbed] });
+    }
 
     const now = Date.now();
     const last = aiCooldowns.get(message.author.id) || 0;
@@ -73,8 +83,9 @@ module.exports = {
 
     const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Thinking...`)] });
 
-    try {
+    const startedAt = Date.now();
 
+    try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -82,25 +93,28 @@ module.exports = {
           Authorization: `Bearer ${"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"}`,
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{ role: 'user', content: question }],
-          max_tokens: 500,
+          model: 'openai/gpt-oss-120b',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: question },
+          ],
+          temperature: 0.4,
+          max_tokens: 220,
         }),
       });
 
       if (!response.ok) throw new Error(`API error: ${response.status}`);
       const data = await response.json();
-      const answer = data.choices?.[0]?.message?.content?.trim() || 'No response received.';
+      let answer = data.choices?.[0]?.message?.content?.trim() || 'No response.';
+
+      if (answer.length > 4000) answer = answer.slice(0, 3997) + '...';
+
+      const took = ((Date.now() - startedAt) / 1000).toFixed(0);
 
       const embed = new EmbedBuilder()
         .setColor(color)
-        .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
-        .addFields(
-          { name: 'Question', value: question.length > 1024 ? question.slice(0, 1021) + '...' : question },
-          { name: 'Answer', value: answer.length > 1024 ? answer.slice(0, 1021) + '...' : answer }
-        )
-        .setFooter({ text: 'Powered by Groq' })
-        .setTimestamp();
+        .setDescription(answer)
+        .setFooter({ text: `gpt-oss • took ${took}s`, iconURL: CHATGPT_ICON });
 
       await thinking.edit({ embeds: [embed] });
     } catch (e) {
