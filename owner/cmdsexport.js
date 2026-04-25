@@ -31,7 +31,17 @@ module.exports = {
 
     const files = globSync(`${root}/**/*.js`, { ignore: '**/node_modules/**' });
     const byCategory = {};
+    const seen = new Set();
     let total = 0;
+
+    const push = (cat, label) => {
+      const key = `${cat}:${label.toLowerCase()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      if (!byCategory[cat]) byCategory[cat] = [];
+      byCategory[cat].push(label);
+      total++;
+    };
 
     for (const file of files) {
       const rel = path.relative(root, file);
@@ -43,10 +53,24 @@ module.exports = {
       if (!mod || !mod.name) continue;
 
       const cat = (mod.category || top || 'uncategorized').toLowerCase();
-      if (!byCategory[cat]) byCategory[cat] = [];
       const aliases = Array.isArray(mod.aliases) && mod.aliases.length ? ` [${mod.aliases.join(', ')}]` : '';
-      byCategory[cat].push(`${mod.name}${aliases}`);
-      total++;
+      if (Array.isArray(mod.help) && mod.help.length) {
+        for (const h of mod.help) {
+          if (!h?.name) continue;
+          const isRoot = h.name.trim().toLowerCase() === mod.name.toLowerCase();
+          push(cat, `${h.name}${isRoot ? aliases : ''}`);
+        }
+      } else {
+        push(cat, `${mod.name}${aliases}`);
+      }
+    }
+
+    let generatedEntries = [];
+    try { generatedEntries = require('../generatedCommands/missingCommands.json'); } catch {}
+    for (const entry of generatedEntries) {
+      const cat = (entry.category || 'uncategorized').toLowerCase();
+      const label = (entry.command || (entry.parts || []).join(' ')).trim();
+      if (label) push(cat, label);
     }
 
     const lines = [];

@@ -149,11 +149,18 @@ function buildEmbeds(catMap, totalCount, prefix) {
 function countTotal(client) {
   const names = new Set();
   for (const cmd of client.commands.values()) {
-    if (cmd.name) names.add(cmd.name.toLowerCase());
+    if (!cmd?.name) continue;
+    if (Array.isArray(cmd.help) && cmd.help.length) {
+      for (const h of cmd.help) {
+        if (h?.name) names.add(h.name.trim().toLowerCase());
+      }
+    } else {
+      names.add(cmd.name.toLowerCase());
+    }
   }
   for (const entry of generatedEntries) {
-    const root = (entry.parts?.[0] || entry.command || '').toLowerCase();
-    if (root) names.add(root);
+    const full = (entry.command || (entry.parts || []).join(' ')).toLowerCase().trim();
+    if (full) names.add(full);
   }
   return names.size;
 }
