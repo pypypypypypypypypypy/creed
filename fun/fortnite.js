@@ -29,7 +29,17 @@ async function getJson(url, requireAuth = false) {
     throw e;
   }
   const res = await fetch(url, { headers: authHeaders() });
-  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  if (!res.ok) {
+    let detail = '';
+    try {
+      const body = await res.json();
+      if (body && body.error) detail = ` — ${body.error}`;
+    } catch {}
+    if (res.status === 401) throw new Error(`Unauthorized (check FORTNITE_API_KEY)${detail}`);
+    if (res.status === 403) throw new Error(`Forbidden${detail || ' — likely the player has stats hidden in their privacy settings.'}`);
+    if (res.status === 404) throw new Error(`Not found${detail}`);
+    throw new Error(`API returned ${res.status}${detail}`);
+  }
   return res.json();
 }
 
