@@ -1,3 +1,22 @@
+// distube → undici v7 references the `File` global at module-load time.
+// Node 18 doesn't expose `File` globally (added as a global in Node 20).
+// Provide a minimal stub BEFORE requiring distube so module load succeeds.
+if (typeof globalThis.File === 'undefined') {
+  try {
+    globalThis.File = require('node:buffer').File;
+  } catch { /* node:buffer.File not available pre-19.7, fall through */ }
+}
+if (typeof globalThis.File === 'undefined') {
+  globalThis.File = class File extends Blob {
+    constructor(parts, name = '', opts = {}) {
+      super(parts, opts);
+      this.name = String(name);
+      this.lastModified = opts.lastModified ?? Date.now();
+    }
+    get [Symbol.toStringTag]() { return 'File'; }
+  };
+}
+
 const { DisTube } = require('distube');
 const { YouTubePlugin } = require('@distube/youtube');
 const { SpotifyPlugin } = require('@distube/spotify');
