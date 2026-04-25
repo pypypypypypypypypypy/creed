@@ -68,7 +68,7 @@ async function paginate(message, pages, module) {
     return new ActionRowBuilder().addComponents(prevBtn, nextBtn, pageBtn, stopBtn);
   }
 
-  const components = [buildRow(0)];
+  const components = pages.length > 1 ? [buildRow(0)] : [];
   const msg = await message.channel.send({ embeds: [buildEmbed(0)], components });
 
   if (pages.length === 1) return;
