@@ -6,11 +6,19 @@ const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 const { approve, warn, deny } = require('../emojis.json');
 
+// Resolve ffmpeg binary: prefer the bundled ffmpeg-static, fall back to system ffmpeg
+let ffmpegPath = 'ffmpeg';
+try {
+  const staticPath = require('ffmpeg-static');
+  if (staticPath) ffmpegPath = staticPath;
+} catch { /* ffmpeg-static not installed — use system ffmpeg */ }
+
 module.exports = (client) => {
   const distube = new DisTube(client, {
     plugins: [new YouTubePlugin(), new SpotifyPlugin(), new SoundCloudPlugin()],
     emitNewSongOnly: true,
     savePreviousSongs: true,
+    ffmpeg: { path: ffmpegPath },
   });
 
   client.distube = distube;
