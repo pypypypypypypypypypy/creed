@@ -25,7 +25,7 @@ const { approve, warn, deny } = require('../emojis.json');
 const DEFAULT_PUBLIC_NODES = [
   { id: 'ajieblogs', host: 'lava-v4.ajieblogs.eu.org', port: 80, authorization: 'https://dsc.gg/ajidevserver', secure: false },
   { id: 'serenetia', host: 'lavalinkv4.serenetia.com', port: 443, authorization: 'https://dsc.gg/ajidevserver', secure: true },
-  { id: 'inza', host: 'lavalink.inza.fun', port: 443, authorization: 'saher.inzas.fun', secure: true },
+  // 'inza' (lavalink.inza.fun) removed — DNS no longer resolves and it spams reconnect loops.
 ];
 
 function resolveNodes() {
