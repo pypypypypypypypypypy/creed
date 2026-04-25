@@ -9,10 +9,10 @@ module.exports = {
   aliases: ['unpause'],
 
   run: async (client, message) => {
-    const queue = client.distube.getQueue(message.guild);
-    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
-    if (!queue.paused) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Not paused.`)] });
-    queue.resume();
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    if (!player || !player.queue.current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (!player.paused) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Not paused.`)] });
+    await player.resume();
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Resumed.`)] });
   },
 };

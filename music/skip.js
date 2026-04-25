@@ -9,10 +9,11 @@ module.exports = {
   aliases: ['s', 'next'],
 
   run: async (client, message) => {
-    const queue = client.distube.getQueue(message.guild);
-    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    if (!player || !player.queue.current)
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
     try {
-      await queue.skip();
+      await player.skip();
       message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Skipped.`)] });
     } catch (e) {
       message.channel.send({ embeds: [new EmbedBuilder().setColor('#ff5555').setDescription(`${deny} ${message.author}: ${e.message || 'Could not skip.'}`)] });

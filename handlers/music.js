@@ -1,183 +1,111 @@
-// distube → undici v7 references the `File` global at module-load time.
-// Node 18 doesn't expose `File` globally (added as a global in Node 20).
-// Provide a minimal stub BEFORE requiring distube so module load succeeds.
-if (typeof globalThis.File === 'undefined') {
-  try {
-    globalThis.File = require('node:buffer').File;
-  } catch { /* node:buffer.File not available pre-19.7, fall through */ }
-}
-if (typeof globalThis.File === 'undefined') {
-  globalThis.File = class File extends Blob {
-    constructor(parts, name = '', opts = {}) {
-      super(parts, opts);
-      this.name = String(name);
-      this.lastModified = opts.lastModified ?? Date.now();
-    }
-    get [Symbol.toStringTag]() { return 'File'; }
-  };
-}
+// Lavalink-based music handler.
+//
+// Replaces the previous DisTube + @distube/youtube setup. Lavalink runs as
+// a separate audio server (Java) and handles all the YouTube/Spotify
+// extraction server-side, which avoids the HTTP 429 bot-detection that
+// kills client-side ytdl on cloud hosts (Railway, Fly, Render, etc.).
+//
+// Connect to a public node by default; override per-deploy via env vars:
+//   LAVALINK_HOST     (default: lavalink.jirayu.net)
+//   LAVALINK_PORT     (default: 13592)
+//   LAVALINK_PASSWORD (default: youshallnotpass)
+//   LAVALINK_SECURE   (default: false; "true" to use wss:// + https://)
+//
+// Public node list (rotate if any go down):
+//   lavalink.jirayu.net:13592   pass: youshallnotpass            secure: false
+//   lava-v4.ajieblogs.eu.org:80 pass: https://dsc.gg/ajidevserver secure: false
 
-const { DisTube } = require('distube');
-const { YouTubePlugin } = require('@distube/youtube');
-const { SpotifyPlugin } = require('@distube/spotify');
-const { SoundCloudPlugin } = require('@distube/soundcloud');
+const { LavalinkManager } = require('lavalink-client');
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 const { approve, warn, deny } = require('../emojis.json');
 
-// Resolve ffmpeg binary: prefer the bundled ffmpeg-static, fall back to system ffmpeg
-let ffmpegPath = 'ffmpeg';
-try {
-  const staticPath = require('ffmpeg-static');
-  if (staticPath) ffmpegPath = staticPath;
-} catch { /* ffmpeg-static not installed — use system ffmpeg */ }
-
-// Print which opus / encryption / ffmpeg libraries discord.js voice detected.
-// This is the single most useful diagnostic for "joins voice but no audio" issues.
-try {
-  const { generateDependencyReport } = require('@discordjs/voice');
-  console.log('--- @discordjs/voice dependency report ---');
-  console.log(generateDependencyReport());
-  console.log('ffmpeg path resolved to:', ffmpegPath);
-  console.log('-------------------------------------------');
-} catch (e) {
-  console.log('Could not generate voice dependency report:', e.message);
-}
-
-// Parse YOUTUBE_COOKIES env var into the array-of-cookie-objects format
-// the YouTubePlugin expects. Accepts either:
-//   1. A JSON array (already in plugin format), or
-//   2. A raw "Cookie:" header string copied from browser devtools
-//      (e.g. "VISITOR_INFO1_LIVE=abc; SID=xyz; ..."), which we convert.
-// Without cookies, YouTube returns HTTP 429 from cloud-host IPs.
-function loadYoutubeCookies() {
-  const raw = process.env.YOUTUBE_COOKIES;
-  if (!raw) {
-    console.warn('[music] YOUTUBE_COOKIES not set — YouTube playback will likely be rate-limited (HTTP 429) on cloud hosts.');
-    return undefined;
-  }
-  const trimmed = raw.trim();
-  try {
-    if (trimmed.startsWith('[')) {
-      const parsed = JSON.parse(trimmed);
-      console.log(`[music] Loaded ${parsed.length} YouTube cookies from JSON.`);
-      return parsed;
-    }
-    const cookies = trimmed
-      .split(';')
-      .map(s => s.trim())
-      .filter(Boolean)
-      .map(pair => {
-        const eq = pair.indexOf('=');
-        if (eq < 0) return null;
-        return {
-          name: pair.slice(0, eq).trim(),
-          value: pair.slice(eq + 1).trim(),
-          domain: '.youtube.com',
-          path: '/',
-          secure: true,
-          httpOnly: true,
-        };
-      })
-      .filter(Boolean);
-    console.log(`[music] Loaded ${cookies.length} YouTube cookies from header string.`);
-    return cookies;
-  } catch (e) {
-    console.error('[music] Failed to parse YOUTUBE_COOKIES:', e.message);
-    return undefined;
-  }
-}
-
 module.exports = (client) => {
-  const youtubeCookies = loadYoutubeCookies();
+  const node = {
+    id: 'main',
+    host: process.env.LAVALINK_HOST || 'lavalink.jirayu.net',
+    port: Number(process.env.LAVALINK_PORT) || 13592,
+    authorization: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
+    secure: String(process.env.LAVALINK_SECURE || 'false').toLowerCase() === 'true',
+    retryAmount: 5,
+    retryDelay: 10_000,
+  };
 
-  const distube = new DisTube(client, {
-    plugins: [
-      new YouTubePlugin(youtubeCookies ? { cookies: youtubeCookies } : {}),
-      new SpotifyPlugin(),
-      new SoundCloudPlugin(),
-    ],
-    emitNewSongOnly: true,
-    savePreviousSongs: true,
-    ffmpeg: { path: ffmpegPath },
+  const manager = new LavalinkManager({
+    nodes: [node],
+    sendToShard: (guildId, payload) =>
+      client.guilds.cache.get(guildId)?.shard?.send(payload),
+    autoSkip: true,
+    playerOptions: {
+      defaultSearchPlatform: 'ytsearch',
+      onDisconnect: { autoReconnect: true, destroyPlayer: false },
+      onEmptyQueue: { destroyAfterMs: 60_000 },
+    },
   });
 
-  client.distube = distube;
+  client.lavalink = manager;
+
+  // Lavalink needs Discord's raw voice events to drive the connection.
+  client.on('raw', (d) => manager.sendRawData(d));
+
+  client.once('ready', () => {
+    manager
+      .init({ id: client.user.id, username: client.user.username })
+      .then(() => console.log('[music] Lavalink manager initialized.'))
+      .catch((e) => console.error('[music] Lavalink init failed:', e));
+  });
 
   const embed = (text, c = color) =>
     new EmbedBuilder().setColor(c).setDescription(text);
 
-  distube
-    .on('playSong', (queue, song) => {
-      queue.textChannel?.send({
-        embeds: [
-          embed(
-            `${approve} Now playing: **[${song.name}](${song.url})** \`[${song.formattedDuration}]\` — requested by ${song.user}`
-          ),
-        ],
-      });
-    })
-    .on('addSong', (queue, song) => {
-      queue.textChannel?.send({
-        embeds: [
-          embed(
-            `${approve} Added **[${song.name}](${song.url})** \`[${song.formattedDuration}]\` to the queue — requested by ${song.user}`
-          ),
-        ],
-      });
-    })
-    .on('addList', (queue, playlist) => {
-      queue.textChannel?.send({
-        embeds: [
-          embed(
-            `${approve} Added playlist **[${playlist.name}](${playlist.url})** (${playlist.songs.length} tracks) to the queue`
-          ),
-        ],
-      });
-    })
-    .on('finish', (queue) => {
-      queue.textChannel?.send({
-        embeds: [embed(`${approve} Queue finished.`)],
-      });
-    })
-    .on('empty', (queue) => {
-      queue.textChannel?.send({
-        embeds: [embed(`${warn} Voice channel is empty — leaving.`, '#efa23a')],
-      });
-    })
-    .on('disconnect', (queue) => {
-      queue.textChannel?.send({
-        embeds: [embed(`${warn} Disconnected from the voice channel.`, '#efa23a')],
-      });
-    })
-    .on('error', (error, queue) => {
-      const ch = queue?.textChannel;
-      const msg = (error?.message || String(error)).slice(0, 1500);
-      console.error('[DisTube error]', error?.stack || error);
+  manager.nodeManager
+    .on('connect', (n) => console.log(`[music] Connected to Lavalink node "${n.id}" (${n.options.host}:${n.options.port}).`))
+    .on('disconnect', (n, reason) => console.warn(`[music] Lavalink node "${n.id}" disconnected:`, reason?.reason || reason))
+    .on('reconnecting', (n) => console.warn(`[music] Lavalink node "${n.id}" reconnecting...`))
+    .on('error', (n, err) => console.error(`[music] Lavalink node "${n.id}" error:`, err?.message || err));
+
+  manager
+    .on('trackStart', (player, track) => {
+      const ch = client.channels.cache.get(player.textChannelId);
+      const requester = track.requester ? `<@${track.requester.id}>` : 'unknown';
+      const dur = formatMs(track.info.duration);
       ch?.send({
-        embeds: [embed(`${deny} Music error: \`${msg}\``, '#ff5555')],
+        embeds: [embed(`${approve} Now playing: **[${track.info.title}](${track.info.uri})** \`[${dur}]\` — requested by ${requester}`)],
       }).catch(() => {});
     })
-    .on('searchNoResult', (message, query) => {
-      console.warn('[DisTube] no search results for:', query);
-      message?.channel?.send({
-        embeds: [embed(`${deny} No results found for \`${query}\`.`, '#ff5555')],
-      }).catch(() => {});
+    .on('trackEnd', (player, track, payload) => {
+      // No message — keeps the channel quiet between tracks.
     })
-    .on('noRelated', (queue) => {
-      console.warn('[DisTube] no related songs');
-      queue?.textChannel?.send({
-        embeds: [embed(`${warn} No related songs to play next.`, '#efa23a')],
+    .on('queueEnd', (player) => {
+      const ch = client.channels.cache.get(player.textChannelId);
+      ch?.send({ embeds: [embed(`${approve} Queue finished.`)] }).catch(() => {});
+    })
+    .on('playerDestroy', (player, reason) => {
+      const ch = client.channels.cache.get(player.textChannelId);
+      if (reason && reason !== 'destroy') {
+        ch?.send({ embeds: [embed(`${warn} Disconnected: ${reason}`, '#efa23a')] }).catch(() => {});
+      }
+    })
+    .on('trackError', (player, track, payload) => {
+      const ch = client.channels.cache.get(player.textChannelId);
+      console.error('[music] Track error:', payload?.exception || payload);
+      ch?.send({
+        embeds: [embed(`${deny} Playback error: \`${payload?.exception?.message || 'unknown error'}\``, '#ff5555')],
       }).catch(() => {});
     });
 
-  // Catch unhandled stream / extractor errors that don't surface via the DisTube error event
-  process.on('unhandledRejection', (reason) => {
-    const txt = reason?.stack || reason?.message || String(reason);
-    if (/distube|ytdl|youtube|ffmpeg|opus/i.test(txt)) {
-      console.error('[unhandledRejection — music subsystem]', txt);
-    }
-  });
-
-  console.log('DisTube initialized.');
+  console.log(`[music] Lavalink configured (${node.host}:${node.port}, secure=${node.secure}). Will connect on ready.`);
 };
+
+function formatMs(ms) {
+  if (!ms || ms < 0) return '0:00';
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return h > 0
+    ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+    : `${m}:${String(s).padStart(2, '0')}`;
+}
+
+module.exports.formatMs = formatMs;

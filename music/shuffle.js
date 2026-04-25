@@ -9,10 +9,10 @@ module.exports = {
   aliases: [],
 
   run: async (client, message) => {
-    const queue = client.distube.getQueue(message.guild);
-    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
-    if (queue.songs.length < 3) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Need at least 3 songs to shuffle.`)] });
-    queue.shuffle();
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    if (!player || !player.queue.current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (player.queue.tracks.length < 2) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Need at least 2 upcoming songs to shuffle.`)] });
+    await player.queue.shuffle();
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Queue shuffled.`)] });
   },
 };

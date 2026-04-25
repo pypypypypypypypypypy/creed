@@ -9,10 +9,10 @@ module.exports = {
   aliases: [],
 
   run: async (client, message) => {
-    const queue = client.distube.getQueue(message.guild);
-    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
-    if (queue.paused) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Already paused.`)] });
-    queue.pause();
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    if (!player || !player.queue.current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (player.paused) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Already paused.`)] });
+    await player.pause();
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Paused.`)] });
   },
 };

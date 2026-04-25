@@ -9,13 +9,13 @@ module.exports = {
   aliases: ['vol'],
 
   run: async (client, message, args) => {
-    const queue = client.distube.getQueue(message.guild);
-    if (!queue) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
-    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Current volume: \`${queue.volume}%\``)] });
+    const player = client.lavalink?.getPlayer(message.guild.id);
+    if (!player || !player.queue.current) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is currently playing.`)] });
+    if (!args[0]) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Current volume: \`${player.volume}%\``)] });
     const v = parseInt(args[0], 10);
     if (Number.isNaN(v) || v < 0 || v > 200)
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Volume must be between 0 and 200.`)] });
-    queue.setVolume(v);
+    await player.setVolume(v);
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Volume set to \`${v}%\`.`)] });
   },
 };
