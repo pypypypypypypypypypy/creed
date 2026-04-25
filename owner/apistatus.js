@@ -61,6 +61,14 @@ module.exports = {
           { label: 'SPOTIFY_CLIENT_SECRET', ok: present(env.SPOTIFY_CLIENT_SECRET) },
         ],
       },
+      {
+        title: 'Reddit',
+        required: false,
+        checks: [
+          { label: 'REDDIT_CLIENT_ID', ok: present(env.REDDIT_CLIENT_ID) },
+          { label: 'REDDIT_CLIENT_SECRET', ok: present(env.REDDIT_CLIENT_SECRET) },
+        ],
+      },
       (() => {
         const hasCustom =
           present(env.LAVALINK_NODES) ||
