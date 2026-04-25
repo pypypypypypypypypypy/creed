@@ -818,10 +818,12 @@ module.exports = {
     // Shared button row builder
     const { applyEmoji } = require('../utils/buttonEmoji');
     function buildRow(idx, total, disabled = false) {
-      const prev = applyEmoji(new ButtonBuilder().setCustomId('help_prev').setStyle(ButtonStyle.Secondary).setDisabled(disabled || idx === 0), 'previous', '<');
+      const single = total <= 1;
+      const prev = applyEmoji(new ButtonBuilder().setCustomId('help_prev').setStyle(ButtonStyle.Primary).setDisabled(disabled || single || idx === 0), 'previous', '<');
+      const next = applyEmoji(new ButtonBuilder().setCustomId('help_next').setStyle(ButtonStyle.Primary).setDisabled(disabled || single || idx === total - 1), 'next', '>');
+      const page = applyEmoji(new ButtonBuilder().setCustomId('help_page').setStyle(ButtonStyle.Secondary).setDisabled(disabled || single), 'navigate', '⇅');
       const stop = applyEmoji(new ButtonBuilder().setCustomId('help_stop').setStyle(ButtonStyle.Danger).setDisabled(disabled), 'cancel', 'x');
-      const next = applyEmoji(new ButtonBuilder().setCustomId('help_next').setStyle(ButtonStyle.Secondary).setDisabled(disabled || idx === total - 1), 'next', '>');
-      return new ActionRowBuilder().addComponents(prev, stop, next);
+      return new ActionRowBuilder().addComponents(prev, next, page, stop);
     }
 
     // Build alias → key lookup
@@ -846,6 +848,17 @@ module.exports = {
       const commandFullQuery = [command.name, ...subArgs].join(' ');
 
       if (command.help && Array.isArray(command.help)) {
+        // Group command, no subcommand specified → paginate all subcommands
+        if (subArgs.length === 0 && command.help.length > 1) {
+          const { paginate } = require('../utils/paginate');
+          const pagesWithPrefix = command.help.map(p => ({
+            ...p,
+            usage: p.usage && !p.usage.startsWith(prefix) ? `${prefix}${p.usage}` : p.usage,
+            example: p.example && !p.example.startsWith(prefix) ? `${prefix}${p.example}` : p.example,
+          }));
+          return paginate(message, pagesWithPrefix, command.category || command.name);
+        }
+
         let matchedPage = null;
 
         if (subArgs.length > 0) {
@@ -962,7 +975,41 @@ module.exports = {
     });
 
     collector.on('collect', async interaction => {
-      await interaction.deferUpdate();
+      if (interaction.customId === 'help_page') {
+        try {
+          await interaction.reply({
+            content: `🔢 What **page** would you like to skip to?`,
+            ephemeral: true,
+          });
+        } catch {}
+
+        const filter = (m) =>
+          m.author.id === message.author.id &&
+          m.channel.id === message.channel.id &&
+          /^\d+$/.test(m.content.trim());
+
+        try {
+          const collected = await message.channel.awaitMessages({
+            filter,
+            max: 1,
+            time: 30_000,
+            errors: ['time'],
+          });
+          const userMsg = collected.first();
+          const num = parseInt(userMsg.content.trim(), 10);
+          userMsg.delete().catch(() => {});
+
+          if (num >= 1 && num <= allPages.length && num - 1 !== current) {
+            current = num - 1;
+            await msg.edit({ embeds: [allPages[current]], components: [buildRow(current, allPages.length)] }).catch(() => {});
+          }
+        } catch { /* timed out */ }
+
+        try { await interaction.deleteReply(); } catch {}
+        return;
+      }
+
+      try { await interaction.deferUpdate(); } catch {}
       if (interaction.customId === 'help_stop') {
         collector.stop('user');
         return msg.delete().catch(() => {});

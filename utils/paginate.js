@@ -1,6 +1,10 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const { color } = require('../config.json');
-const emojis = require('../emojis.json');
+
+function getEmojis() {
+  delete require.cache[require.resolve('../emojis.json')];
+  return require('../emojis.json');
+}
 
 function parseEmoji(tag) {
   const m = /^<(a)?:([a-zA-Z0-9_]+):(\d+)>$/.exec(tag || '');
@@ -10,6 +14,7 @@ function parseEmoji(tag) {
 
 async function paginate(message, pages, module) {
   let current = 0;
+  const emojis = getEmojis();
 
   function buildEmbed(i) {
     const p = pages[i];
@@ -31,18 +36,20 @@ async function paginate(message, pages, module) {
   }
 
   function buildRow(i, disabled = false) {
+    const single = pages.length <= 1;
+
     const prevBtn = new ButtonBuilder()
       .setCustomId('pag_prev')
       .setStyle(ButtonStyle.Primary)
-      .setDisabled(disabled || i === 0);
+      .setDisabled(disabled || single || i === 0);
     const nextBtn = new ButtonBuilder()
       .setCustomId('pag_next')
       .setStyle(ButtonStyle.Primary)
-      .setDisabled(disabled || i === pages.length - 1);
+      .setDisabled(disabled || single || i === pages.length - 1);
     const pageBtn = new ButtonBuilder()
       .setCustomId('pag_page')
       .setStyle(ButtonStyle.Secondary)
-      .setDisabled(true);
+      .setDisabled(disabled || single);
     const stopBtn = new ButtonBuilder()
       .setCustomId('pag_stop')
       .setStyle(ButtonStyle.Danger)
@@ -55,13 +62,13 @@ async function paginate(message, pages, module) {
 
     if (prevE) prevBtn.setEmoji(prevE); else prevBtn.setLabel('<');
     if (nextE) nextBtn.setEmoji(nextE); else nextBtn.setLabel('>');
-    if (navE) pageBtn.setEmoji(navE);
+    if (navE) pageBtn.setEmoji(navE); else pageBtn.setLabel('⇅');
     if (stopE) stopBtn.setEmoji(stopE); else stopBtn.setLabel('x');
 
     return new ActionRowBuilder().addComponents(prevBtn, nextBtn, pageBtn, stopBtn);
   }
 
-  const components = pages.length === 1 ? [] : [buildRow(0)];
+  const components = [buildRow(0)];
   const msg = await message.channel.send({ embeds: [buildEmbed(0)], components });
 
   if (pages.length === 1) return;
@@ -73,7 +80,43 @@ async function paginate(message, pages, module) {
   });
 
   collector.on('collect', async interaction => {
-    await interaction.deferUpdate();
+    if (interaction.customId === 'pag_page') {
+      try {
+        await interaction.reply({
+          content: `🔢 What **page** would you like to skip to?`,
+          ephemeral: true,
+        });
+      } catch {}
+
+      const filter = (m) =>
+        m.author.id === message.author.id &&
+        m.channel.id === message.channel.id &&
+        /^\d+$/.test(m.content.trim());
+
+      try {
+        const collected = await message.channel.awaitMessages({
+          filter,
+          max: 1,
+          time: 30_000,
+          errors: ['time'],
+        });
+        const userMsg = collected.first();
+        const num = parseInt(userMsg.content.trim(), 10);
+        userMsg.delete().catch(() => {});
+
+        if (num >= 1 && num <= pages.length && num - 1 !== current) {
+          current = num - 1;
+          await msg.edit({ embeds: [buildEmbed(current)], components: [buildRow(current)] }).catch(() => {});
+        }
+      } catch {
+        /* timed out — silently ignore */
+      }
+
+      try { await interaction.deleteReply(); } catch {}
+      return;
+    }
+
+    try { await interaction.deferUpdate(); } catch {}
 
     if (interaction.customId === 'pag_stop') {
       collector.stop('user');
