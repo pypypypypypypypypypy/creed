@@ -1,7 +1,7 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { color } = require("../config.json");
 
-const ADD = '<:add:1496708513177538600>';
+const SUCCESS = '<:success:1496708562695618641>';
 
 module.exports = {
   category: 'fun',
@@ -26,6 +26,6 @@ module.exports = {
 
     client.snipes?.delete(message.channel.id);
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${ADD} ${message.author}: Cleared snipes`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${SUCCESS} ${message.author}: Cleared snipes`)] });
   }
 };
