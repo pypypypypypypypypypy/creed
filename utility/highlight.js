@@ -6,7 +6,7 @@ const { default_prefix } = require('../config.json');
 
 module.exports = {
   name: 'highlight',
-  aliases: ['hl'],
+  aliases: [],
   category: 'utility',
   help: [
     { name: 'highlight', description: 'Get notified when a word is mentioned', aliases: 'hl', parameters: 'n/a', information: 'n/a', usage: 'highlight', example: 'highlight' },
