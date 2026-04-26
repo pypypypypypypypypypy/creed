@@ -1,11 +1,12 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { color, default_prefix } = require('../config.json');
-const { deny, warn } = require('../emojis.json');
+const { default_prefix } = require('../config.json');
 const { paginate } = require('../utils/paginate');
 const db = require('../db');
 
 const ADD = '<:add:1496708513177538600>';
 const REMOVE = '<:remove:1496708551161155697>';
+const SUCCESS = '<:success:1496708562695618641>';
+const BLUE = '#5dade2';
 
 function findRole(message, parts) {
   if (!parts || !parts.length) return message.mentions.roles.first() || null;
@@ -36,14 +37,16 @@ function findMember(message, arg) {
   );
 }
 
-function ok(message, text, kind = 'add') {
-  const emoji = kind === 'remove' ? REMOVE : ADD;
-  return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${emoji} ${message.author}: ${text}`)] });
+function send(message, emoji, text) {
+  return message.channel.send({ embeds: [new EmbedBuilder().setColor(BLUE).setDescription(`${emoji} ${message.author}: ${text}`)] });
 }
 
-function fail(message, text) {
-  return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: ${text}`)] });
+function ok(message, text, kind = 'success') {
+  const emoji = kind === 'remove' ? REMOVE : kind === 'add' ? ADD : SUCCESS;
+  return send(message, emoji, text);
 }
+
+function fail(message, text) { return send(message, SUCCESS, text); }
 
 const SUBS = ['create','make','delete','del','edit','editname','rename','color','colour','topcolor','topcolour','tc','hoist','mentionable','mention','bots','humans','has','icon','restore','cancel','kill'];
 
@@ -81,10 +84,10 @@ module.exports = {
       const role = findRole(message, roleParts);
       if (!role) return fail(message, `Role not found. Try: \`${prefix}role @${member.user.username} <role name>\``);
       if (role.position >= message.member.roles.highest.position && message.guild.ownerId !== message.author.id) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot manage a role higher than yours.`)] });
+        return fail(message, `You cannot manage a role higher than yours.`);
       }
       if (role.position >= message.guild.members.me.roles.highest.position) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: I cannot manage a role higher than mine.`)] });
+        return fail(message, `I cannot manage a role higher than mine.`);
       }
       if (member.roles.cache.has(role.id)) {
         const result = await member.roles.remove(role).catch(() => null);
@@ -117,7 +120,7 @@ module.exports = {
       const name = subArgs.slice(1).join(' ');
       if (!role || !name) return fail(message, `Usage: \`${prefix}role rename <role> <new name>\``);
       await role.setName(name).catch(() => null);
-      return ok(message, `Renamed ${role} to **${name}**.`, 'add');
+      return ok(message, `Renamed ${role} to **${name}**.`);
     }
 
     if (['color', 'colour', 'topcolor', 'topcolour', 'tc'].includes(sub)) {
@@ -128,7 +131,7 @@ module.exports = {
       if (!role || !hex) return fail(message, `Usage: \`${prefix}role color <role> #hex\``);
       const colorValue = hex.startsWith('#') ? hex : `#${hex}`;
       await role.setColor(colorValue).catch(() => null);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor(colorValue).setDescription(`${ADD} ${message.author}: Updated ${role}'s color to **${colorValue}**.`)] });
+      return ok(message, `Updated ${role}'s color to **${colorValue}**.`);
     }
 
     if (sub === 'hoist' || ['mentionable', 'mention'].includes(sub)) {
@@ -136,7 +139,7 @@ module.exports = {
       if (!role) return fail(message, `Usage: \`${prefix}role ${sub} <role>\``);
       if (sub === 'hoist') await role.setHoist(!role.hoist).catch(() => null);
       else await role.setMentionable(!role.mentionable).catch(() => null);
-      return ok(message, `${role} ${sub === 'hoist' ? 'hoist' : 'mentionable'} toggled.`, 'add');
+      return ok(message, `${role} ${sub === 'hoist' ? 'hoist' : 'mentionable'} toggled.`);
     }
 
     if (['bots', 'humans'].includes(sub)) {
@@ -160,7 +163,7 @@ module.exports = {
         return ok(message, `Removed ${role} from **${count}** member(s).`, 'remove');
       }
       const members = role.members.map(m => `${m} — ${m.user.tag}`);
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setTitle(`Members with ${role.name}`).setDescription(members.length ? members.slice(0, 50).join('\n') : 'No cached members have this role.')] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor(BLUE).setTitle(`Members with ${role.name}`).setDescription(members.length ? members.slice(0, 50).join('\n') : 'No cached members have this role.')] });
     }
 
     if (sub === 'icon') {
@@ -168,10 +171,10 @@ module.exports = {
       const icon = message.attachments.first()?.url || subArgs[1];
       if (!role || !icon) return fail(message, `Usage: \`${prefix}role icon <role> <emoji or image url>\``);
       await role.setIcon(icon).catch(() => null);
-      return ok(message, `Updated ${role}'s icon.`, 'add');
+      return ok(message, `Updated ${role}'s icon.`);
     }
 
-    if (sub === 'restore') return ok(message, 'Role restore data has been checked. No pending restore entries were found.', 'add');
+    if (sub === 'restore') return ok(message, 'Role restore data has been checked. No pending restore entries were found.');
     if (['cancel', 'kill'].includes(sub)) return ok(message, 'Cancelled pending role operations.', 'remove');
   }
 };
