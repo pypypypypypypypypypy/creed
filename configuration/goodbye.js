@@ -6,7 +6,7 @@ const { paginate } = require('../utils/paginate');
 
 module.exports = {
   name: 'goodbye',
-  aliases: ['bye', 'leave'],
+  aliases: ['bye'],
   category: 'configuration',
   help: [
     { name: 'goodbye', description: 'Manage goodbye messages when members leave', aliases: 'bye, leave', parameters: 'n/a', information: 'MANAGE_GUILD', usage: 'goodbye', example: 'goodbye' },
