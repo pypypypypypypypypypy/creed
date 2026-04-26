@@ -45,7 +45,7 @@ module.exports = {
 ],
 
     name: 'vanitysniper',
-  aliases: ['vs', 'vanity'],
+  aliases: ['vs'],
 
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
