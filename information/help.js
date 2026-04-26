@@ -8,7 +8,7 @@ function getEmojis() {
 
 module.exports = {
   name: "help",
-  aliases: ["h", "commands", "cmds"],
+  aliases: ["h"],
   category: 'information',
   help: [
     { name: 'help', description: 'View all commands or get help for a specific command', aliases: 'n/a', parameters: '[command] [subcommand]', information: 'n/a', usage: 'help [command] [subcommand]', example: 'help welcome add' },
