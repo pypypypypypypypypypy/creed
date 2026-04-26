@@ -161,20 +161,35 @@ async function getRolimons(userId) {
 }
 
 async function getGroupThumb(groupId) {
-  const d = await jget(
-    `https://thumbnails.roblox.com/v1/groups/icons?groupIds=${groupId}&size=150x150&format=Png&isCircular=false`
-  );
-  return d && d.data && d.data[0] && d.data[0].imageUrl;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const d = await jget(
+      `https://thumbnails.roblox.com/v1/groups/icons?groupIds=${groupId}&size=150x150&format=Png&isCircular=false`
+    );
+    const item = d && d.data && d.data[0];
+    if (!item) return null;
+    if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
+    if (item.state === 'Blocked' || item.state === 'Error') return null;
+    if (attempt < 2) await new Promise(r => setTimeout(r, 1200));
+  }
+  return null;
 }
 
 async function getGameThumbs(universeIds) {
   if (!universeIds.length) return {};
-  const d = await jget(
-    `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeIds.join(',')}&size=150x150&format=Png&isCircular=false`
-  );
   const map = {};
-  if (d && d.data) {
-    for (const t of d.data) map[t.targetId] = t.imageUrl;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const d = await jget(
+      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeIds.join(',')}&size=150x150&format=Png&isCircular=false`
+    );
+    if (!d || !d.data) return map;
+    let allDone = true;
+    for (const t of d.data) {
+      if (map[t.targetId]) continue;
+      if (t.state === 'Completed' && t.imageUrl) map[t.targetId] = t.imageUrl;
+      else if (t.state !== 'Blocked' && t.state !== 'Error') allDone = false;
+    }
+    if (allDone) break;
+    if (attempt < 2) await new Promise(r => setTimeout(r, 1200));
   }
   return map;
 }
@@ -221,10 +236,10 @@ function buildSelect(active) {
 
 function buildPager(page, totalPages, ownerId, sortable = false) {
   const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Primary).setEmoji('◀').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Primary).setEmoji('▶').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_sort').setStyle(ButtonStyle.Secondary).setEmoji('↕').setDisabled(!sortable),
-    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji('🗑')
+    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Secondary).setEmoji('1496708665862783106').setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_nav').setStyle(ButtonStyle.Secondary).setEmoji('1496708656807542844').setLabel(`${page + 1}/${totalPages}`).setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Secondary).setEmoji('1496708661525876787').setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji('1496708523613098035')
   );
   return row;
 }
@@ -530,7 +545,7 @@ module.exports = {
     const components = () => {
       const pi = pageInfo();
       const rows = [buildSelect(state.view)];
-      if (pi.total > 1 || pi.sortable) rows.push(buildPager(state.page, pi.total, message.author.id, pi.sortable));
+      if (pi.total > 1) rows.push(buildPager(state.page, pi.total, message.author.id, false));
       rows.push(buildLinkRow(user.id));
       return rows;
     };
@@ -551,6 +566,21 @@ module.exports = {
       if (i.user.id !== message.author.id) {
         return i.reply({ content: 'Only the command runner can use these controls.', ephemeral: true }).catch(() => {});
       }
+      if (i.customId === 'rblx_nav') {
+        try { await i.reply({ content: '🔢 What **page** would you like to skip to?', ephemeral: true }); } catch {}
+        const filter = (m) => m.author.id === message.author.id && m.channel.id === message.channel.id && /^\d+$/.test(m.content.trim());
+        try {
+          const collected = await message.channel.awaitMessages({ filter, max: 1, time: 30_000, errors: ['time'] });
+          const userMsg = collected.first();
+          const num = parseInt(userMsg.content.trim(), 10);
+          userMsg.delete().catch(() => {});
+          const total = pageInfo().total;
+          if (num >= 1 && num <= total) state.page = num - 1;
+        } catch {}
+        try { await i.deleteReply(); } catch {}
+        await thinking.edit({ embeds: [await embedFor()], components: components() }).catch(() => {});
+        return;
+      }
       try {
         if (i.customId === 'rblx_view' && i.componentType === ComponentType.StringSelect) {
           state.view = i.values[0];
@@ -561,14 +591,6 @@ module.exports = {
         } else if (i.customId === 'rblx_next') {
           const total = pageInfo().total;
           state.page = (state.page + 1) % total;
-        } else if (i.customId === 'rblx_sort') {
-          state.sortAsc = !state.sortAsc;
-          if (state.view === 'groups') ctx.groups.sort((a, b) => state.sortAsc ? (a.group?.name || '').localeCompare(b.group?.name || '') : (b.group?.name || '').localeCompare(a.group?.name || ''));
-          if (state.view === 'games') ctx.games.sort((a, b) => state.sortAsc ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || ''));
-          if (state.view === 'names') sortPaged(ctx.names, 'name');
-          if (state.view === 'friends') sortPaged(ctx.friends, 'name');
-          if (state.view === 'followers') sortPaged(ctx.followers, 'name');
-          if (state.view === 'following') sortPaged(ctx.following, 'name');
         } else if (i.customId === 'rblx_close') {
           collector.stop('closed');
           return i.update({ components: [] }).catch(() => {});
