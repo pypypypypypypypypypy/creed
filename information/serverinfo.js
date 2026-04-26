@@ -36,10 +36,6 @@ module.exports = {
       4: 'Highest'
     };
 
-    const features = guild.features.map(f =>
-      f.toLowerCase().replace(/(^|_)(\S)/g, (s) => s.toUpperCase()).replace(/_/g, ' ')
-    );
-
     const owner = await guild.fetchOwner().catch(() => null);
     const ownerTag = owner ? owner.user.tag : 'Unknown';
 
@@ -62,7 +58,6 @@ module.exports = {
         { name: '**Design**', value: `**Banner:** ${banner ? `[Click Here](${banner})` : 'N/A'}\n**Splash:** ${splash ? `[Click Here](${splash})` : 'N/A'}\n**Icon:** ${icon ? `[Click Here](${icon})` : 'N/A'}`, inline: true },
         { name: `**Channels (${guild.channels.cache.size})**`, value: `**Text:** ${textChannels}\n**Voice:** ${voiceChannels}\n**Category:** ${categories}`, inline: true },
         { name: '**Other**', value: `**Roles:** ${guild.roles.cache.size}\n**Emojis:** ${guild.emojis.cache.size}`, inline: true },
-        { name: '**Features**', value: features.length ? features.map(f => `\`${f}\``).join(', ') : 'N/A', inline: false }
       );
 
     message.channel.send({ embeds: [embed] });
