@@ -19,7 +19,7 @@ module.exports = {
 ],
 
     name: 'mail',
-  aliases: ['dm', 'sendmail'],
+  aliases: ['sendmail'],
   category: 'utility',
 
   run: async (client, message, args) => {
