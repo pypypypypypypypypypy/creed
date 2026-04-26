@@ -17,7 +17,7 @@ module.exports = {
 ],
 
     name: "google",
-  aliases: ["g"],
+  aliases: [],
   category: "utility",
 
   run: async (client, message, args) => {
