@@ -53,17 +53,31 @@ async function resolveUser(input) {
 }
 
 async function getAvatarThumb(userId, size = '420x420') {
-  const d = await jget(
-    `https://thumbnails.roblox.com/v1/users/avatar?userIds=${userId}&size=${size}&format=Png&isCircular=false`
-  );
-  return d && d.data && d.data[0] && d.data[0].imageUrl;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const d = await jget(
+      `https://thumbnails.roblox.com/v1/users/avatar?userIds=${userId}&size=${size}&format=Png&isCircular=false`
+    );
+    const item = d && d.data && d.data[0];
+    if (!item) return null;
+    if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
+    if (item.state === 'Blocked' || item.state === 'Error') return null;
+    if (attempt < 2) await new Promise(r => setTimeout(r, 1200));
+  }
+  return null;
 }
 
 async function getAvatarHeadshot(userId, size = '150x150') {
-  const d = await jget(
-    `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=${size}&format=Png&isCircular=false`
-  );
-  return d && d.data && d.data[0] && d.data[0].imageUrl;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const d = await jget(
+      `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=${size}&format=Png&isCircular=false`
+    );
+    const item = d && d.data && d.data[0];
+    if (!item) return null;
+    if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
+    if (item.state === 'Blocked' || item.state === 'Error') return null;
+    if (attempt < 2) await new Promise(r => setTimeout(r, 1200));
+  }
+  return null;
 }
 
 async function getPresence(userId) {
@@ -268,12 +282,16 @@ async function buildProfileEmbed(ctx) {
     .setThumbnail(headshot || null);
 }
 
-function buildAvatarEmbed(user, fullBody) {
-  return new EmbedBuilder()
+function buildAvatarEmbed(user, fullBody, headshot) {
+  const img = fullBody || headshot;
+  const e = new EmbedBuilder()
     .setColor(color)
     .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
     .setTitle('Avatar')
-    .setImage(fullBody || null);
+    .setURL(`https://www.roblox.com/users/${user.id}/profile`);
+  if (img) e.setImage(img);
+  else e.setDescription('Avatar image is currently unavailable from Roblox. Try again in a moment.');
+  return e;
 }
 
 function buildGroupEmbed(user, groups, page) {
@@ -484,7 +502,7 @@ module.exports = {
     const embedFor = async () => {
       switch (state.view) {
         case 'profile': return await buildProfileEmbed(ctx);
-        case 'avatar': return buildAvatarEmbed(user, fullBody);
+        case 'avatar': return buildAvatarEmbed(user, fullBody, headshot);
         case 'groups': return buildGroupEmbed(user, ctx.groups, state.page);
         case 'games': return buildGamesEmbed(user, ctx.games, state.page, ctx.gameThumbs);
         case 'wearing': return buildWearingEmbed(user, ctx.wearingDetails, state.page);
