@@ -238,7 +238,7 @@ module.exports = {
     { name: 'fortnite cosmetic', description: 'Search a cosmetic by name.', aliases: 'fn cos', parameters: '<query>', information: 'n/a', usage: 'fortnite cosmetic <query>', example: 'fortnite cosmetic peely' },
     { name: 'fortnite creator', description: 'Look up a Support-a-Creator code.', aliases: 'fn sac', parameters: '<code>', information: 'n/a', usage: 'fortnite creator <code>', example: 'fortnite creator ninja' },
   ],
-  aliases: ['fn'],
+  aliases: [],
 
   run: async (client, message, args) => {
     if (args.length === 0) return showHelp(message);
