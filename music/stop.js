@@ -6,7 +6,7 @@ module.exports = {
   category: 'music',
   help: [{ name: 'stop', description: 'Stop the music and clear the queue', aliases: 'n/a', parameters: 'n/a', information: 'n/a', usage: 'stop', example: 'stop' }],
   name: 'stop',
-  aliases: ['leave', 'disconnect', 'dc'],
+  aliases: ['disconnect'],
 
   run: async (client, message) => {
     const player = client.lavalink?.getPlayer(message.guild.id);
