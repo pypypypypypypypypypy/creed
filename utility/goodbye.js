@@ -55,7 +55,7 @@ module.exports = {
 ],
 
     name: 'goodbye',
-  aliases: ['farewell', 'leave'],
+  aliases: ['farewell'],
 
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
