@@ -18,7 +18,7 @@ module.exports = {
 ],
 
     name: 'lookup',
-  aliases: ['vanity'],
+  aliases: [],
 
   run: async (client, message, args) => {
     const helpEmbed = new EmbedBuilder()
