@@ -77,7 +77,7 @@ module.exports = {
     usage: 'reddit <subreddit>',
     example: 'reddit memes',
   }],
-  aliases: ['r'],
+  aliases: [],
   run: async (client, message, args) => {
     const sub = (args[0] || '').replace(/^r\//, '').trim();
     if (!sub) return warn(message, 'Usage: `reddit <subreddit>`');
