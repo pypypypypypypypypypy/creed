@@ -154,16 +154,21 @@ module.exports = {
     }
 
     // Force the exact hierarchy from the screenshot (Developer highest, NPC
-    // lowest). @everyone is position 0; lowest custom role is 1, then up.
+    // lowest). Positions must stay strictly BELOW the bot's top role — even
+    // Administrator can't move a role above its own top role. We refetch the
+    // bot's position because creating 33 roles shifted it upward.
     try {
-      const positions = ROLES
-        .map((def, i) => {
-          const role = createdRoleByName.get(def.name);
-          if (!role) return null;
-          return { role: role.id, position: ROLES.length - i };
-        })
-        .filter(Boolean);
-      if (positions.length) await guild.roles.setPositions(positions);
+      await guild.roles.fetch().catch(() => {});
+      const myTopNow = guild.members.me.roles.highest.position;
+      const ordered = ROLES
+        .map((def) => createdRoleByName.get(def.name))
+        .filter(Boolean); // top-down layout order
+      if (ordered.length && myTopNow - 1 >= ordered.length) {
+        const positions = ordered.map((role, i) => ({ role: role.id, position: myTopNow - 1 - i }));
+        await guild.roles.setPositions(positions);
+      } else if (ordered.length) {
+        log.errors.push(`reorder roles: my top role is at position ${myTopNow}, need to be above ${ordered.length} roles`);
+      }
     } catch (e) {
       log.errors.push(`reorder roles: ${e.message}`);
     }

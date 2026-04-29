@@ -33,6 +33,10 @@ module.exports = {
       ] });
     }
 
+    // Make sure the cache is fresh so position math is right.
+    await guild.roles.fetch().catch(() => {});
+
+    // Find layout roles in TOP-DOWN order (Developer first, NPC last).
     const found = [];
     const missing = [];
     for (const def of ROLES) {
@@ -46,18 +50,34 @@ module.exports = {
       ] });
     }
 
-    // Build position list. Highest in our layout (Developer, index 0) gets the
-    // largest position; lowest (NPC) gets position 1.
-    const positions = found.map(({ role }, _i) => {
-      const layoutIndex = ROLES.findIndex((d) => d.name === role.name);
-      return { role: role.id, position: ROLES.length - layoutIndex };
-    });
+    // Hierarchy gate. Discord forbids moving any role to a position >= the
+    // bot's own top role, regardless of Manage Roles / Administrator. So we
+    // pack the layout roles into the slots immediately below the bot.
+    const myTop = me.roles.highest.position;
+    if (myTop - 1 < found.length) {
+      return message.channel.send({ embeds: [
+        new EmbedBuilder().setColor(color).setDescription(
+          `${deny} ${message.author}: My top role is at position **${myTop}** but I need to be above **${found.length}** layout roles. ` +
+          `Drag my role higher in **Server Settings → Roles** (it must sit above every role being reordered) and try again.`
+        ),
+      ] });
+    }
+
+    // found is already in layout order (top-down). Place Developer at
+    // (myTop - 1), API/Web Dev at (myTop - 2), …, NPC at (myTop - found.length).
+    const positions = found.map(({ role }, i) => ({
+      role: role.id,
+      position: myTop - 1 - i,
+    }));
 
     try {
       await guild.roles.setPositions(positions);
     } catch (e) {
       return message.channel.send({ embeds: [
-        new EmbedBuilder().setColor(color).setDescription(`${deny} ${message.author}: Reorder failed: ${e.message}`),
+        new EmbedBuilder().setColor(color).setDescription(
+          `${deny} ${message.author}: Reorder failed: \`${e.message}\`. ` +
+          `Most common cause is my role not being above the roles I'm trying to move.`
+        ),
       ] });
     }
 
