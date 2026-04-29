@@ -8,8 +8,20 @@ function load() {
   try { return JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { return {}; }
 }
 
+// Lazy-resolve the backup module so this file stays usable even before
+// utils/backup.js exists or if the user has not configured BACKUP_CHANNEL_ID.
+let _backup = undefined;
+function getBackup() {
+  if (_backup === undefined) {
+    try { _backup = require('./utils/backup'); } catch { _backup = null; }
+  }
+  return _backup;
+}
+
 function save(data) {
   fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+  const b = getBackup();
+  if (b && typeof b.scheduleBackup === 'function') b.scheduleBackup();
 }
 
 function resolvePath(data, keys) {
