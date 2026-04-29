@@ -19,6 +19,8 @@ const COMMAND_DIRS = [
 const KNOWN_EMOJI_KEYS = {
   slot_cherry: 'slot_cherry', slot_lemon: 'slot_lemon', slot_orange: 'slot_orange',
   slot_grape: 'slot_grape', slot_star: 'slot_star', slot_diamond: 'slot_diamond',
+  slot_watermelon: 'slot_watermelon', slot_bell: 'slot_bell', slot_seven: 'slot_seven',
+  chip: 'chip',
 };
 
 function reloadCommands() {

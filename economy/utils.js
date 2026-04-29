@@ -10,8 +10,22 @@ function isEnabled(guildId) {
   return val === null ? true : val;
 }
 
+function getCurrencyEmoji() {
+  try {
+    delete require.cache[require.resolve('../emojis.json')];
+    const e = require('../emojis.json');
+    return e.chip || '$';
+  } catch {
+    return '$';
+  }
+}
+
 function fmt(amount) {
-  return `$${Number(amount).toLocaleString()}`;
+  const sym = getCurrencyEmoji();
+  const num = Number(amount).toLocaleString();
+  // If the symbol is a Discord custom emoji tag, separate it from the number
+  // with a space so it renders cleanly. Otherwise (fallback `$`), keep flush.
+  return sym.startsWith('<') ? `${sym} ${num}` : `${sym}${num}`;
 }
 
 function getWallet(guildId, userId) {

@@ -3,20 +3,27 @@ const { color } = require('../config.json');
 const { warn, approve, deny } = require('../emojis.json');
 const { fmt, getWallet, setWallet, isEnabled, hasAccount, openAccount, parseAmount } = require('./utils');
 
-function getSpinningEmoji() {
+function freshEmojis() {
   delete require.cache[require.resolve('../emojis.json')];
-  const e = require('../emojis.json');
-  return e.slots || '<a:loading:1496728277690089503>';
+  return require('../emojis.json');
 }
 
+function getSpinningEmoji() {
+  return freshEmojis().slots || '<a:loading:1496728277690089503>';
+}
+
+// Slot symbols use the bot's custom emoji pack uploaded via ,uploademojis.
+// Multipliers: cherry/lemon/orange = 3x, grape/watermelon/bell = 5x, seven = 10x.
 function getFruits() {
+  const e = freshEmojis();
   return [
-    { emoji: '🍒', key: 'cherry',  mult: 3  },
-    { emoji: '🍋', key: 'lemon',   mult: 3  },
-    { emoji: '🍊', key: 'orange',  mult: 3  },
-    { emoji: '🍇', key: 'grape',   mult: 5  },
-    { emoji: '⭐', key: 'star',    mult: 5  },
-    { emoji: '💎', key: 'diamond', mult: 10 },
+    { emoji: e.slot_cherry     || '🍒', key: 'cherry',     mult: 3  },
+    { emoji: e.slot_lemon      || '🍋', key: 'lemon',      mult: 3  },
+    { emoji: e.slot_orange     || '🍊', key: 'orange',     mult: 3  },
+    { emoji: e.slot_grape      || '🍇', key: 'grape',      mult: 5  },
+    { emoji: e.slot_watermelon || '🍉', key: 'watermelon', mult: 5  },
+    { emoji: e.slot_bell       || '🔔', key: 'bell',       mult: 5  },
+    { emoji: e.slot_seven      || '7️⃣', key: 'seven',      mult: 10 },
   ];
 }
 
