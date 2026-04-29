@@ -242,6 +242,21 @@ module.exports = {
       }
     }
 
+    // Force the exact hierarchy from the screenshot (Developer highest, NPC
+    // lowest). @everyone is position 0; lowest custom role is 1, then up.
+    try {
+      const positions = ROLES
+        .map((def, i) => {
+          const role = createdRoleByName.get(def.name);
+          if (!role) return null;
+          return { role: role.id, position: ROLES.length - i };
+        })
+        .filter(Boolean);
+      if (positions.length) await guild.roles.setPositions(positions);
+    } catch (e) {
+      log.errors.push(`reorder roles: ${e.message}`);
+    }
+
     // ---------- 5. CREATE CHANNELS ----------
     for (const cat of CATEGORIES) {
       let category;
