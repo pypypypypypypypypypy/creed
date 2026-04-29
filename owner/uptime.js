@@ -82,7 +82,7 @@ module.exports = {
     // Default: show uptime to anyone
     const embed = new EmbedBuilder()
       .setColor(color)
-      .setDescription(`:alarm_clock: **${client.user.username}** has been up for: ${formatUptime(client.uptime)}`);
+      .setDescription(`<:uptime:1496708571109396591> **${client.user.username}** has been up for: ${formatUptime(client.uptime)}`);
     return message.channel.send({ embeds: [embed] }).catch(err => {
       console.error('uptime send failed:', err.message);
     });
