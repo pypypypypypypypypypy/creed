@@ -55,7 +55,7 @@ module.exports = {
     if (!role) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: That role **doesn't** exist, state a valid role`)] });
     if (message.member.roles.highest.position <= role.position) message.channel.send({ embeds: [new EmbedBuilder().setColor("#fe6464").setDescription(`${deny} ${message.author}: You cannot remove a role that is **higher** than **yours**`)] });
 
-    await mentionedMember.roles.remove(role.id).catch(err => console.log(err))
+    await mentionedMember.roles.remove(role.id)
     const rolegiveEmbed = new EmbedBuilder()
       .setDescription(`${remove} ${message.author}: Removed ${role} from ${mentionedMember}`)
       .setColor("#46bcec")

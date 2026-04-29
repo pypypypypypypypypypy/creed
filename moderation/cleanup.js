@@ -16,13 +16,11 @@ module.exports = {
   run: async (client, message, args) => {
     if (!needPerm(message, 'ManageMessages', 'manage_messages')) return;
     const limit = Math.min(Math.max(parseInt(args[0]) || 50, 1), 100);
-    try {
-      const msgs = await message.channel.messages.fetch({ limit });
-      const prefix = require('../config.json').default_prefix;
-      const toDel = msgs.filter(m => m.author.id === client.user.id || (m.content && m.content.startsWith(prefix)));
-      const deleted = await message.channel.bulkDelete(toDel, true);
-      const reply = await message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`Cleaned up ${deleted.size} message(s).`)] });
-      setTimeout(() => reply.delete().catch(() => {}), 5000);
-    } catch (e) { return deny(message, `Failed: ${e.message}`); }
+    const msgs = await message.channel.messages.fetch({ limit });
+    const prefix = require('../config.json').default_prefix;
+    const toDel = msgs.filter(m => m.author.id === client.user.id || (m.content && m.content.startsWith(prefix)));
+    const deleted = await message.channel.bulkDelete(toDel, true);
+    const reply = await message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`Cleaned up ${deleted.size} message(s).`)] });
+    setTimeout(() => reply.delete().catch(() => {}), 5000);
   }
 };

@@ -19,13 +19,9 @@ module.exports = {
   run: async (client, message, args) => {
     if (!needPerm(message, 'BanMembers', 'ban_members')) return;
     const count = Math.min(Math.max(parseInt(args[0]) || 5, 1), 25);
-    try {
-      const bans = await message.guild.bans.fetch({ limit: count });
-      if (!bans.size) return info(message, 'Recent bans', 'No bans found.');
-      const lines = [...bans.values()].map(b => `• ${b.user.tag} (\`${b.user.id}\`) — ${b.reason || 'No reason'}`);
-      return info(message, `Recent bans (${bans.size})`, lines.join('\n').slice(0, 4000));
-    } catch (e) {
-      return deny(message, `Failed to fetch bans: ${e.message}`);
-    }
+    const bans = await message.guild.bans.fetch({ limit: count });
+    if (!bans.size) return info(message, 'Recent bans', 'No bans found.');
+    const lines = [...bans.values()].map(b => `• ${b.user.tag} (\`${b.user.id}\`) — ${b.reason || 'No reason'}`);
+    return info(message, `Recent bans (${bans.size})`, lines.join('\n').slice(0, 4000));
   }
 };

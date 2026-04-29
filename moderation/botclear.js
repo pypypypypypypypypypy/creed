@@ -30,15 +30,10 @@ module.exports = {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
 
-    try {
-      message.channel.messages.fetch().then(messages => {
-        const botMessages = messages.filter(msg => msg.author.bot);
-        message.channel.bulkDelete(botMessages);
-      });
-    } catch (err) {
-      return;
-    }
-    message.delete();
+    const messages = await message.channel.messages.fetch();
+    const botMessages = messages.filter(msg => msg.author.bot);
+    await message.channel.bulkDelete(botMessages, true);
+    await message.delete().catch(() => {});
 
     let botClearEmbed = new EmbedBuilder()
       .setColor("#a3eb7b")

@@ -45,12 +45,8 @@ module.exports = {
 
     const reason = args.slice(1).join(' ') || 'No reason provided';
 
-    try {
-      await member.voice.setDeaf(true, reason);
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: **Deafened** ${member.user.tag} — ${reason}`)] });
-    } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to deafen member: ${err.message}`)] });
-    }
+    await member.voice.setDeaf(true, reason);
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: **Deafened** ${member.user.tag} — ${reason}`)] });
     logModAction(message.guild, { action: 'Deafen', user: member.user, moderator: message.author, reason: reason || 'No Reason Supplied' }).catch(() => {});
   }
 };

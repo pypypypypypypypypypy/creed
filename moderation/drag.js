@@ -21,9 +21,7 @@ module.exports = {
     const dest = getChannel(message, args.slice(1)) || message.member.voice?.channel;
     if (!dest) return warn(message, 'Join a voice channel or specify one.');
     if (dest.type !== ChannelType.GuildVoice && dest.type !== ChannelType.GuildStageVoice) return warn(message, 'Destination must be a voice channel.');
-    try {
-      await target.voice.setChannel(dest);
-      return ok(message, `Dragged ${target} to ${dest}.`);
-    } catch (e) { return deny(message, `Failed: ${e.message}`); }
+    await target.voice.setChannel(dest);
+    return ok(message, `Dragged ${target} to ${dest}.`);
   }
 };

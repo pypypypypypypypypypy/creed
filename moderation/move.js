@@ -50,11 +50,7 @@ module.exports = {
     if (!voiceChannel || voiceChannel.type !== 2)
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Could not find that **voice channel**.`)] });
 
-    try {
-      await member.voice.setChannel(voiceChannel);
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Moved **${member.user.tag}** to **${voiceChannel.name}**`)] });
-    } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to move member: ${err.message}`)] });
-    }
+    await member.voice.setChannel(voiceChannel);
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Moved **${member.user.tag}** to **${voiceChannel.name}**`)] });
   }
 };

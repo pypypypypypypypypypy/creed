@@ -60,17 +60,13 @@ module.exports = {
       console.log('Could not DM member');
     }
 
-    try {
-      await mentionedMember.kick(reason);
-      message.channel.send('👍');
-      logModAction(message.guild, {
-        action: 'Kick',
-        user: mentionedMember.user,
-        moderator: message.author,
-        reason
-      }).catch(() => {});
-    } catch (err) {
-      console.log(err);
-    }
+    await mentionedMember.kick(reason);
+    message.channel.send('👍').catch(() => {});
+    logModAction(message.guild, {
+      action: 'Kick',
+      user: mentionedMember.user,
+      moderator: message.author,
+      reason
+    }).catch(() => {});
   }
 }
