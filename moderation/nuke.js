@@ -44,41 +44,37 @@ module.exports = {
     if (!collected || collected.size === 0)
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Nuke cancelled.`)] });
 
-    try {
-      const pos = channel.position;
-      const parent = channel.parent;
-      const perms = channel.permissionOverwrites.cache.map(o => ({
-        id: o.id,
-        allow: o.allow.bitfield,
-        deny: o.deny.bitfield,
-        type: o.type
-      }));
+    const pos = channel.position;
+    const parent = channel.parent;
+    const perms = channel.permissionOverwrites.cache.map(o => ({
+      id: o.id,
+      allow: o.allow.bitfield,
+      deny: o.deny.bitfield,
+      type: o.type
+    }));
 
-      const newChannel = await message.guild.channels.create({
-        name: channel.name,
-        type: channel.type,
-        topic: channel.topic || undefined,
-        nsfw: channel.nsfw,
-        rateLimitPerUser: channel.rateLimitPerUser,
-        parent: parent ? parent.id : undefined,
-        permissionOverwrites: perms,
-        position: pos
-      });
+    const newChannel = await message.guild.channels.create({
+      name: channel.name,
+      type: channel.type,
+      topic: channel.topic || undefined,
+      nsfw: channel.nsfw,
+      rateLimitPerUser: channel.rateLimitPerUser,
+      parent: parent ? parent.id : undefined,
+      permissionOverwrites: perms,
+      position: pos
+    });
 
-      await channel.delete('Channel nuked');
+    await channel.delete('Channel nuked');
 
-      await newChannel.send({
-        embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} Channel has been **nuked** by ${message.author}.`).setImage('https://media.tenor.com/images/2e1d68962bff7b9ab45f498e93c5e8e2/tenor.gif')]
-      });
+    await newChannel.send({
+      embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} Channel has been **nuked** by ${message.author}.`).setImage('https://media.tenor.com/images/2e1d68962bff7b9ab45f498e93c5e8e2/tenor.gif')]
+    });
 
-      logModAction(message.guild, {
-        action: 'Nuke',
-        channel: newChannel,
-        moderator: message.author,
-        reason: 'No Reason Provided'
-      }).catch(() => {});
-    } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to nuke channel: ${err.message}`)] });
-    }
+    logModAction(message.guild, {
+      action: 'Nuke',
+      channel: newChannel,
+      moderator: message.author,
+      reason: 'No Reason Provided'
+    }).catch(() => {});
   }
 };

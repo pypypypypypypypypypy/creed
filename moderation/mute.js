@@ -47,32 +47,13 @@ module.exports = {
     if (Member.id == message.author.id) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot mute **yourself**`)] })
     if (message.member.roles.highest.comparePositionTo(Member.roles.highest) >= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot mute someone that is **higher** than **yours**`)] })
     if (!Member) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: I was unable to find a member with that name`)] })
-    const role = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'muted')
+    let prefix2 = db.get(`prefix_${message.guild.id}`);
+    if (prefix2 === null) prefix2 = require('../config.json').default_prefix;
+    const role = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'muted');
     if (!role) {
-      try {
-        message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: There was no **muted** role found`)] }).then(embedMessage => {
-          embedMessage.edit({ embed: { color: "#efa23a", description: `${warn} ${message.author}: Attempting to create a **muted** role` } })
-        });
-
-        let muterole = await message.guild.roles.create({
-          data: {
-            name: 'muted',
-            permissions: []
-          }
-        });
-        message.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).forEach(async (channel, id) => {
-          await channel.createOverwrite(muterole, {
-            SEND_MESSAGES: false,
-            ADD_REACTIONS: false
-          })
-        });
-        message.channel.send({ embeds: [new EmbedBuilder().setColor("#a3eb7b").setDescription(`${approve} ${message.author}: Sucessfully created a **muted** role`)] })
-      } catch (error) {
-        console.log(error)
-        message.channel.send(error)
-      }
-    };
-    let role2 = message.guild.roles.cache.find(r => r.name.toLowerCase() === 'muted')
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: There was no **muted** role found. Run \`${prefix2}setupmute\` to create one.`)] });
+    }
+    let role2 = role;
     if (Member.roles.cache.has(role2.id)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: **${user.user.tag}** has already been muted`)] })
     const muteReason = args.slice(1).join(' ') || 'No Reason Supplied';
     await Member.roles.add(role2, muteReason)
