@@ -215,7 +215,7 @@ const APP_EMOJIS = {
 };
 function appEmojiObj(name) {
   const id = APP_EMOJIS[name];
-  return id ? { id, name } : null;
+  return id ? { id, name, animated: false } : null;
 }
 function appEmojiStr(name, fallback = '') {
   const id = APP_EMOJIS[name];
@@ -224,7 +224,6 @@ function appEmojiStr(name, fallback = '') {
 
 // Maps view value -> { label, emojiName, fallbackEmoji }
 const VIEWS = {
-  profile:   { label: 'User Profile',       emojiName: 'profile',   fallback: '👤' },
   avatar:    { label: 'Avatar',             emojiName: 'avatar',    fallback: '🧍' },
   groups:    { label: 'Groups',             emojiName: 'groups',    fallback: '👥' },
   games:     { label: 'Games',              emojiName: 'games',     fallback: '🎮' },
@@ -233,7 +232,6 @@ const VIEWS = {
   friends:   { label: 'Friends',            emojiName: 'friends',   fallback: '🧑‍🤝‍🧑' },
   followers: { label: 'Followers',          emojiName: 'followers', fallback: '🌟' },
   following: { label: 'Following',          emojiName: 'following', fallback: '➡️' },
-  rolimons:  { label: 'Rolimons',           emojiName: 'roblox',    fallback: '💎' },
 };
 
 // ---------- UI: Select / Pager / Links ----------
@@ -259,7 +257,7 @@ const PAGER_EMOJIS = {
   prev:  { id: '1496728326608388096', name: 'previous' },
   next:  { id: '1496728324414767266', name: 'next' },
   nav:   { id: '1496728322120613931', name: 'navigate' },
-  close: appEmojiObj('trash') || '🗑️',
+  close: { id: '1498895660303257742', name: 'emoji_2', animated: false },
 };
 
 function buildPager(page, totalPages) {
@@ -545,7 +543,7 @@ module.exports = {
     }
 
     const query = args.join(' ').trim();
-    const scanEmoji = appEmojiStr('roblox', '👀');
+    const scanEmoji = '<a:loading:1496708542676074667>';
     const thinking = await message.channel.send({
       embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} scanning **${query}**'s Roblox profile..`)],
     });
