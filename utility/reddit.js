@@ -14,7 +14,7 @@ function warn(message, text) {
   return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${e.warn || '⚠️'} ${message.author}: ${text}`)] });
 }
 
-const UA = 'web:drown-xd-bot:v1.0 (by Discord bot)';
+const UA = 'web:bored-xd-bot:v1.0 (by Discord bot)';
 
 let cachedToken = null;
 let cachedExpiry = 0;

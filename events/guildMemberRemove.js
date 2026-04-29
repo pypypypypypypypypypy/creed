@@ -1,4 +1,4 @@
-const client = require('../bleed')
+const client = require('../bored')
 const db = require('../db')
 const { default_prefix, color } = require("../config.json");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits, ChannelType } = require('discord.js')

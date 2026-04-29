@@ -72,7 +72,7 @@ module.exports = {
         ch = await message.guild.channels.create({
           name: 'bot-backup',
           type: ChannelType.GuildText,
-          topic: 'Auto-managed by drown-xd. Do not delete \u2014 db_data.json snapshots are uploaded here.',
+          topic: 'Auto-managed by bored-xd. Do not delete \u2014 db_data.json snapshots are uploaded here.',
           permissionOverwrites: [
             { id: message.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
             {

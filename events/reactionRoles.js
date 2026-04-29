@@ -1,4 +1,4 @@
-const client = require('../bleed');
+const client = require('../bored');
 
 if (!global.reactionRoles) global.reactionRoles = {};
 

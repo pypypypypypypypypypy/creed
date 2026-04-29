@@ -15,7 +15,7 @@ function deny(message, text) {
 }
 
 const FN = 'https://fortnite-api.com';
-const UA = 'drown-bot';
+const UA = 'bored-bot';
 
 function authHeaders() {
   const key = process.env.FORTNITE_API_KEY;

@@ -41,7 +41,7 @@ async function checkGitHub() {
   if (!present(token)) return { skip: true, detail: 'no token' };
   return timed(async () => {
     const res = await fetch('https://api.github.com/user', {
-      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot' },
+      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bored-bot' },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const j = await res.json();
@@ -74,7 +74,7 @@ async function checkLastFm() {
   if (!present(key)) return { skip: true, detail: 'no api key' };
   return timed(async () => {
     const res = await fetch(`http://ws.audioscrobbler.com/2.0/?method=user.getInfo&user=rj&api_key=${encodeURIComponent(key)}&format=json`, {
-      headers: { 'User-Agent': 'drown-bot/1.0' },
+      headers: { 'User-Agent': 'bored-bot/1.0' },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const j = await res.json();
@@ -120,7 +120,7 @@ async function checkLavalink() {
   const results = await Promise.all(nodes.map(n => timed(async () => {
     const proto = n.secure ? 'https' : 'http';
     const res = await fetch(`${proto}://${n.host}:${n.port}/version`, {
-      headers: { Authorization: n.password, 'User-Agent': 'drown-bot' },
+      headers: { Authorization: n.password, 'User-Agent': 'bored-bot' },
     });
     if (!res.ok) {
       // /version is usually unauth; if HTTP fails try TCP probe as fallback
@@ -142,7 +142,7 @@ async function checkFortnite() {
     // fortnite-api.com — same service the bot actually uses (see fun/fortnite.js, information/itemshop.js)
     // /v2/aes is a tiny auth probe — just returns the current game encryption key.
     const res = await fetch('https://fortnite-api.com/v2/aes', {
-      headers: { Authorization: key, 'User-Agent': 'drown-bot' },
+      headers: { Authorization: key, 'User-Agent': 'bored-bot' },
     });
     if (res.status === 401 || res.status === 403) throw new Error(`unauthorized (HTTP ${res.status})`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

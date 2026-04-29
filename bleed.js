@@ -43,7 +43,7 @@ const backup = require('./utils/backup');
   try {
     await client.login(token);
   } catch (e) {
-    console.error('[bleed] login failed:', e.message);
+    console.error('[bored] login failed:', e.message);
     process.exit(1);
   }
 })();

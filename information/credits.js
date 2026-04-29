@@ -14,6 +14,6 @@ module.exports = {
   name: 'credits', category: 'information', usage: 'credits',
   help: [{ name: 'credits', description: 'Show bot credits and contributors', aliases: 'n/a', parameters: 'n/a', information: 'n/a', usage: 'credits', example: 'credits' }],
   run: async (client, message, args) => {
-    return info(message, 'Credits', `**${client.user.username}**\nBased on the drown-xd codebase.\nContributions ported from upset.bot, bleed.bot, greed.best.\nDiscord.js v14 • Node.js ${process.version}`);
+    return info(message, 'Credits', `**${client.user.username}**\nBased on the bored-xd codebase.\nContributions ported from bored.bot, bored.bot, bored.best.\nDiscord.js v14 • Node.js ${process.version}`);
   }
 };

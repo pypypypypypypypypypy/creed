@@ -36,7 +36,7 @@ async function discordJson(method, urlPath) {
     method,
     headers: {
       Authorization: `Bot ${token()}`,
-      'User-Agent': 'drown-xd-backup (1.0)',
+      'User-Agent': 'bored-xd-backup (1.0)',
     },
   });
   if (!res.ok) {

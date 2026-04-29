@@ -18,7 +18,7 @@ module.exports = {
   ],
 
   name: 'about',
-  aliases: ['bleed', 'botinfo', 'bi', 'bot'],
+  aliases: ['bored', 'botinfo', 'bi', 'bot'],
 
   run: async (client, message, args) => {
     const totalUsers = client.guilds.cache.reduce((acc, g) => acc + g.memberCount, 0);

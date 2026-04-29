@@ -24,7 +24,7 @@ module.exports = {
     const helpEmbed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
       .setTitle('Command: choose')
-      .setDescription('Let bleed choose between options for you.')
+      .setDescription('Let bored choose between options for you.')
       .addFields(
         { name: '**Aliases**', value: 'pick, decide', inline: true },
         { name: '**Parameters**', value: '[option1 / option2 / ...]', inline: true },

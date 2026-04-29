@@ -16,7 +16,7 @@ module.exports = {
   help: [
     { name: 'customise', description: 'Customise the bots looks, such as pfp, banner, and nickname.', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'customise', example: 'customise' },
     { name: 'customise color', description: 'Update the bot s color.', aliases: 'n/a', parameters: '<colors>', information: 'n/a', usage: 'customise color <colors>', example: 'customise color' },
-    { name: 'customise reset', description: 'Reset upset s profile to default.', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'customise reset', example: 'customise reset' },
+    { name: 'customise reset', description: 'Reset bored s profile to default.', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'customise reset', example: 'customise reset' },
     { name: 'customise avatar', description: 'Update the bots avatar.', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'customise avatar', example: 'customise avatar' },
     { name: 'customise name', description: 'Changes the bot s Guild Nickname.', aliases: 'n/a', parameters: '<name>', information: 'n/a', usage: 'customise name <name>', example: 'customise name' },
     { name: 'customise font', description: 'Update the bot s font.', aliases: 'n/a', parameters: '', information: 'n/a', usage: 'customise font', example: 'customise font' },

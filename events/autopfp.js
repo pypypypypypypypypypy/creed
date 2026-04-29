@@ -1,4 +1,4 @@
-const client = require('../bleed');
+const client = require('../bored');
 const db = require('../db');
 
 const intervals = new Map();

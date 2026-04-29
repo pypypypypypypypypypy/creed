@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "node bleed.js",
+    "startCommand": "node bored.js",
     "restartPolicyType": "ALWAYS"
   }
 }

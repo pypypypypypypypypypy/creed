@@ -11,7 +11,7 @@ const moment = require('moment');
 const { color } = require('../config.json');
 const { warn } = require('../emojis.json');
 
-const UA = { 'User-Agent': 'drown-xd-bot/1.0 (+https://github.com/abannition/drown-xd)' };
+const UA = { 'User-Agent': 'bored-xd-bot/1.0 (+https://github.com/abannition/bored-xd)' };
 
 const ROLIMONS_LOGO = 'https://www.rolimons.com/imgs/icons/rolimons_logo_512.png';
 

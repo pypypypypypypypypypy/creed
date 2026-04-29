@@ -19,9 +19,9 @@ const EXCLUDE_FILE_PATTERNS = [
   /^yarn-error\.log/i,
   /\.log$/i,
   /\.DS_Store$/i,
-  /^drown-bot-fixed\.zip$/i,
-  /^drown-xd-source.*\.zip$/i,
-  /^drown-xd-emojis.*\.zip$/i,
+  /^bored-bot-fixed\.zip$/i,
+  /^bored-xd-source.*\.zip$/i,
+  /^bored-xd-emojis.*\.zip$/i,
 ];
 
 function shouldExcludeFile(name) {
@@ -174,15 +174,15 @@ module.exports = {
       }).catch(() => {});
     }
 
-    const sourceAtt = new AttachmentBuilder(source.buf, { name: 'drown-xd-source.zip' });
-    const emojiAtt = new AttachmentBuilder(emojis.buf, { name: 'drown-xd-emojis.zip' });
+    const sourceAtt = new AttachmentBuilder(source.buf, { name: 'bored-xd-source.zip' });
+    const emojiAtt = new AttachmentBuilder(emojis.buf, { name: 'bored-xd-emojis.zip' });
 
     const summary = new EmbedBuilder()
       .setColor('#2ecc71')
       .setTitle('zipup complete')
       .setDescription(
-        `**Source:** \`drown-xd-source.zip\` — ${fmtBytes(source.buf.length)}, ${source.fileCount} files\n` +
-        `**Emojis:** \`drown-xd-emojis.zip\` — ${fmtBytes(emojis.buf.length)}, ${emojis.ok}/${emojis.total} downloaded${emojis.fail ? ` (${emojis.fail} failed)` : ''}`,
+        `**Source:** \`bored-xd-source.zip\` — ${fmtBytes(source.buf.length)}, ${source.fileCount} files\n` +
+        `**Emojis:** \`bored-xd-emojis.zip\` — ${fmtBytes(emojis.buf.length)}, ${emojis.ok}/${emojis.total} downloaded${emojis.fail ? ` (${emojis.fail} failed)` : ''}`,
       );
 
     // Try sending both in one message; if Discord rejects it for size, send

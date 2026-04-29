@@ -10,12 +10,12 @@ const APIS = [
   {
     name: 'Discord (bot gateway)',
     keys: ['DISCORD_TOKEN', 'TOKEN'],
-    belongs: 'Bot login token. Read by bleed.js to log the client in to Discord.',
+    belongs: 'Bot login token. Read by bored.js to log the client in to Discord.',
   },
   {
     name: 'GitHub API',
     keys: ['DROWN_GITHUB_TOKEN', 'GITHUB_TOKEN'],
-    belongs: 'Auto-pushes emojis.json after ,uploademojis. Repo controlled by `DROWN_GITHUB_OWNER` / `DROWN_GITHUB_REPO` (defaults: abannition / drown-xd).',
+    belongs: 'Auto-pushes emojis.json after ,uploademojis. Repo controlled by `DROWN_GITHUB_OWNER` / `DROWN_GITHUB_REPO` (defaults: abannition / bored-xd).',
   },
   {
     name: 'Spotify Web API',

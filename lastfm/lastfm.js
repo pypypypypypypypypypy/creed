@@ -29,7 +29,7 @@ function getFmUsername(db, userId, arg) {
 }
 
 async function lfm(params) {
-  return rp({ uri: API, qs: { ...params, api_key: APIKEY, format: 'json' }, json: true, headers: { 'User-Agent': 'bleed-bot/1.0' } });
+  return rp({ uri: API, qs: { ...params, api_key: APIKEY, format: 'json' }, json: true, headers: { 'User-Agent': 'bored-bot/1.0' } });
 }
 
 function parsePeriod(str) {

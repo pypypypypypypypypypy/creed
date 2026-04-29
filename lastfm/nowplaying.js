@@ -48,7 +48,7 @@ module.exports = {
     try {
       const data = await rp({
         uri: `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${fmUser}&api_key=${APIKEY}&format=json&extended=1&limit=1`,
-        json: true, headers: { 'User-Agent': 'bleed-bot/1.0' }
+        json: true, headers: { 'User-Agent': 'bored-bot/1.0' }
       });
 
       const track = data.recenttracks.track[0];
