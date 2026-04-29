@@ -75,6 +75,9 @@ module.exports = {
     const fruits = getFruits();
     const spinning = getSpinningEmoji();
 
+    // Reveal beats — long enough that each reel clearly drops on its own.
+    const REVEAL_DELAY_MS = 1400;
+
     const spinMsg = await message.channel.send({
       embeds: [
         new EmbedBuilder()
@@ -84,9 +87,9 @@ module.exports = {
       ]
     });
 
-    await wait(500);
-
     const [a, b, c] = spin(fruits);
+
+    await wait(REVEAL_DELAY_MS);
 
     await spinMsg.edit({
       embeds: [
@@ -97,7 +100,7 @@ module.exports = {
       ]
     });
 
-    await wait(500);
+    await wait(REVEAL_DELAY_MS);
 
     await spinMsg.edit({
       embeds: [
@@ -108,7 +111,7 @@ module.exports = {
       ]
     });
 
-    await wait(600);
+    await wait(REVEAL_DELAY_MS);
 
     const display = buildSlotDisplay(a.emoji, b.emoji, c.emoji);
 
