@@ -30,10 +30,10 @@
   "vm_decrease": "<:vm_decrease:1496745383794049105>",
   "replyline": "<:replyline:1493704862536433684>",
   "slots": "<a:loading:1496728277690089503>",
-  "slot_cherry": "<:slot_cherry:1493709767292485642>",
-  "slot_lemon": "<:slot_lemon:1493709771709223122>",
-  "slot_orange": "<:slot_orange:1493709776276684930>",
-  "slot_grape": "<:slot_grape:1493709781083619389>",
+  "slot_cherry": "<:slot_cherry:1498911567792836608>",
+  "slot_lemon": "<a:slot_lemon:1498911572536594472>",
+  "slot_orange": "<:slot_orange:1498911577376690267>",
+  "slot_grape": "<:slot_grape:1498911581898149918>",
   "slot_star": "<:slot_star:1493709786041028622>",
   "slot_diamond": "<:slot_diamond:1493709791170658344>",
   "previous": "<:previous:1496728326608388096>",
@@ -59,8 +59,8 @@
   "white": "<:white:1496708637060759634>",
   "white_left_rounded": "<:white_left_rounded:1496708641422708737>",
   "white_right_rounded": "<:white_right_rounded:1496708650100719617>",
-  "slot_watermelon": "🍉",
-  "slot_bell": "🔔",
-  "slot_seven": "7️⃣",
-  "chip": "$"
+  "slot_watermelon": "<:slot_watermelon:1498911584649478266>",
+  "slot_bell": "<:slot_bell:1498911587103281225>",
+  "slot_seven": "<:slot_seven:1498911590408261786>",
+  "chip": "<:chip:1498911593336017018>"
 }
