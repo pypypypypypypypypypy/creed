@@ -45,13 +45,29 @@ function openAccount(guildId, userId) {
   if (!db.has(`economy.${scope}.bank.${userId}`)) db.set(`economy.${scope}.bank.${userId}`, 0);
 }
 
-function parseAmount(str, wallet) {
-  if (!str) return NaN;
-  const lower = str.toLowerCase();
-  if (lower === 'all') return wallet;
-  if (lower === 'half') return Math.floor(wallet / 2);
-  const n = parseInt(str.replace(/,/g, ''), 10);
-  return isNaN(n) ? NaN : n;
+// Parses amounts like:
+//   1000, 1,000, 1_000  -> 1000
+//   5k, 2.5k            -> 5000, 2500
+//   10m, 1.2m           -> 10000000, 1200000
+//   3b, 4t              -> 3000000000, 4000000000000
+//   all / half / max    -> wallet / wallet/2 / wallet
+// Returns NaN for invalid input. `wallet` is optional for plain numeric
+// callers that don't need the all/half shortcuts.
+function parseAmount(str, wallet = 0) {
+  if (str === null || str === undefined) return NaN;
+  const raw = String(str).trim().toLowerCase().replace(/[, _]/g, '');
+  if (!raw) return NaN;
+  if (raw === 'all' || raw === 'max') return wallet;
+  if (raw === 'half') return Math.floor(wallet / 2);
+
+  const m = raw.match(/^(\d+(?:\.\d+)?)([kmbt])?$/);
+  if (!m) return NaN;
+  const base = parseFloat(m[1]);
+  if (!isFinite(base)) return NaN;
+
+  const mult = { k: 1e3, m: 1e6, b: 1e9, t: 1e12 }[m[2]] || 1;
+  const n = Math.floor(base * mult);
+  return isFinite(n) ? n : NaN;
 }
 
 function cooldownLeft(key, duration) {
