@@ -222,6 +222,25 @@ function appEmojiStr(name, fallback = '') {
   return id ? `<:${name}:${id}>` : fallback;
 }
 
+// Roblox player-badge ID -> bot emoji
+const BADGE_EMOJIS = {
+  1:  { name: 'administrator',        id: '1498897160513654795' },
+  2:  { name: 'friendship',           id: '1498897178360418365' },
+  3:  { name: 'combat_initiation',    id: '1498897173960593429' },
+  4:  { name: 'warrior',              id: '1498897200552476722' },
+  5:  { name: 'bloxxer',              id: '1498897165169197057' },
+  6:  { name: 'homestead',            id: '1498897183083073607' },
+  7:  { name: 'bricksmith',           id: '1498897169665757235' },
+  8:  { name: 'inviter',              id: '1498897187466383550' },
+  12: { name: 'veteran',              id: '1498897196169433180' },
+  17: { name: 'official_model_maker', id: '1498897191761084507' },
+  18: { name: 'welcome_to_the_club',  id: '1498897205283651754' },
+};
+function badgeEmojiStr(badge) {
+  const e = BADGE_EMOJIS[badge.id];
+  return e ? `<:${e.name}:${e.id}>` : `\`${badge.name}\``;
+}
+
 // Maps view value -> { label, emojiName, fallbackEmoji }
 const VIEWS = {
   avatar:    { label: 'Avatar',             emojiName: 'avatar',    fallback: '🧍' },
@@ -334,7 +353,7 @@ async function buildProfileEmbed(ctx) {
   lines.push(`**Created:** ${fmtDate(user.created)} (${moment(user.created).fromNow(true)} ago)`);
   lines.push(`**Visits:** ${fmtNum(totalVisits)}`);
   if (badges && Array.isArray(badges) && badges.length) {
-    lines.push(`**Badges (${badges.length}):** ${badges.map((b) => b.name).join(', ')}`);
+    lines.push(`**Badges (${badges.length}):** ${badges.map(badgeEmojiStr).join(' ')}`);
   } else {
     lines.push(`**Badges (0):** None`);
   }
