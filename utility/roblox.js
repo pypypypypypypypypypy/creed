@@ -243,6 +243,7 @@ function badgeEmojiStr(badge) {
 
 // Maps view value -> { label, emojiName, fallbackEmoji }
 const VIEWS = {
+  profile:   { label: 'User Profile',       emojiName: 'profile',   fallback: '👤' },
   avatar:    { label: 'Avatar',             emojiName: 'avatar',    fallback: '🧍' },
   groups:    { label: 'Groups',             emojiName: 'groups',    fallback: '👥' },
   games:     { label: 'Games',              emojiName: 'games',     fallback: '🎮' },
@@ -251,6 +252,7 @@ const VIEWS = {
   friends:   { label: 'Friends',            emojiName: 'friends',   fallback: '🧑‍🤝‍🧑' },
   followers: { label: 'Followers',          emojiName: 'followers', fallback: '🌟' },
   following: { label: 'Following',          emojiName: 'following', fallback: '➡️' },
+  rolimons:  { label: 'Rolimons',           emojiName: 'roblox',    fallback: '💎' },
 };
 
 // ---------- UI: Select / Pager / Links ----------
@@ -653,7 +655,6 @@ module.exports = {
     const components = () => {
       const pi = pageInfo();
       const rows = [];
-      rows.push(buildLinkRow(user.id));
       rows.push(buildSelect(message.guild, state.view));
       if (pi.total > 1) rows.push(buildPager(state.page, pi.total));
       return rows;
