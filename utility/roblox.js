@@ -107,17 +107,55 @@ async function getFollowingCount(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followings/count`);
   return d ? d.count : 0;
 }
+// Bulk-resolve user IDs -> { id, name, displayName, hasVerifiedBadge }.
+// The friends/followers/following endpoints now return only `{id}` (or empty
+// name fields), so we have to look names up separately in batches of 100.
+async function getUsersByIds(userIds) {
+  const map = {};
+  if (!userIds.length) return map;
+  for (let i = 0; i < userIds.length; i += 100) {
+    const chunk = userIds.slice(i, i + 100);
+    const d = await jpost('https://users.roblox.com/v1/users', {
+      userIds: chunk,
+      excludeBannedUsers: false,
+    });
+    if (!d || !d.data) continue;
+    for (const u of d.data) map[u.id] = u;
+  }
+  return map;
+}
+
+async function enrichWithNames(people) {
+  if (!people.length) return people;
+  // Only look up the ones missing a usable name.
+  const needIds = people
+    .filter((p) => !p.name || !p.displayName)
+    .map((p) => p.id);
+  if (!needIds.length) return people;
+  const map = await getUsersByIds([...new Set(needIds)]);
+  return people.map((p) => {
+    const hit = map[p.id];
+    if (!hit) return p;
+    return {
+      ...p,
+      name: p.name || hit.name,
+      displayName: p.displayName || hit.displayName || hit.name,
+      hasVerifiedBadge: p.hasVerifiedBadge ?? hit.hasVerifiedBadge,
+    };
+  });
+}
+
 async function getFriends(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/friends`);
-  return (d && d.data) || [];
+  return await enrichWithNames((d && d.data) || []);
 }
 async function getFollowers(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followers?limit=100&sortOrder=Asc`);
-  return (d && d.data) || [];
+  return await enrichWithNames((d && d.data) || []);
 }
 async function getFollowing(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followings?limit=100&sortOrder=Asc`);
-  return (d && d.data) || [];
+  return await enrichWithNames((d && d.data) || []);
 }
 async function getGroups(userId) {
   const d = await jget(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);
@@ -139,6 +177,27 @@ async function getCanViewInventory(userId) {
   const d = await jget(`https://inventory.roblox.com/v1/users/${userId}/can-view-inventory`);
   if (!d) return null;
   return d.canView;
+}
+
+// The classic "Verified, Bonafide, Plaidafied" hat (asset 102611803), given to
+// every account that verified their email back when Roblox handed it out, is
+// the canonical way to confirm an account had a verified email.
+// Returns true if owned, false if not, or null if the inventory is private /
+// the request failed (so callers can show "Unknown" instead of lying).
+const VERIFIED_EMAIL_HAT_ID = 102611803;
+async function hasVerifiedEmailHat(userId) {
+  try {
+    const r = await fetch(
+      `https://inventory.roblox.com/v1/users/${userId}/items/Asset/${VERIFIED_EMAIL_HAT_ID}`,
+      { headers: UA, timeout: 10000 },
+    );
+    if (!r.ok) return null; // 403 = private inventory, anything else = unknown
+    const d = await r.json();
+    if (!d || !Array.isArray(d.data)) return null;
+    return d.data.length > 0;
+  } catch {
+    return null;
+  }
 }
 async function getAssetDetails(assetIds) {
   if (!assetIds.length) return [];
@@ -312,9 +371,13 @@ async function buildProfileEmbed(ctx) {
   const {
     guild, user, presence, friendCount, followerCount, followingCount,
     rolimons, badges, headshot, totalVisits, canViewInventory,
+    hasVerifiedEmail,
   } = ctx;
 
-  const emailVerified = 'Unknown';
+  const emailVerified =
+    hasVerifiedEmail === true ? 'True'
+    : hasVerifiedEmail === false ? 'False'
+    : 'Unknown';
   const inventory =
     canViewInventory === true ? 'Public'
     : canViewInventory === false ? 'Private'
@@ -580,7 +643,7 @@ module.exports = {
       headshot, fullBody, presence,
       friendCount, followerCount, followingCount,
       groups, games, names, friends, followers, following,
-      wearingIds, badges, rolimons, canViewInventory,
+      wearingIds, badges, rolimons, canViewInventory, hasVerifiedEmail,
     ] = await Promise.all([
       getAvatarHeadshot(user.id),
       getAvatarThumb(user.id),
@@ -598,6 +661,7 @@ module.exports = {
       getRobloxBadges(user.id),
       getRolimons(user.id),
       getCanViewInventory(user.id),
+      hasVerifiedEmailHat(user.id),
     ]);
 
     const wearingDetails = await getAssetDetails(wearingIds);
@@ -617,7 +681,7 @@ module.exports = {
     const ctx = {
       guild: message.guild,
       user, presence, friendCount, followerCount, followingCount, rolimons, badges,
-      headshot, fullBody, totalVisits, canViewInventory,
+      headshot, fullBody, totalVisits, canViewInventory, hasVerifiedEmail,
       groups, games, names, friends, followers, following,
       wearingDetails, gameThumbs, peopleHeadshots,
     };
