@@ -3,6 +3,7 @@ const db = require('../db');
 const { default_prefix, color } = require("../config.json");
 const { EmbedBuilder } = require('discord.js');
 const { handleGeneratedCommand } = require('../generatedCommands/handleMissingCommand');
+const { buildErrorPayload } = require('../utils/errorEmbed');
 function getEmojis() {
   delete require.cache[require.resolve('../emojis.json')];
   return require('../emojis.json');
@@ -219,8 +220,9 @@ client.on("messageCreate", async message => {
       global.__boredCmdCount = (global.__boredCmdCount || 0) + 1;
       await command.run(client, message, args);
     } catch (err) {
-      console.error(`Command error [${cmd}]:`, err.message);
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`An error occurred while running that command.`)] }).catch(() => {});
+      const payload = buildErrorPayload(message, command.name || cmd);
+      console.error(`Command error [${cmd}] (code ${payload.code}):`, err);
+      message.channel.send({ content: payload.content, embeds: payload.embeds }).catch(() => {});
     }
   } else {
     await handleGeneratedCommand(client, message, cmd, args, prefix);

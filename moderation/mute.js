@@ -74,8 +74,9 @@ module.exports = {
     };
     let role2 = message.guild.roles.cache.find(r => r.name.toLowerCase() === 'muted')
     if (Member.roles.cache.has(role2.id)) return message.channel.send({ embeds: [new EmbedBuilder().setColor("#efa23a").setDescription(`${warn} ${message.author}: **${user.user.tag}** has already been muted`)] })
-    await Member.roles.add(role2)
+    const muteReason = args.slice(1).join(' ') || 'No Reason Supplied';
+    await Member.roles.add(role2, muteReason)
     message.channel.send({ embeds: [new EmbedBuilder().setColor("RED").setDescription(`${message.author}: **${user.user.tag}** is now muted`)] })
-    logModAction(message.guild, { action: 'Mute', user: Member.user, moderator: message.author, reason: 'No Reason Supplied' }).catch(() => {});
+    logModAction(message.guild, { action: 'Mute', user: Member.user, moderator: message.author, reason: muteReason }).catch(() => {});
   }
 }

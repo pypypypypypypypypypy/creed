@@ -2,6 +2,7 @@ const { EmbedBuilder, PermissionFlagsBits, ChannelType } = require('discord.js')
 const db = require('../db');
 const { default_prefix, color } = require('../config.json');
 const { warn, deny, approve } = require('../emojis.json');
+const { logModAction } = require('../utils/modlog');
 
 module.exports = {
   category: 'moderation',
@@ -69,6 +70,13 @@ module.exports = {
       await newChannel.send({
         embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} Channel has been **nuked** by ${message.author}.`).setImage('https://media.tenor.com/images/2e1d68962bff7b9ab45f498e93c5e8e2/tenor.gif')]
       });
+
+      logModAction(message.guild, {
+        action: 'Nuke',
+        channel: newChannel,
+        moderator: message.author,
+        reason: 'No Reason Provided'
+      }).catch(() => {});
     } catch (err) {
       message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: Failed to nuke channel: ${err.message}`)] });
     }

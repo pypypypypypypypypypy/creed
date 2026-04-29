@@ -38,6 +38,12 @@ module.exports = {
     await member.timeout(duration, reason);
 
     message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Timed out **${member.user.tag}** for **${args[1]}** — reason: **${reason}**`)] });
-    logModAction(message.guild, { action: 'Timeout', user: member.user, moderator: message.author, reason: reason }).catch(() => {});
+    logModAction(message.guild, {
+      action: 'Mute',
+      user: member.user,
+      moderator: message.author,
+      reason,
+      until: Date.now() + duration
+    }).catch(() => {});
   }
 };

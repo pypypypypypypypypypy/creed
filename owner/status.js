@@ -1,58 +1,72 @@
-const { ActivityType } = require('discord.js');
 const { isOwner } = require('../utils/owners');
 
-const ACTIVITY_MAP = {
-  playing: ActivityType.Playing,
-  watching: ActivityType.Watching,
-  listening: ActivityType.Listening,
-  competing: ActivityType.Competing,
-  streaming: ActivityType.Streaming,
+const STATUS_MAP = {
+  online: 'online',
+  on: 'online',
+  green: 'online',
+  idle: 'idle',
+  away: 'idle',
+  yellow: 'idle',
+  dnd: 'dnd',
+  donotdisturb: 'dnd',
+  red: 'dnd',
+  invisible: 'invisible',
+  invis: 'invisible',
+  offline: 'invisible',
+  off: 'invisible',
 };
 
 const LABELS = {
-  playing: 'Playing',
-  watching: 'Watching',
-  listening: 'Listening to',
-  competing: 'Competing in',
-  streaming: 'Streaming',
+  online: '🟢 Online',
+  idle: '🟡 Idle',
+  dnd: '🔴 Do Not Disturb',
+  invisible: '⚫ Invisible',
 };
 
 module.exports = {
   category: 'owner',
   help: [
     {
-        name: 'status',
-        description: "Change the bot's status or activity",
-        aliases: 'n/a',
-        parameters: '(status)',
-        information: 'BOT_OWNER',
-        usage: 'status (status)',
-        example: 'status status'
+      name: 'status',
+      description: "Change the bot's presence status (the bubble)",
+      aliases: 'n/a',
+      parameters: '(online | idle | dnd | invisible)',
+      information: 'BOT_OWNER',
+      usage: 'status (status)',
+      example: 'status dnd'
     }
-],
+  ],
 
-    name: 'status',
-  aliases: ['activity', 'setstatus'],
-  category: 'owner',
+  name: 'status',
+  aliases: ['presence', 'setstatus'],
 
   run: async (client, message, args) => {
     if (!isOwner(message.author.id)) return;
 
-    const type = (args.shift() || '').toLowerCase();
-
-    if (!type || type === 'clear') {
-      client.user.setPresence({ activities: [], status: 'online' });
-      return message.channel.send('✅ Activity cleared.');
+    const input = (args[0] || '').toLowerCase();
+    if (!input) {
+      return message.channel.send(
+        '❌ Usage: `,status [online | idle | dnd | invisible]`'
+      );
     }
 
-    if (!ACTIVITY_MAP[type]) {
-      return message.channel.send('❌ Types: `playing` `watching` `listening` `competing` `streaming` `clear`');
+    const status = STATUS_MAP[input];
+    if (!status) {
+      return message.channel.send(
+        '❌ Valid statuses: `online` `idle` `dnd` `invisible`'
+      );
     }
 
-    const text = args.join(' ');
-    if (!text) return message.channel.send('❌ Example: `,status playing bored`');
+    // Preserve any current activity, only swap the presence bubble.
+    const currentActivities = client.user.presence?.activities || [];
+    const activitiesPayload = currentActivities.map(a => ({
+      name: a.name,
+      type: a.type,
+      url: a.url,
+      state: a.state,
+    }));
 
-    client.user.setPresence({ activities: [{ name: text, type: ACTIVITY_MAP[type] }], status: 'online' });
-    return message.channel.send(`✅ Status set to **${LABELS[type]} ${text}**.`);
+    await client.user.setPresence({ activities: activitiesPayload, status });
+    return message.channel.send(`✅ Status set to **${LABELS[status]}**.`);
   }
 };
