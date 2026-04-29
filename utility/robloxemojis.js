@@ -2,7 +2,10 @@ const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-const NAMES = ['profile', 'avatar', 'groups', 'games', 'inventory', 'names', 'friends', 'followers', 'following', 'roblox'];
+const NAMES = [
+  'profile', 'avatar', 'groups', 'games', 'inventory', 'names',
+  'friends', 'followers', 'following', 'roblox', 'language', 'trash',
+];
 
 const SUCCESS = '<:success:1496708562695618641>';
 const FAIL = '<:fail:1496708523613098035>';
