@@ -13,14 +13,15 @@ const { warn } = require('../emojis.json');
 
 const UA = { 'User-Agent': 'drown-xd-bot/1.0 (+https://github.com/abannition/drown-xd)' };
 
+const ROLIMONS_LOGO = 'https://www.rolimons.com/imgs/icons/rolimons_logo_512.png';
+
+// ---------- HTTP helpers ----------
 async function jget(url) {
   try {
     const r = await fetch(url, { headers: UA, timeout: 10000 });
     if (!r.ok) return null;
     return await r.json();
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 async function jpost(url, body) {
@@ -33,11 +34,10 @@ async function jpost(url, body) {
     });
     if (!r.ok) return null;
     return await r.json();
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
+// ---------- Roblox API ----------
 async function resolveUser(input) {
   if (/^\d+$/.test(input)) {
     const u = await jget(`https://users.roblox.com/v1/users/${input}`);
@@ -54,9 +54,7 @@ async function resolveUser(input) {
 
 async function getAvatarThumb(userId, size = '420x420') {
   for (let attempt = 0; attempt < 3; attempt++) {
-    const d = await jget(
-      `https://thumbnails.roblox.com/v1/users/avatar?userIds=${userId}&size=${size}&format=Png&isCircular=false`
-    );
+    const d = await jget(`https://thumbnails.roblox.com/v1/users/avatar?userIds=${userId}&size=${size}&format=Png&isCircular=false`);
     const item = d && d.data && d.data[0];
     if (!item) return null;
     if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
@@ -68,9 +66,7 @@ async function getAvatarThumb(userId, size = '420x420') {
 
 async function getAvatarHeadshot(userId, size = '150x150') {
   for (let attempt = 0; attempt < 3; attempt++) {
-    const d = await jget(
-      `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=${size}&format=Png&isCircular=false`
-    );
+    const d = await jget(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=${size}&format=Png&isCircular=false`);
     const item = d && d.data && d.data[0];
     if (!item) return null;
     if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
@@ -80,10 +76,22 @@ async function getAvatarHeadshot(userId, size = '150x150') {
   return null;
 }
 
+async function getHeadshotsBatch(userIds) {
+  const map = {};
+  if (!userIds.length) return map;
+  for (let i = 0; i < userIds.length; i += 100) {
+    const chunk = userIds.slice(i, i + 100);
+    const d = await jget(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${chunk.join(',')}&size=150x150&format=Png&isCircular=false`);
+    if (!d || !d.data) continue;
+    for (const t of d.data) {
+      if (t.state === 'Completed' && t.imageUrl) map[t.targetId] = t.imageUrl;
+    }
+  }
+  return map;
+}
+
 async function getPresence(userId) {
-  const d = await jpost('https://presence.roblox.com/v1/presence/users', {
-    userIds: [Number(userId)],
-  });
+  const d = await jpost('https://presence.roblox.com/v1/presence/users', { userIds: [Number(userId)] });
   return d && d.userPresences && d.userPresences[0];
 }
 
@@ -91,54 +99,47 @@ async function getFriendCount(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/friends/count`);
   return d ? d.count : 0;
 }
-
 async function getFollowerCount(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followers/count`);
   return d ? d.count : 0;
 }
-
 async function getFollowingCount(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followings/count`);
   return d ? d.count : 0;
 }
-
 async function getFriends(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/friends`);
   return (d && d.data) || [];
 }
-
 async function getFollowers(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followers?limit=100&sortOrder=Asc`);
   return (d && d.data) || [];
 }
-
 async function getFollowing(userId) {
   const d = await jget(`https://friends.roblox.com/v1/users/${userId}/followings?limit=100&sortOrder=Asc`);
   return (d && d.data) || [];
 }
-
 async function getGroups(userId) {
   const d = await jget(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);
   return (d && d.data) || [];
 }
-
 async function getGames(userId) {
-  const d = await jget(
-    `https://games.roblox.com/v2/users/${userId}/games?accessFilter=Public&sortOrder=Asc&limit=50`
-  );
+  const d = await jget(`https://games.roblox.com/v2/users/${userId}/games?accessFilter=Public&sortOrder=Asc&limit=50`);
   return (d && d.data) || [];
 }
-
 async function getNameHistory(userId) {
   const d = await jget(`https://users.roblox.com/v1/users/${userId}/username-history?limit=100&sortOrder=Asc`);
   return (d && d.data) || [];
 }
-
 async function getCurrentlyWearing(userId) {
   const d = await jget(`https://avatar.roblox.com/v1/users/${userId}/currently-wearing`);
   return (d && d.assetIds) || [];
 }
-
+async function getCanViewInventory(userId) {
+  const d = await jget(`https://inventory.roblox.com/v1/users/${userId}/can-view-inventory`);
+  if (!d) return null;
+  return d.canView;
+}
 async function getAssetDetails(assetIds) {
   if (!assetIds.length) return [];
   const out = [];
@@ -150,37 +151,18 @@ async function getAssetDetails(assetIds) {
   }
   return out;
 }
-
 async function getRobloxBadges(userId) {
   const d = await jget(`https://accountinformation.roblox.com/v1/users/${userId}/roblox-badges`);
   return d || [];
 }
-
 async function getRolimons(userId) {
   return await jget(`https://api.rolimons.com/players/v1/playerinfo/${userId}`);
 }
-
-async function getGroupThumb(groupId) {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const d = await jget(
-      `https://thumbnails.roblox.com/v1/groups/icons?groupIds=${groupId}&size=150x150&format=Png&isCircular=false`
-    );
-    const item = d && d.data && d.data[0];
-    if (!item) return null;
-    if (item.state === 'Completed' && item.imageUrl) return item.imageUrl;
-    if (item.state === 'Blocked' || item.state === 'Error') return null;
-    if (attempt < 2) await new Promise(r => setTimeout(r, 1200));
-  }
-  return null;
-}
-
 async function getGameThumbs(universeIds) {
   if (!universeIds.length) return {};
   const map = {};
   for (let attempt = 0; attempt < 3; attempt++) {
-    const d = await jget(
-      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeIds.join(',')}&size=150x150&format=Png&isCircular=false`
-    );
+    const d = await jget(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeIds.join(',')}&size=150x150&format=Png&isCircular=false`);
     if (!d || !d.data) return map;
     let allDone = true;
     for (const t of d.data) {
@@ -194,16 +176,15 @@ async function getGameThumbs(universeIds) {
   return map;
 }
 
+// ---------- Format helpers ----------
 function fmtNum(n) {
   if (n === null || n === undefined) return 'N/A';
   return Number(n).toLocaleString('en-US');
 }
-
 function fmtDate(d) {
   if (!d) return 'N/A';
   return moment(d).format('MMMM D, YYYY [at] h:mm A');
 }
-
 function statusFromPresence(p) {
   if (!p) return 'Offline';
   switch (p.userPresenceType) {
@@ -216,32 +197,57 @@ function statusFromPresence(p) {
   }
 }
 
-function buildSelect(active) {
-  const options = [
-    { label: 'User Profile', value: 'profile', emoji: '👤' },
-    { label: 'Avatar', value: 'avatar', emoji: '🧍' },
-    { label: 'Groups', value: 'groups', emoji: '👥' },
-    { label: 'Games', value: 'games', emoji: '🎮' },
-    { label: 'Currently Wearing', value: 'wearing', emoji: '👕' },
-    { label: 'Previous Usernames', value: 'names', emoji: '🕘' },
-    { label: 'Friends', value: 'friends', emoji: '🧑‍🤝‍🧑' },
-    { label: 'Followers', value: 'followers', emoji: '🌟' },
-    { label: 'Following', value: 'following', emoji: '➡️' },
-    { label: "Rolimon's", value: 'rolimons', emoji: '💎' },
-  ].map((o) => ({ ...o, default: o.value === active }));
+// ---------- Custom-emoji lookup (uploaded via ,robloxemojis) ----------
+function guildEmojiObj(guild, name) {
+  const e = guild?.emojis?.cache?.find((x) => x.name === name);
+  if (!e) return null;
+  return { id: e.id, name: e.name, animated: e.animated };
+}
+function guildEmojiStr(guild, name, fallback = '') {
+  const e = guild?.emojis?.cache?.find((x) => x.name === name);
+  return e ? e.toString() : fallback;
+}
+
+// Maps view value -> { label, emojiName, fallbackEmoji }
+const VIEWS = {
+  profile:   { label: 'User Profile',       emojiName: 'profile',   fallback: '👤' },
+  avatar:    { label: 'Avatar',             emojiName: 'avatar',    fallback: '🧍' },
+  groups:    { label: 'Groups',             emojiName: 'groups',    fallback: '👥' },
+  games:     { label: 'Games',              emojiName: 'games',     fallback: '🎮' },
+  wearing:   { label: 'Currently Wearing',  emojiName: 'inventory', fallback: '👕' },
+  names:     { label: 'Previous Usernames', emojiName: 'names',     fallback: '🕘' },
+  friends:   { label: 'Friends',            emojiName: 'friends',   fallback: '🧑‍🤝‍🧑' },
+  followers: { label: 'Followers',          emojiName: 'followers', fallback: '🌟' },
+  following: { label: 'Following',          emojiName: 'following', fallback: '➡️' },
+  rolimons:  { label: 'Rolimons',           emojiName: 'roblox',    fallback: '💎' },
+};
+
+// ---------- UI: Select / Pager / Links ----------
+function buildSelect(guild, active) {
+  const options = Object.entries(VIEWS).map(([value, v]) => {
+    const eo = guildEmojiObj(guild, v.emojiName);
+    return {
+      label: v.label,
+      value,
+      emoji: eo || v.fallback,
+      default: value === active,
+    };
+  });
   return new ActionRowBuilder().addComponents(
-    new StringSelectMenuBuilder().setCustomId('rblx_view').setPlaceholder('View').addOptions(options)
+    new StringSelectMenuBuilder()
+      .setCustomId('rblx_view')
+      .setPlaceholder(VIEWS[active]?.label || 'View')
+      .addOptions(options)
   );
 }
 
-function buildPager(page, totalPages, ownerId, sortable = false) {
-  const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Secondary).setEmoji('1496708665862783106').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_nav').setStyle(ButtonStyle.Secondary).setEmoji('1496708656807542844').setLabel(`${page + 1}/${totalPages}`).setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Secondary).setEmoji('1496708661525876787').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji('1496708523613098035')
+function buildPager(page, totalPages) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Primary).setEmoji('◀️').setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Primary).setEmoji('▶️').setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_nav').setStyle(ButtonStyle.Secondary).setEmoji('↕️').setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji('🗑️')
   );
-  return row;
 }
 
 function buildLinkRow(userId) {
@@ -251,26 +257,54 @@ function buildLinkRow(userId) {
   );
 }
 
+// ---------- Embeds ----------
+function userLink(user) {
+  return `https://www.roblox.com/users/${user.id}/profile`;
+}
+function userMention(user) {
+  return `[${user.displayName || user.name}](${userLink(user)})`;
+}
+function userHandle(user) {
+  return `[@${user.name}](${userLink(user)})`;
+}
+
 async function buildProfileEmbed(ctx) {
-  const { user, presence, friendCount, followerCount, followingCount, rolimons, badges, headshot, totalVisits, lastGame } = ctx;
-  const emailVerified = user.hasVerifiedBadge ? 'Yes (Hat)' : 'No';
-  const inventory = 'Public';
-  const language = user.locale || 'English (US)';
+  const {
+    guild, user, presence, friendCount, followerCount, followingCount,
+    rolimons, badges, headshot, totalVisits, canViewInventory,
+  } = ctx;
+
+  const emailVerified = 'Unknown';
+  const inventory =
+    canViewInventory === true ? 'Public'
+    : canViewInventory === false ? 'Private'
+    : 'Unknown';
+
+  const friendsLink = `https://www.roblox.com/users/${user.id}/friends`;
+  const followersLink = `https://www.roblox.com/users/${user.id}/friends#!/followers`;
+  const followingLink = `https://www.roblox.com/users/${user.id}/friends#!/following`;
+  const rolimonsLink = `https://www.rolimons.com/player/${user.id}`;
+  const langEmoji = guildEmojiStr(guild, 'language', '🌐');
+
   const lines = [];
-  lines.push(`**User:** ${user.displayName || user.name} ${user.hasVerifiedBadge ? '☑' : ''}`);
-  lines.push(`(@${user.name})`);
+  lines.push(`**User:** ${userMention(user)} ${user.hasVerifiedBadge ? '☑️' : ''}`);
+  lines.push(`(${userHandle(user)})`);
   lines.push(`**ID:** \`${user.id}\``);
   lines.push(`**Status:** ${statusFromPresence(presence)}`);
   lines.push(`**Inventory:** ${inventory}`);
   lines.push(`**Email Verified:** ${emailVerified}`);
-  lines.push(`**Language:** ${language}`);
+  lines.push(`${langEmoji} **Language:** ${user.locale || 'English (US)'}`);
   lines.push('');
-  lines.push(`${fmtNum(friendCount)} Friends · ${fmtNum(followerCount)} Followers · ${fmtNum(followingCount)} Following`);
+  lines.push(
+    `[**${fmtNum(friendCount)}**](${friendsLink}) Friends • ` +
+    `[**${fmtNum(followerCount)}**](${followersLink}) Followers • ` +
+    `[**${fmtNum(followingCount)}**](${followingLink}) Following`
+  );
   if (rolimons && rolimons.success !== false) {
     const rap = rolimons.rap ?? rolimons.RAP;
     const value = rolimons.value ?? rolimons.Value;
     if (rap !== undefined || value !== undefined) {
-      lines.push(`${fmtNum(rap)} RAP · ${fmtNum(value)} Value (${moment().format('M/D/YY')})`);
+      lines.push(`[**${fmtNum(rap)}**](${rolimonsLink}) RAP • [**${fmtNum(value)}**](${rolimonsLink}) Value`);
     }
   }
   lines.push('');
@@ -280,145 +314,171 @@ async function buildProfileEmbed(ctx) {
   }
   lines.push(`**Created:** ${fmtDate(user.created)} (${moment(user.created).fromNow(true)} ago)`);
   lines.push(`**Visits:** ${fmtNum(totalVisits)}`);
-  if (badges && badges.length) {
+  if (badges && Array.isArray(badges) && badges.length) {
     lines.push(`**Badges (${badges.length}):** ${badges.map((b) => b.name).join(', ')}`);
-  }
-  if (presence && presence.lastOnline) {
-    lines.push(`**Last Seen (Est.):** ${moment(presence.lastOnline).format('MMMM D, YYYY')}`);
-  }
-  if (lastGame) {
-    lines.push(`**Last Game:** ${lastGame}`);
+  } else {
+    lines.push(`**Badges (0):** None`);
   }
 
   return new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
     .setDescription(lines.join('\n'))
     .setThumbnail(headshot || null);
 }
 
-function buildAvatarEmbed(user, fullBody, headshot) {
+function buildAvatarEmbed(guild, user, fullBody, headshot) {
   const img = fullBody || headshot;
   const e = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle('Avatar')
-    .setURL(`https://www.roblox.com/users/${user.id}/profile`);
+    .setDescription(`${userMention(user)}\n(${userHandle(user)})`);
   if (img) e.setImage(img);
-  else e.setDescription('Avatar image is currently unavailable from Roblox. Try again in a moment.');
+  else e.setDescription(`${userMention(user)}\n(${userHandle(user)})\n\nAvatar image is currently unavailable from Roblox. Try again in a moment.`);
   return e;
 }
 
-function buildGroupEmbed(user, groups, page) {
+function buildGroupEmbed(guild, user, groups, page) {
   const total = groups.length;
   if (!total) {
-    return new EmbedBuilder().setColor(color)
-      .setAuthor({ name: `${user.displayName || user.name} (@${user.name})` })
-      .setTitle(`${user.name}'s Joined Groups (0)`)
-      .setDescription('No groups.');
+    return new EmbedBuilder()
+      .setColor(color)
+      .setDescription(`${userHandle(user)}'s Joined Groups (0)\n\nNo groups.`);
   }
   const g = groups[page];
   const grp = g.group || {};
   const role = g.role || {};
+  const ownerName = grp.owner ? grp.owner.username : null;
+  const ownerId = grp.owner ? grp.owner.userId : null;
+  const ownerStr = ownerName && ownerId
+    ? `[${ownerName}](https://www.roblox.com/users/${ownerId}/profile)`
+    : (ownerName || 'N/A');
+
+  const groupLink = grp.id ? `https://www.roblox.com/groups/${grp.id}` : null;
+  const titleLine = groupLink ? `[**${grp.name || 'Group'}**](${groupLink})` : `**${grp.name || 'Group'}**`;
+
   const lines = [
-    `**Owner:** ${grp.owner ? grp.owner.username : 'N/A'}`,
+    titleLine,
+    `${userHandle(user)}'s Joined Groups (${total})`,
+    grp.description ? `*${grp.description.split('\n')[0].slice(0, 80)}*` : '',
+    '',
+    `**Owner:** ${ownerStr}`,
     `**Members:** ${fmtNum(grp.memberCount)}`,
     `**Public:** ${grp.publicEntryAllowed ? 'True' : 'False'}`,
     `**Group ID:** ${grp.id}`,
+    grp.created ? `**Created:** ${moment(grp.created).format('MMMM D, YYYY')}` : '',
     '',
     `**Role:** ${role.name || 'N/A'}`,
     `**Rank:** ${role.rank ?? 'N/A'}`,
     `**Role ID:** ${role.id ?? 'N/A'}`,
-  ];
+  ].filter(Boolean);
+
   return new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle(`${grp.name || 'Group'}`)
-    .setURL(grp.id ? `https://www.roblox.com/groups/${grp.id}` : null)
-    .setDescription(`${user.name}'s Joined Groups (${total})\n\n${lines.join('\n')}`)
+    .setDescription(lines.join('\n'))
     .setFooter({ text: `Page ${page + 1}/${total}` });
 }
 
-function buildGamesEmbed(user, games, page, thumbs) {
-  const perPage = 3;
-  const totalPages = Math.max(1, Math.ceil(games.length / perPage));
-  const slice = games.slice(page * perPage, page * perPage + perPage);
+function buildGamesEmbed(guild, user, games, page, thumbs) {
+  const totalPages = Math.max(1, games.length);
   const e = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle(`Games (${games.length}) — @${user.name}`)
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
-  if (!games.length) return e.setDescription('No public games.');
-  for (const g of slice) {
-    e.addFields({
-      name: g.name || 'Untitled',
-      value:
-        `\`${fmtNum(g.placeVisits ?? 0)} visits\`\n` +
-        `Created ${fmtDate(g.created)}\n` +
-        `Updated ${fmtDate(g.updated)}` +
-        (g.id ? `\n[Open](https://www.roblox.com/games/${g.rootPlace?.id || g.id})` : ''),
-      inline: false,
-    });
+  if (!games.length) {
+    return e.setDescription(`Games (0) — ${userHandle(user)}\n\nNo public games.`);
   }
-  if (slice[0] && thumbs[slice[0].id]) e.setThumbnail(thumbs[slice[0].id]);
+  const g = games[page];
+  const placeId = g.rootPlace?.id || g.id;
+  const gameLink = placeId ? `https://www.roblox.com/games/${placeId}` : null;
+  const title = gameLink ? `[**${g.name || 'Untitled'}**](${gameLink})` : `**${g.name || 'Untitled'}**`;
+
+  const desc = [
+    `Games (${games.length}) — ${userHandle(user)}`,
+    '',
+    title,
+    g.description ? g.description.slice(0, 300) : '',
+    '',
+    `\`${fmtNum(g.placeVisits ?? 0)} visits\``,
+    `Created ${fmtDate(g.created)}`,
+    `Updated ${fmtDate(g.updated)}`,
+  ].filter(Boolean).join('\n');
+
+  e.setDescription(desc);
+  if (thumbs[g.id]) e.setThumbnail(thumbs[g.id]);
   return e;
 }
 
-function buildWearingEmbed(user, assets, page) {
+function buildWearingEmbed(guild, user, assets, page) {
   const perPage = 10;
   const totalPages = Math.max(1, Math.ceil(assets.length / perPage));
   const slice = assets.slice(page * perPage, page * perPage + perPage);
   const desc = slice.length
-    ? slice.map((a) => `• [${a.name || 'Asset'}](https://www.roblox.com/catalog/${a.id}) \`${a.id}\``).join('\n')
-    : 'Wearing nothing visible.';
+    ? [
+        `Currently Wearing (${assets.length}) — ${userHandle(user)}`,
+        '',
+        slice.map((a) => `• [${a.name || 'Asset'}](https://www.roblox.com/catalog/${a.id}) \`${a.id}\``).join('\n'),
+      ].join('\n')
+    : `Currently Wearing (0) — ${userHandle(user)}\n\nWearing nothing visible.`;
   return new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle(`Currently Wearing (${assets.length})`)
     .setDescription(desc)
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
 }
 
-function buildNamesEmbed(user, names, page) {
+function buildNamesEmbed(guild, user, names, page) {
   const perPage = 10;
   const totalPages = Math.max(1, Math.ceil(names.length / perPage));
   const slice = names.slice(page * perPage, page * perPage + perPage);
+  const header = `${userMention(user)}\n(${userHandle(user)})\n`;
+  if (!names.length) {
+    return new EmbedBuilder()
+      .setColor(color)
+      .setDescription(`${header}\nThis user has no past usernames.`);
+  }
   return new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle(`Past Usernames (${names.length}) — @${user.name}`)
-    .setDescription(slice.length ? slice.map((n) => n.name).join('\n') : 'No previous usernames.')
+    .setDescription(`${header}\n${slice.map((n) => `• ${n.name}`).join('\n')}`)
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
 }
 
-function buildPeopleEmbed(user, people, page, label, total) {
+function buildPeopleEmbed(guild, user, people, page, label, total, headshots) {
   const perPage = 5;
   const totalPages = Math.max(1, Math.ceil(people.length / perPage));
   const slice = people.slice(page * perPage, page * perPage + perPage);
+  const header = `**${label} (${fmtNum(total)})** — ${userHandle(user)}`;
+  if (!slice.length) {
+    let emptyText;
+    if (label === 'Friends') emptyText = 'This user has no friends.';
+    else if (label === 'Followers') emptyText = 'This user has no followers.';
+    else if (label === 'Following') emptyText = 'This user is not following anyone.';
+    else emptyText = 'Nobody to show.';
+    return new EmbedBuilder().setColor(color).setDescription(`${header}\n\n${emptyText}`);
+  }
+  const lines = slice.map((p) => {
+    const link = `https://www.roblox.com/users/${p.id}/profile`;
+    return [
+      `[**${p.displayName || p.name}**](${link}) [@${p.name}](${link})`,
+      `\`${p.id}\``,
+    ].join('\n');
+  });
   const e = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `${user.displayName || user.name} (@${user.name})`, url: `https://www.roblox.com/users/${user.id}/profile` })
-    .setTitle(`${label} (${fmtNum(total)}) — @${user.name}`)
+    .setDescription(`${header}\n\n${lines.join('\n\n')}`)
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
-  if (!slice.length) return e.setDescription('Nobody to show.');
-  for (const p of slice) {
-    e.addFields({
-      name: `${p.displayName || p.name} @${p.name}`,
-      value: `\`${p.id}\` · [Profile](https://www.roblox.com/users/${p.id}/profile)`,
-      inline: false,
-    });
-  }
+  // Show first person's headshot as the embed thumbnail
+  const firstId = slice[0].id;
+  if (headshots && headshots[firstId]) e.setThumbnail(headshots[firstId]);
   return e;
 }
 
-function buildRolimonsEmbed(user, rolimons) {
+function buildRolimonsEmbed(guild, user, rolimons) {
+  const link = `https://www.rolimons.com/player/${user.id}`;
   const e = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: `@${user.name}`, url: `https://www.rolimons.com/player/${user.id}` })
-    .setTitle(`${user.name} — cached by rolimons.com`)
-    .setURL(`https://www.rolimons.com/player/${user.id}`);
+    .setThumbnail(ROLIMONS_LOGO);
+
+  const header = `[**${user.displayName || user.name}**](${link})\ncached by rolimons.com`;
+
   if (!rolimons || rolimons.success === false) {
-    e.setDescription('Rolimon\'s data unavailable for this user.');
+    e.setDescription(`${header}\n\nRolimon's data unavailable for this user.`);
     return e;
   }
   const rap = rolimons.rap ?? rolimons.RAP;
@@ -427,17 +487,19 @@ function buildRolimonsEmbed(user, rolimons) {
   const isPrivate = rolimons.privateinventory ?? rolimons.private ?? false;
   const isPremium = rolimons.premium ?? false;
   e.setDescription(
+    `${header}\n\n` +
     [
-      `**RAP:** ${fmtNum(rap)} R$`,
-      `**Value:** ${fmtNum(value)} R$`,
-      `**Limiteds:** ${fmtNum(limiteds)}`,
-      `**Private:** ${isPrivate ? 'True' : 'False'}`,
-      `**Premium:** ${isPremium ? 'True' : 'False'}`,
+      `**RAP:** \`${fmtNum(rap)}\` R$`,
+      `**Value:** \`${fmtNum(value)}\` R$`,
+      `**Limiteds:** \`${fmtNum(limiteds)}\``,
+      `**Private:** \`${isPrivate ? 'True' : 'False'}\``,
+      `**Premium:** \`${isPremium ? 'True' : 'False'}\``,
     ].join('\n')
   );
   return e;
 }
 
+// ---------- Command ----------
 module.exports = {
   category: 'utility',
   help: [
@@ -457,17 +519,14 @@ module.exports = {
   run: async (client, message, args) => {
     if (!args[0]) {
       return message.channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setColor('#efa23a')
-            .setDescription(`${warn} ${message.author}: Provide a Roblox username or user ID. \`,roblox builderman\``),
-        ],
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a Roblox username or user ID. \`,roblox builderman\``)],
       });
     }
 
     const query = args.join(' ').trim();
+    const scanEmoji = guildEmojiStr(message.guild, 'roblox', '👀');
     const thinking = await message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`Looking up **${query}** on Roblox...`)],
+      embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} scanning **${query}**'s Roblox profile..`)],
     });
 
     const user = await resolveUser(query);
@@ -481,7 +540,7 @@ module.exports = {
       headshot, fullBody, presence,
       friendCount, followerCount, followingCount,
       groups, games, names, friends, followers, following,
-      wearingIds, badges, rolimons,
+      wearingIds, badges, rolimons, canViewInventory,
     ] = await Promise.all([
       getAvatarHeadshot(user.id),
       getAvatarThumb(user.id),
@@ -498,64 +557,68 @@ module.exports = {
       getCurrentlyWearing(user.id),
       getRobloxBadges(user.id),
       getRolimons(user.id),
+      getCanViewInventory(user.id),
     ]);
 
     const wearingDetails = await getAssetDetails(wearingIds);
     const totalVisits = games.reduce((s, g) => s + (g.placeVisits || 0), 0);
-    const lastGame = presence && presence.lastLocation ? presence.lastLocation : null;
     const gameThumbs = await getGameThumbs(games.map((g) => g.id).filter(Boolean));
 
+    // Pre-fetch headshots for the first page of friends/followers/following so the
+    // person embed can show one as a thumbnail.
+    const peopleHeadshots = await getHeadshotsBatch(
+      [...new Set([
+        ...friends.slice(0, 5).map((p) => p.id),
+        ...followers.slice(0, 5).map((p) => p.id),
+        ...following.slice(0, 5).map((p) => p.id),
+      ])]
+    );
+
     const ctx = {
+      guild: message.guild,
       user, presence, friendCount, followerCount, followingCount, rolimons, badges,
-      headshot, fullBody, totalVisits, lastGame,
+      headshot, fullBody, totalVisits, canViewInventory,
       groups, games, names, friends, followers, following,
-      wearingDetails, gameThumbs,
+      wearingDetails, gameThumbs, peopleHeadshots,
     };
 
-    const state = { view: 'profile', page: 0, sortAsc: true };
+    const state = { view: 'profile', page: 0 };
 
     const embedFor = async () => {
       switch (state.view) {
-        case 'profile': return await buildProfileEmbed(ctx);
-        case 'avatar': return buildAvatarEmbed(user, fullBody, headshot);
-        case 'groups': return buildGroupEmbed(user, ctx.groups, state.page);
-        case 'games': return buildGamesEmbed(user, ctx.games, state.page, ctx.gameThumbs);
-        case 'wearing': return buildWearingEmbed(user, ctx.wearingDetails, state.page);
-        case 'names': return buildNamesEmbed(user, ctx.names, state.page);
-        case 'friends': return buildPeopleEmbed(user, ctx.friends, state.page, 'Friends', ctx.friends.length);
-        case 'followers': return buildPeopleEmbed(user, ctx.followers, state.page, 'Followers', followerCount);
-        case 'following': return buildPeopleEmbed(user, ctx.following, state.page, 'Following', followingCount);
-        case 'rolimons': return buildRolimonsEmbed(user, rolimons);
+        case 'profile':   return await buildProfileEmbed(ctx);
+        case 'avatar':    return buildAvatarEmbed(message.guild, user, fullBody, headshot);
+        case 'groups':    return buildGroupEmbed(message.guild, user, ctx.groups, state.page);
+        case 'games':     return buildGamesEmbed(message.guild, user, ctx.games, state.page, ctx.gameThumbs);
+        case 'wearing':   return buildWearingEmbed(message.guild, user, ctx.wearingDetails, state.page);
+        case 'names':     return buildNamesEmbed(message.guild, user, ctx.names, state.page);
+        case 'friends':   return buildPeopleEmbed(message.guild, user, ctx.friends, state.page, 'Friends', ctx.friends.length, ctx.peopleHeadshots);
+        case 'followers': return buildPeopleEmbed(message.guild, user, ctx.followers, state.page, 'Followers', followerCount, ctx.peopleHeadshots);
+        case 'following': return buildPeopleEmbed(message.guild, user, ctx.following, state.page, 'Following', followingCount, ctx.peopleHeadshots);
+        case 'rolimons':  return buildRolimonsEmbed(message.guild, user, rolimons);
       }
     };
 
     const pageInfo = () => {
       switch (state.view) {
-        case 'groups': return { total: ctx.groups.length, sortable: true };
-        case 'games': return { total: Math.max(1, Math.ceil(ctx.games.length / 3)), sortable: true };
-        case 'wearing': return { total: Math.max(1, Math.ceil(ctx.wearingDetails.length / 10)), sortable: false };
-        case 'names': return { total: Math.max(1, Math.ceil(ctx.names.length / 10)), sortable: true };
-        case 'friends': return { total: Math.max(1, Math.ceil(ctx.friends.length / 5)), sortable: true };
-        case 'followers': return { total: Math.max(1, Math.ceil(ctx.followers.length / 5)), sortable: true };
-        case 'following': return { total: Math.max(1, Math.ceil(ctx.following.length / 5)), sortable: true };
-        default: return { total: 1, sortable: false };
+        case 'groups':    return { total: ctx.groups.length };
+        case 'games':     return { total: Math.max(1, ctx.games.length) };
+        case 'wearing':   return { total: Math.max(1, Math.ceil(ctx.wearingDetails.length / 10)) };
+        case 'names':     return { total: Math.max(1, Math.ceil(ctx.names.length / 10)) };
+        case 'friends':   return { total: Math.max(1, Math.ceil(ctx.friends.length / 5)) };
+        case 'followers': return { total: Math.max(1, Math.ceil(ctx.followers.length / 5)) };
+        case 'following': return { total: Math.max(1, Math.ceil(ctx.following.length / 5)) };
+        default: return { total: 1 };
       }
     };
 
     const components = () => {
       const pi = pageInfo();
-      const rows = [buildSelect(state.view)];
-      if (pi.total > 1) rows.push(buildPager(state.page, pi.total, message.author.id, false));
+      const rows = [];
       rows.push(buildLinkRow(user.id));
+      rows.push(buildSelect(message.guild, state.view));
+      if (pi.total > 1) rows.push(buildPager(state.page, pi.total));
       return rows;
-    };
-
-    const sortPaged = (arr, key) => {
-      arr.sort((a, b) => {
-        const av = (a[key] ?? '').toString().toLowerCase();
-        const bv = (b[key] ?? '').toString().toLowerCase();
-        return state.sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
-      });
     };
 
     await thinking.edit({ embeds: [await embedFor()], components: components() });
