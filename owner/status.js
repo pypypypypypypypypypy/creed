@@ -1,5 +1,5 @@
 const { ActivityType } = require('discord.js');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -19,7 +19,7 @@ module.exports = {
   aliases: ['setstatus', 'customstatus'],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'status')) return;
 
     if (!args.length) {
       return message.channel.send(

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { globSync } = require('glob');
 const { color } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -24,7 +24,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'reloademojis')) return;
 
     const emojisPath = path.join(__dirname, '..', 'emojis.json');
     let raw = {};

@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { color } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -23,7 +23,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'syncemojis')) return;
 
     const guildEmojis = await message.guild.emojis.fetch();
 

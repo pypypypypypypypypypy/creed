@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 // Inventory of every API / external integration the bot uses.
 // `keys`     — env-var names that hold the credential (any one being set counts).
@@ -110,7 +110,7 @@ module.exports = {
   aliases: [],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'sudo')) return;
 
     const sub = (args[0] || '').toLowerCase();
 

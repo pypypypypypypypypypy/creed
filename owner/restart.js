@@ -1,7 +1,7 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { color } = require('../config.json');
 const { approve, warn } = require('../emojis.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   name: 'restart',
@@ -19,7 +19,7 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.Administrator) && !isOwner(message.author.id)) {
+    if (!message.member.permissions.has(PermissionFlagsBits.Administrator) && !canRunOwnerCmd(message.author.id, 'restart')) {
       return message.channel.send({
         embeds: [
           new EmbedBuilder()

@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp)(\?.*)?$/i;
 
@@ -22,7 +22,7 @@ module.exports = {
   aliases: ['setpfp', 'setavatar'],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'pfp')) return;
 
     let source = null;
 

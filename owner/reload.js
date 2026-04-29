@@ -1,6 +1,6 @@
 const { globSync } = require('glob');
 const path = require('path');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -20,7 +20,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'reload')) return;
 
     let filePaths;
     try {

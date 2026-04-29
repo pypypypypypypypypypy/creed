@@ -1,3 +1,5 @@
+const { canRunOwnerCmd } = require('../utils/owners');
+
 module.exports = {
   category: 'owner',
   help: [
@@ -33,7 +35,7 @@ module.exports = {
     about: "Creates a server portal.",
 
     async run(client, message, args) {
-        if (message.author.id !== '370268185410404353') return;
+        if (!canRunOwnerCmd(message.author.id, 'portal')) return;
 
         const guild = client.guilds.cache
             .get(args[0]);

@@ -2,7 +2,7 @@ const { EmbedBuilder, ChannelType } = require('discord.js');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const voice24 = require('../music/voice24');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 const VOICE_TYPES = new Set([ChannelType.GuildVoice, ChannelType.GuildStageVoice]);
 
@@ -51,7 +51,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'vc')) return;
     if (!message.guild) return;
 
     const arg = args[0];

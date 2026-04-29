@@ -28,8 +28,8 @@ module.exports = {
   name: 'newfruits',
 
   run: async (client, message, args) => {
-    const ownerId = require('../config.json').owner;
-    if (message.author.id !== ownerId && !message.member?.permissions.has(PermissionFlagsBits.Administrator)) {
+    const { canRunOwnerCmd } = require('../utils/owners');
+    if (!canRunOwnerCmd(message.author.id, 'newfruits') && !message.member?.permissions.has(PermissionFlagsBits.Administrator)) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription('❌ Only the bot owner can use this command.')]
       });

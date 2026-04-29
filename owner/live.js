@@ -1,5 +1,5 @@
 const { ActivityType } = require('discord.js');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 let isLive = false;
 
@@ -20,7 +20,7 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'live')) return;
 
     if (isLive) {
       isLive = false;

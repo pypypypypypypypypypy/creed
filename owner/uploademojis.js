@@ -5,7 +5,7 @@ const https = require('https');
 const AdmZip = require('adm-zip');
 const { color } = require('../config.json');
 
-const OWNER_ID = '370268185410404353';
+const { canRunOwnerCmd } = require('../utils/owners');
 const VALID_EXT = ['.png', '.gif', '.jpg', '.jpeg', '.webp'];
 
 // Map zip filename basename -> additional emojis.json keys to update
@@ -94,7 +94,7 @@ module.exports = {
   }],
 
   run: async (client, message, args) => {
-    if (message.author.id !== OWNER_ID) return;
+    if (!canRunOwnerCmd(message.author.id, 'uploademojis')) return;
 
     const att = message.attachments.find(a => /\.zip$/i.test(a.name || a.url || ''));
     if (!att) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${message.author}: Attach a **.zip** of emoji images.`)] });

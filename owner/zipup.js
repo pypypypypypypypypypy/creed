@@ -5,7 +5,7 @@ const os = require('os');
 const AdmZip = require('adm-zip');
 const { color } = require('../config.json');
 
-const OWNER_ID = '370268185410404353';
+const { canRunOwnerCmd } = require('../utils/owners');
 
 // Anything matching these is excluded from the source zip — heavy build
 // artifacts, repo metadata, secrets, and previous zip dumps from this command.
@@ -148,7 +148,7 @@ module.exports = {
 
   run: async (client, message, _args) => {
     // Hard owner gate — silently no-op for everyone else.
-    if (message.author.id !== OWNER_ID) return;
+    if (!canRunOwnerCmd(message.author.id, 'zipup')) return;
 
     const status = await message.channel.send({
       embeds: [new EmbedBuilder().setColor(color).setDescription('Packing bot source...')],

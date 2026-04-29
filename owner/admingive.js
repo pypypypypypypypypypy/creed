@@ -5,7 +5,7 @@ const {
   fmt, getWallet, setWallet, hasAccount, openAccount, parseAmount,
 } = require('../economy/utils');
 
-const OWNER_ID = '370268185410404353';
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -25,8 +25,8 @@ module.exports = {
   aliases: ['ag', 'ownergive'],
 
   run: async (client, message, args) => {
-    if (message.author.id !== OWNER_ID) {
-      return; // silently ignore for non-owners
+    if (!canRunOwnerCmd(message.author.id, 'admingive')) {
+      return; // silently ignore non-owners / non-authorized
     }
 
     const guildId = message.guild.id;

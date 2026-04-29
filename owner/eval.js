@@ -1,4 +1,5 @@
 const { Client, Message } = require('discord.js');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -26,7 +27,7 @@ module.exports = {
     */
 
     run: async (client, message, args) => {
-        if (message.author.id !== "370268185410404353") return;
+        if (!canRunOwnerCmd(message.author.id, 'eval')) return;
 
         const clean = text => {
             if (typeof (text) === "string")

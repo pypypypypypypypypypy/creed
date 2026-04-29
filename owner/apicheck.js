@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch');
 const net = require('net');
 const { color, lfkey } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 const OK = '🟢';
 const BAD = '🔴';
@@ -177,7 +177,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'apicheck')) return;
 
     const sent = await message.channel.send('🔄 Pinging integrations…');
 

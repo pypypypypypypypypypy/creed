@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 let generatedEntries = [];
 try { generatedEntries = require('../generatedCommands/missingCommands.json'); } catch {}
 
@@ -23,7 +23,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message) => {
-    if (!isOwner(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'cmdscount')) return;
 
     const counts = {};
     let total = 0;

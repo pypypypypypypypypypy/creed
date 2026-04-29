@@ -1,5 +1,6 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { owners, color } = require('../config.json');
+const { color } = require('../config.json');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   name: 'delete',
@@ -18,7 +19,7 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!owners.includes(message.author.id)) return;
+    if (!canRunOwnerCmd(message.author.id, 'delete')) return;
 
     const sub = args[0];
 

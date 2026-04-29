@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 module.exports = {
   category: 'owner',
@@ -50,7 +50,7 @@ module.exports = {
   category: 'owner',
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id))
+    if (!canRunOwnerCmd(message.author.id, 'guildwhitelist'))
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: This command is restricted to the **bot owner**.`)] });
 
     const sub = (args[0] || '').toLowerCase();

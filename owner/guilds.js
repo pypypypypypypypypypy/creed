@@ -1,5 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
-const { isOwner } = require('../utils/owners');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 function getEmojis() {
   delete require.cache[require.resolve('../emojis.json')];
@@ -35,7 +35,7 @@ module.exports = {
   }],
 
   run: async (client, message, args) => {
-    if (!isOwner(message.author.id)) {
+    if (!canRunOwnerCmd(message.author.id, 'guilds')) {
       console.log(`[guilds] non-owner attempt by ${message.author.id} (${message.author.tag})`);
       return;
     }
