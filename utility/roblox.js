@@ -197,15 +197,29 @@ function statusFromPresence(p) {
   }
 }
 
-// ---------- Custom-emoji lookup (uploaded via ,robloxemojis) ----------
-function guildEmojiObj(guild, name) {
-  const e = guild?.emojis?.cache?.find((x) => x.name === name);
-  if (!e) return null;
-  return { id: e.id, name: e.name, animated: e.animated };
+// ---------- Custom-emoji lookup (application-owned, uploaded to the bot) ----------
+// These work in every server the bot is in — no per-server upload needed.
+const APP_EMOJIS = {
+  profile:   '1498894231668916284',
+  avatar:    '1498894235540263003',
+  groups:    '1498894239541628928',
+  games:     '1498894243140337735',
+  inventory: '1498894247569391736',
+  names:     '1498894251646390424',
+  friends:   '1498894256570368060',
+  followers: '1498894260538441749',
+  following: '1498894264778883082',
+  roblox:    '1498894268511813684',
+  language:  '1498894272550670406',
+  trash:     '1498894276447436872',
+};
+function appEmojiObj(name) {
+  const id = APP_EMOJIS[name];
+  return id ? { id, name } : null;
 }
-function guildEmojiStr(guild, name, fallback = '') {
-  const e = guild?.emojis?.cache?.find((x) => x.name === name);
-  return e ? e.toString() : fallback;
+function appEmojiStr(name, fallback = '') {
+  const id = APP_EMOJIS[name];
+  return id ? `<:${name}:${id}>` : fallback;
 }
 
 // Maps view value -> { label, emojiName, fallbackEmoji }
@@ -225,7 +239,7 @@ const VIEWS = {
 // ---------- UI: Select / Pager / Links ----------
 function buildSelect(guild, active) {
   const options = Object.entries(VIEWS).map(([value, v]) => {
-    const eo = guildEmojiObj(guild, v.emojiName);
+    const eo = appEmojiObj(v.emojiName);
     return {
       label: v.label,
       value,
@@ -242,10 +256,10 @@ function buildSelect(guild, active) {
 }
 
 const PAGER_EMOJIS = {
-  prev: { id: '1496708665862783106', name: 'previous' },
-  next: { id: '1496708661525876787', name: 'next' },
-  nav:  { id: '1496708656807542844', name: 'navigate' },
-  close: '🗑️',
+  prev:  { id: '1496728326608388096', name: 'previous' },
+  next:  { id: '1496728324414767266', name: 'next' },
+  nav:   { id: '1496728322120613931', name: 'navigate' },
+  close: appEmojiObj('trash') || '🗑️',
 };
 
 function buildPager(page, totalPages) {
@@ -291,7 +305,7 @@ async function buildProfileEmbed(ctx) {
   const followersLink = `https://www.roblox.com/users/${user.id}/friends#!/followers`;
   const followingLink = `https://www.roblox.com/users/${user.id}/friends#!/following`;
   const rolimonsLink = `https://www.rolimons.com/player/${user.id}`;
-  const langEmoji = guildEmojiStr(guild, 'language', '🌐');
+  const langEmoji = appEmojiStr('language', '🌐');
 
   const lines = [];
   lines.push(`**User:** ${userMention(user)} ${user.hasVerifiedBadge ? '☑️' : ''}`);
@@ -531,7 +545,7 @@ module.exports = {
     }
 
     const query = args.join(' ').trim();
-    const scanEmoji = guildEmojiStr(message.guild, 'roblox', '👀');
+    const scanEmoji = appEmojiStr('roblox', '👀');
     const thinking = await message.channel.send({
       embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} scanning **${query}**'s Roblox profile..`)],
     });
