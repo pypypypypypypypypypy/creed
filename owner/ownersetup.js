@@ -103,15 +103,26 @@ const CATEGORIES = [
 
 const STAFF_ROLE_NAMES = ['Administrator', 'Manager', 'Head Moderator', 'Senior Moderator', 'Moderator', 'Staff'];
 
+async function disableCommunity(guild) {
+  if (!guild.features.includes('COMMUNITY')) return { changed: false };
+  await guild.edit({
+    features: guild.features.filter((f) => f !== 'COMMUNITY'),
+    rulesChannel: null,
+    publicUpdatesChannel: null,
+    reason: 'ownersetup: disabling community before wipe',
+  });
+  return { changed: true };
+}
+
 module.exports = {
   category: 'owner',
   help: [
     {
       name: 'ownersetup',
-      description: '[Owner] Bulk-create the standard role + channel layout in the current server.',
+      description: '[Owner] Wipe the server (disable Community, delete every channel and every role below the bot) and create the standard role + channel layout.',
       aliases: 'n/a',
       parameters: 'n/a',
-      information: 'Owner-only. Creates 34 roles (with colors + sensible permissions) and 6 categories of channels. Skips anything already present, so it is safe to re-run.',
+      information: 'Owner-only and DESTRUCTIVE. Disables Community, deletes ALL channels, deletes every role positioned below the bot (except @everyone and managed integration roles), then creates 34 roles (with colors + sensible permissions) and 6 categories of channels. The summary is DM\'d to you because the channel running the command is deleted.',
       usage: 'ownersetup',
       example: 'ownersetup',
     },
@@ -124,11 +135,12 @@ module.exports = {
     if (!isOwner(message.author.id)) return;
     if (!message.guild) return;
 
-    const me = message.guild.members.me;
-    if (!me.permissions.has(P.ManageRoles) || !me.permissions.has(P.ManageChannels)) {
+    const guild = message.guild;
+    const me = guild.members.me;
+    if (!me.permissions.has(P.ManageRoles) || !me.permissions.has(P.ManageChannels) || !me.permissions.has(P.ManageGuild)) {
       return message.channel.send({ embeds: [
         new EmbedBuilder().setColor(color).setDescription(
-          `${deny} ${message.author}: I need **Manage Roles** and **Manage Channels** to run setup.`
+          `${deny} ${message.author}: I need **Manage Roles**, **Manage Channels**, and **Manage Server** to run setup.`
         ),
       ] });
     }
@@ -136,16 +148,19 @@ module.exports = {
     // Confirmation prompt
     const confirmEmbed = new EmbedBuilder()
       .setColor(color)
-      .setTitle('Owner setup — confirm')
+      .setTitle('Owner setup — DESTRUCTIVE confirm')
       .setDescription(
-        `${warn} This will create **${ROLES.length} roles** and **${CATEGORIES.length} categories** ` +
-        `(plus their channels) in **${message.guild.name}**.\n\n` +
-        `Existing roles/channels with the same name are **skipped** — safe to re-run.`
+        `${warn} This will **wipe ${guild.name}**:\n` +
+        `• Disable Community (if enabled)\n` +
+        `• Delete **every** channel (including this one)\n` +
+        `• Delete **every** role below my top role (except @everyone and managed roles)\n\n` +
+        `Then it creates **${ROLES.length} roles** and **${CATEGORIES.length} categories** with their channels.\n\n` +
+        `The result will be DM'd to you. **This cannot be undone.**`
       );
 
     const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('ownersetup_confirm').setLabel('Confirm').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId('ownersetup_cancel').setLabel('Cancel').setStyle(ButtonStyle.Danger),
+      new ButtonBuilder().setCustomId('ownersetup_confirm').setLabel('Wipe + Setup').setStyle(ButtonStyle.Danger),
+      new ButtonBuilder().setCustomId('ownersetup_cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary),
     );
 
     const prompt = await message.channel.send({ embeds: [confirmEmbed], components: [row] });
@@ -168,110 +183,125 @@ module.exports = {
     }
 
     await interaction.update({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} Running setup… this can take a minute.`)],
+      embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} Wiping and setting up… results will be DM'd to you.`)],
       components: [],
     });
 
-    const created = { roles: [], rolesSkipped: [], channels: [], channelsSkipped: [] };
-    const errors = [];
+    const log = { communityDisabled: false, channelsDeleted: 0, rolesDeleted: 0, rolesCreated: [], channelsCreated: [], errors: [] };
 
-    // ---------- ROLES ----------
+    // ---------- 1. DISABLE COMMUNITY ----------
+    try {
+      const r = await disableCommunity(guild);
+      log.communityDisabled = r.changed;
+    } catch (e) {
+      log.errors.push(`disable community: ${e.message}`);
+    }
+
+    // ---------- 2. DELETE ALL CHANNELS ----------
+    const allChannels = [...guild.channels.cache.values()];
+    for (const ch of allChannels) {
+      try {
+        await ch.delete('ownersetup wipe');
+        log.channelsDeleted++;
+      } catch (e) {
+        log.errors.push(`delete #${ch.name}: ${e.message}`);
+      }
+    }
+
+    // ---------- 3. DELETE ROLES BELOW BOT'S TOP ROLE ----------
+    const myTop = me.roles.highest.position;
+    const everyoneId = guild.roles.everyone.id;
+    const rolesToDelete = [...guild.roles.cache.values()]
+      .filter((r) => r.id !== everyoneId && !r.managed && r.position < myTop)
+      .sort((a, b) => b.position - a.position); // delete top-down to avoid hierarchy issues
+    for (const role of rolesToDelete) {
+      try {
+        await role.delete('ownersetup wipe');
+        log.rolesDeleted++;
+      } catch (e) {
+        log.errors.push(`delete role \`${role.name}\`: ${e.message}`);
+      }
+    }
+
+    // ---------- 4. CREATE ROLES ----------
     // Create from BOTTOM up so highest-priority entries end at the top.
     const createdRoleByName = new Map();
     for (let i = ROLES.length - 1; i >= 0; i--) {
       const def = ROLES[i];
-      const existing = message.guild.roles.cache.find((r) => r.name === def.name);
-      if (existing) {
-        createdRoleByName.set(def.name, existing);
-        created.rolesSkipped.push(def.name);
-        continue;
-      }
       try {
-        const role = await message.guild.roles.create({
+        const role = await guild.roles.create({
           name: def.name,
           color: def.color,
           permissions: new PermissionsBitField(def.perms),
           reason: `ownersetup by ${message.author.tag}`,
         });
         createdRoleByName.set(def.name, role);
-        created.roles.push(def.name);
+        log.rolesCreated.push(def.name);
       } catch (e) {
-        errors.push(`role \`${def.name}\`: ${e.message}`);
+        log.errors.push(`create role \`${def.name}\`: ${e.message}`);
       }
     }
 
-    // ---------- CHANNELS ----------
+    // ---------- 5. CREATE CHANNELS ----------
     for (const cat of CATEGORIES) {
-      // Find an existing category with the same name that has no parent
-      // (i.e. is itself a category) and is *not yet* one we just created.
-      let category = message.guild.channels.cache.find(
-        (c) => c.type === ChannelType.GuildCategory && c.name === cat.name && !created.channels.includes(`📁 ${cat.name}`)
-      );
-
-      if (!category) {
-        try {
-          const overwrites = [];
-          if (cat.locked) {
-            overwrites.push({
-              id: message.guild.roles.everyone.id,
-              deny: [P.ViewChannel],
-            });
-            for (const name of STAFF_ROLE_NAMES) {
-              const r = createdRoleByName.get(name) || message.guild.roles.cache.find((x) => x.name === name);
-              if (r) overwrites.push({ id: r.id, allow: [P.ViewChannel, P.SendMessages, P.ReadMessageHistory] });
-            }
+      let category;
+      try {
+        const overwrites = [];
+        if (cat.locked) {
+          overwrites.push({ id: guild.roles.everyone.id, deny: [P.ViewChannel] });
+          for (const name of STAFF_ROLE_NAMES) {
+            const r = createdRoleByName.get(name);
+            if (r) overwrites.push({ id: r.id, allow: [P.ViewChannel, P.SendMessages, P.ReadMessageHistory] });
           }
-          category = await message.guild.channels.create({
-            name: cat.name,
-            type: ChannelType.GuildCategory,
-            permissionOverwrites: overwrites,
-            reason: `ownersetup by ${message.author.tag}`,
-          });
-          created.channels.push(`📁 ${cat.name}`);
-        } catch (e) {
-          errors.push(`category \`${cat.name}\`: ${e.message}`);
-          continue;
         }
-      } else {
-        created.channelsSkipped.push(`📁 ${cat.name}`);
+        category = await guild.channels.create({
+          name: cat.name,
+          type: ChannelType.GuildCategory,
+          permissionOverwrites: overwrites,
+          reason: `ownersetup by ${message.author.tag}`,
+        });
+        log.channelsCreated.push(`📁 ${cat.name}`);
+      } catch (e) {
+        log.errors.push(`create category \`${cat.name}\`: ${e.message}`);
+        continue;
       }
 
       for (const ch of cat.channels) {
-        const dupe = message.guild.channels.cache.find(
-          (c) => c.parentId === category.id && c.name === ch.name && c.type === ch.type
-        );
-        if (dupe) {
-          created.channelsSkipped.push(`#${ch.name}`);
-          continue;
-        }
         try {
-          await message.guild.channels.create({
+          await guild.channels.create({
             name: ch.name,
             type: ch.type,
             parent: category.id,
             reason: `ownersetup by ${message.author.tag}`,
           });
-          created.channels.push(`#${ch.name}`);
+          log.channelsCreated.push(`#${ch.name}`);
         } catch (e) {
-          errors.push(`channel \`${ch.name}\`: ${e.message}`);
+          log.errors.push(`create channel \`${ch.name}\`: ${e.message}`);
         }
       }
     }
 
-    // ---------- SUMMARY ----------
+    // ---------- 6. DM SUMMARY ----------
     const summary = new EmbedBuilder()
       .setColor(color)
-      .setTitle('Owner setup — done')
+      .setTitle(`Owner setup — done in ${guild.name}`)
       .addFields(
-        { name: `Roles created (${created.roles.length})`,    value: created.roles.length    ? created.roles.join(', ').slice(0, 1024)    : '*none*' },
-        { name: `Roles skipped (${created.rolesSkipped.length})`, value: created.rolesSkipped.length ? created.rolesSkipped.join(', ').slice(0, 1024) : '*none*' },
-        { name: `Channels created (${created.channels.length})`, value: created.channels.length ? created.channels.join(', ').slice(0, 1024) : '*none*' },
-        { name: `Channels skipped (${created.channelsSkipped.length})`, value: created.channelsSkipped.length ? created.channelsSkipped.join(', ').slice(0, 1024) : '*none*' },
+        { name: 'Community disabled',   value: log.communityDisabled ? 'yes' : 'no (was already off)' },
+        { name: 'Channels deleted',     value: String(log.channelsDeleted) },
+        { name: 'Roles deleted',        value: String(log.rolesDeleted) },
+        { name: `Roles created (${log.rolesCreated.length})`,    value: log.rolesCreated.length    ? log.rolesCreated.join(', ').slice(0, 1024)    : '*none*' },
+        { name: `Channels created (${log.channelsCreated.length})`, value: log.channelsCreated.length ? log.channelsCreated.join(', ').slice(0, 1024) : '*none*' },
       );
-    if (errors.length) {
-      summary.addFields({ name: `Errors (${errors.length})`, value: errors.slice(0, 8).join('\n').slice(0, 1024) });
+    if (log.errors.length) {
+      summary.addFields({ name: `Errors (${log.errors.length})`, value: log.errors.slice(0, 8).join('\n').slice(0, 1024) });
     }
 
-    return message.channel.send({ embeds: [summary] });
+    try {
+      await message.author.send({ embeds: [summary] });
+    } catch {
+      // DMs closed — try posting in the first text channel we just made.
+      const fallback = guild.channels.cache.find((c) => c.type === ChannelType.GuildText);
+      if (fallback) await fallback.send({ content: `<@${message.author.id}>`, embeds: [summary] }).catch(() => {});
+    }
   },
 };
