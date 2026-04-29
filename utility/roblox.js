@@ -241,12 +241,19 @@ function buildSelect(guild, active) {
   );
 }
 
+const PAGER_EMOJIS = {
+  prev: { id: '1496708665862783106', name: 'previous' },
+  next: { id: '1496708661525876787', name: 'next' },
+  nav:  { id: '1496708656807542844', name: 'navigate' },
+  close: '🗑️',
+};
+
 function buildPager(page, totalPages) {
   return new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Primary).setEmoji('◀️').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Primary).setEmoji('▶️').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_nav').setStyle(ButtonStyle.Secondary).setEmoji('↕️').setDisabled(totalPages <= 1),
-    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji('🗑️')
+    new ButtonBuilder().setCustomId('rblx_prev').setStyle(ButtonStyle.Primary).setEmoji(PAGER_EMOJIS.prev).setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_next').setStyle(ButtonStyle.Primary).setEmoji(PAGER_EMOJIS.next).setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_nav').setStyle(ButtonStyle.Secondary).setEmoji(PAGER_EMOJIS.nav).setDisabled(totalPages <= 1),
+    new ButtonBuilder().setCustomId('rblx_close').setStyle(ButtonStyle.Danger).setEmoji(PAGER_EMOJIS.close)
   );
 }
 
