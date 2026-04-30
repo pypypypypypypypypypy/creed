@@ -10,7 +10,7 @@ const APIS = [
   {
     name: 'Discord (bot gateway)',
     keys: ['DISCORD_TOKEN', 'TOKEN'],
-    belongs: 'Bot login token. Read by bored.js to log the client in to Discord.',
+    belongs: 'Bot login token. Read by bleed.js to log the client in to Discord.',
   },
   {
     name: 'GitHub API',

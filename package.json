@@ -2,10 +2,10 @@
   "name": "@workspace/discord-bot",
   "version": "1.0.0",
   "private": true,
-  "main": "bored.js",
+  "main": "bleed.js",
   "scripts": {
-    "start": "node bored.js",
-    "check": "node --check bored.js"
+    "start": "node bleed.js",
+    "check": "node --check bleed.js"
   },
   "dependencies": {
     "@discordjs/voice": "^0.19.2",
