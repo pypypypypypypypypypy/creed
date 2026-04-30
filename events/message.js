@@ -220,7 +220,7 @@ client.on("messageCreate", async message => {
       global.__boredCmdCount = (global.__boredCmdCount || 0) + 1;
       await command.run(client, message, args);
     } catch (err) {
-      const payload = buildErrorPayload(message, command.name || cmd);
+      const payload = buildErrorPayload(message, command.name || cmd, err);
       console.error(`Command error [${cmd}] (code ${payload.code}):`, err);
       message.channel.send({ content: payload.content, embeds: payload.embeds }).catch(() => {});
     }
