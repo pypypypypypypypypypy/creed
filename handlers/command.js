@@ -10,6 +10,10 @@ module.exports = (client) => {
     "automod", "message", "music", "info", "leveling"
   ];
 
+  let total = 0;
+  const failed = [];
+  const skipped = [];
+
   for (const dir of dirs) {
     const dirPath = path.join(__dirname, `../${dir}`);
     let files;
@@ -20,19 +24,31 @@ module.exports = (client) => {
     }
 
     for (const file of files) {
+      total++;
+      const rel = `${dir}/${file}`;
       try {
         const pull = require(`../${dir}/${file}`);
-        if (pull.name) {
+        if (pull && pull.name) {
           client.commands.set(pull.name, pull);
-        }
-        if (pull.aliases && Array.isArray(pull.aliases)) {
-          pull.aliases.forEach(alias => client.aliases.set(alias, pull.name));
+          if (pull.aliases && Array.isArray(pull.aliases)) {
+            pull.aliases.forEach(alias => client.aliases.set(alias, pull.name));
+          }
+        } else {
+          skipped.push(rel);
         }
       } catch (e) {
-        console.log(`Failed to load ${dir}/${file}:`, e.message);
+        failed.push(rel);
+        console.error(`\n[boot][cmds] !!! FAILED to load ${rel}`);
+        console.error(e && e.stack ? e.stack : e);
       }
     }
   }
 
-  console.log(`Loaded ${client.commands.size} commands.`);
+  console.log(`[boot][cmds] loaded ${client.commands.size} commands (${client.aliases.size} aliases) from ${total} files.`);
+  if (skipped.length) {
+    console.warn(`[boot][cmds] ${skipped.length} file(s) had no .name and were skipped: ${skipped.slice(0, 10).join(', ')}${skipped.length > 10 ? `, +${skipped.length - 10} more` : ''}`);
+  }
+  if (failed.length) {
+    console.error(`[boot][cmds] !!! ${failed.length} command(s) failed to load: ${failed.join(', ')}`);
+  }
 };
