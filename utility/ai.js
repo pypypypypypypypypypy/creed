@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { warn } = require('../emojis.json');
+const { warn, loading } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 const aiCooldowns = new Map();
@@ -81,7 +81,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That prompt was blocked by the content filter.`)] });
     }
 
-    const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Thinking...`)] });
+    const thinking = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loading} ${message.author}: Thinking...`)] });
 
     const startedAt = Date.now();
 
