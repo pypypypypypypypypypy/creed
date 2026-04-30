@@ -161,6 +161,57 @@ async function getGroups(userId) {
   const d = await jget(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);
   return (d && d.data) || [];
 }
+// /v2/users/{userId}/groups/roles does NOT include owner info on each group.
+// Fetch the missing fields (owner, memberCount, publicEntryAllowed, description,
+// created) in bulk via /v2/groups, then resolve owner usernames in one batch
+// users.roblox.com call. Mutates the original `groups` array in place so the
+// existing renderer keeps working.
+async function enrichGroupsWithOwners(groups) {
+  if (!groups || !groups.length) return;
+  const ids = [...new Set(groups.map((g) => g.group && g.group.id).filter(Boolean))];
+  if (!ids.length) return;
+
+  const detailsById = {};
+  for (let i = 0; i < ids.length; i += 50) {
+    const chunk = ids.slice(i, i + 50);
+    const d = await jget(`https://groups.roblox.com/v2/groups?groupIds=${chunk.join(',')}`);
+    if (!d || !d.data) continue;
+    for (const g of d.data) detailsById[g.id] = g;
+  }
+
+  // Resolve owner usernames in one POST.
+  const ownerIds = [...new Set(
+    Object.values(detailsById)
+      .map((g) => g.owner && g.owner.id)
+      .filter(Boolean)
+  )];
+  const ownerById = {};
+  if (ownerIds.length) {
+    const u = await jpost('https://users.roblox.com/v1/users', { userIds: ownerIds, excludeBannedUsers: false });
+    if (u && Array.isArray(u.data)) {
+      for (const o of u.data) ownerById[o.id] = o;
+    }
+  }
+
+  for (const item of groups) {
+    const grp = item.group;
+    if (!grp || !grp.id) continue;
+    const info = detailsById[grp.id];
+    if (!info) continue;
+    if (info.memberCount != null) grp.memberCount = info.memberCount;
+    if (info.created) grp.created = info.created;
+    if (info.description) grp.description = info.description;
+    if (info.publicEntryAllowed != null) grp.publicEntryAllowed = info.publicEntryAllowed;
+    if (info.owner && info.owner.id) {
+      const ownerUser = ownerById[info.owner.id];
+      grp.owner = {
+        userId: info.owner.id,
+        username: (ownerUser && (ownerUser.name || ownerUser.requestedUsername)) || (info.owner.username || null),
+        displayName: (ownerUser && ownerUser.displayName) || null,
+      };
+    }
+  }
+}
 async function getGames(userId) {
   const d = await jget(`https://games.roblox.com/v2/users/${userId}/games?accessFilter=Public&sortOrder=Asc&limit=50`);
   return (d && d.data) || [];
@@ -542,7 +593,10 @@ function buildNamesEmbed(guild, user, names, page) {
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
 }
 
-function buildPeopleEmbed(guild, user, people, page, label, total, headshots) {
+// Returns an array of embeds: a header summary + one mini-embed per person on
+// the current page so each person gets their own avatar thumbnail. Discord
+// allows up to 10 embeds per message; perPage stays at 5 so we ship at most 6.
+async function buildPeopleEmbed(guild, user, people, page, label, total, headshots) {
   const perPage = 5;
   const totalPages = Math.max(1, Math.ceil(people.length / perPage));
   const slice = people.slice(page * perPage, page * perPage + perPage);
@@ -553,23 +607,37 @@ function buildPeopleEmbed(guild, user, people, page, label, total, headshots) {
     else if (label === 'Followers') emptyText = 'This user has no followers.';
     else if (label === 'Following') emptyText = 'This user is not following anyone.';
     else emptyText = 'Nobody to show.';
-    return new EmbedBuilder().setColor(color).setDescription(`${header}\n\n${emptyText}`);
+    return [new EmbedBuilder().setColor(color).setDescription(`${header}\n\n${emptyText}`)];
   }
-  const lines = slice.map((p) => {
-    const link = `https://www.roblox.com/users/${p.id}/profile`;
-    return [
-      `[**${p.displayName || p.name}**](${link}) [@${p.name}](${link})`,
-      `\`${p.id}\``,
-    ].join('\n');
-  });
-  const e = new EmbedBuilder()
+
+  // Lazily fetch any missing headshots for this page so pagination still works.
+  const need = slice.map((p) => p.id).filter((id) => !(headshots && headshots[id]));
+  if (need.length) {
+    try {
+      const got = await getHeadshotsBatch(need);
+      Object.assign(headshots, got);
+    } catch { /* keep going without thumbnails */ }
+  }
+
+  const headerEmbed = new EmbedBuilder()
     .setColor(color)
-    .setDescription(`${header}\n\n${lines.join('\n\n')}`)
+    .setDescription(`${header}`)
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
-  // Show first person's headshot as the embed thumbnail
-  const firstId = slice[0].id;
-  if (headshots && headshots[firstId]) e.setThumbnail(headshots[firstId]);
-  return e;
+
+  const personEmbeds = slice.map((p) => {
+    const link = `https://www.roblox.com/users/${p.id}/profile`;
+    const e = new EmbedBuilder()
+      .setColor(color)
+      .setDescription([
+        `[**${p.displayName || p.name}**](${link})`,
+        `[@${p.name}](${link})`,
+        `\`${p.id}\``,
+      ].join('\n'));
+    if (headshots && headshots[p.id]) e.setThumbnail(headshots[p.id]);
+    return e;
+  });
+
+  return [headerEmbed, ...personEmbeds];
 }
 
 function buildRolimonsEmbed(guild, user, rolimons) {
@@ -667,6 +735,8 @@ module.exports = {
     const wearingDetails = await getAssetDetails(wearingIds);
     const totalVisits = games.reduce((s, g) => s + (g.placeVisits || 0), 0);
     const gameThumbs = await getGameThumbs(games.map((g) => g.id).filter(Boolean));
+    // Backfill group owner / member count / created — the user-groups endpoint omits these.
+    await enrichGroupsWithOwners(groups);
 
     // Pre-fetch headshots for the first page of friends/followers/following so the
     // person embed can show one as a thumbnail.
@@ -689,18 +759,20 @@ module.exports = {
     const state = { view: 'profile', page: 0 };
 
     const embedFor = async () => {
+      let out;
       switch (state.view) {
-        case 'profile':   return await buildProfileEmbed(ctx);
-        case 'avatar':    return buildAvatarEmbed(message.guild, user, fullBody, headshot);
-        case 'groups':    return buildGroupEmbed(message.guild, user, ctx.groups, state.page);
-        case 'games':     return buildGamesEmbed(message.guild, user, ctx.games, state.page, ctx.gameThumbs);
-        case 'wearing':   return buildWearingEmbed(message.guild, user, ctx.wearingDetails, state.page);
-        case 'names':     return buildNamesEmbed(message.guild, user, ctx.names, state.page);
-        case 'friends':   return buildPeopleEmbed(message.guild, user, ctx.friends, state.page, 'Friends', ctx.friends.length, ctx.peopleHeadshots);
-        case 'followers': return buildPeopleEmbed(message.guild, user, ctx.followers, state.page, 'Followers', followerCount, ctx.peopleHeadshots);
-        case 'following': return buildPeopleEmbed(message.guild, user, ctx.following, state.page, 'Following', followingCount, ctx.peopleHeadshots);
-        case 'rolimons':  return buildRolimonsEmbed(message.guild, user, rolimons);
+        case 'profile':   out = await buildProfileEmbed(ctx); break;
+        case 'avatar':    out = buildAvatarEmbed(message.guild, user, fullBody, headshot); break;
+        case 'groups':    out = buildGroupEmbed(message.guild, user, ctx.groups, state.page); break;
+        case 'games':     out = buildGamesEmbed(message.guild, user, ctx.games, state.page, ctx.gameThumbs); break;
+        case 'wearing':   out = buildWearingEmbed(message.guild, user, ctx.wearingDetails, state.page); break;
+        case 'names':     out = buildNamesEmbed(message.guild, user, ctx.names, state.page); break;
+        case 'friends':   out = await buildPeopleEmbed(message.guild, user, ctx.friends, state.page, 'Friends', ctx.friends.length, ctx.peopleHeadshots); break;
+        case 'followers': out = await buildPeopleEmbed(message.guild, user, ctx.followers, state.page, 'Followers', followerCount, ctx.peopleHeadshots); break;
+        case 'following': out = await buildPeopleEmbed(message.guild, user, ctx.following, state.page, 'Following', followingCount, ctx.peopleHeadshots); break;
+        case 'rolimons':  out = buildRolimonsEmbed(message.guild, user, rolimons); break;
       }
+      return Array.isArray(out) ? out : [out];
     };
 
     const pageInfo = () => {
@@ -724,7 +796,7 @@ module.exports = {
       return rows;
     };
 
-    await thinking.edit({ embeds: [await embedFor()], components: components() });
+    await thinking.edit({ embeds: await embedFor(), components: components() });
 
     const collector = thinking.createMessageComponentCollector({ time: 5 * 60 * 1000 });
 
@@ -744,7 +816,7 @@ module.exports = {
           if (num >= 1 && num <= total) state.page = num - 1;
         } catch {}
         try { await i.deleteReply(); } catch {}
-        await thinking.edit({ embeds: [await embedFor()], components: components() }).catch(() => {});
+        await thinking.edit({ embeds: await embedFor(), components: components() }).catch(() => {});
         return;
       }
       try {
@@ -761,7 +833,7 @@ module.exports = {
           collector.stop('closed');
           return i.update({ components: [] }).catch(() => {});
         }
-        await i.update({ embeds: [await embedFor()], components: components() });
+        await i.update({ embeds: await embedFor(), components: components() });
       } catch (e) {
         try { await i.followUp({ content: 'Something went wrong updating the view.', ephemeral: true }); } catch {}
       }
