@@ -24,7 +24,7 @@ function generateErrorCode(length = 12) {
 function buildErrorPayload(message, commandName) {
   const code = generateErrorCode();
   const embed = new EmbedBuilder()
-    .setColor(0xefa23a)
+    .setColor('#FFFFFF')
     .setDescription(
       `:warning: ${message.author}: Error occurred while performing command ` +
       `**${commandName}**. Use the given error code to report it to the developers in the ` +

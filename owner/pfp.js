@@ -38,7 +38,7 @@ module.exports = {
       return message.channel.send({
         embeds: [
           new EmbedBuilder()
-            .setColor('#efa23a')
+            .setColor('#FFFFFF')
             .setDescription(`${message.author}: Attach a **png / jpg / gif / webp** image (or pass a direct image URL) to update the bot's pfp.`),
         ],
       });
@@ -49,7 +49,7 @@ module.exports = {
       return message.channel.send({
         embeds: [
           new EmbedBuilder()
-            .setColor('#2ecc71')
+            .setColor('#FFFFFF')
             .setDescription(`${message.author}: Updated **${client.user.username}**'s avatar.`)
             .setThumbnail(client.user.displayAvatarURL({ size: 512, extension: 'png', forceStatic: false })),
         ],
@@ -58,7 +58,7 @@ module.exports = {
       const msg = (e && e.message) || 'unknown error';
       return message.channel.send({
         embeds: [
-          new EmbedBuilder().setColor('#e74c3c').setDescription(`Failed to update avatar: \`${msg}\``),
+          new EmbedBuilder().setColor('#FFFFFF').setDescription(`Failed to update avatar: \`${msg}\``),
         ],
       });
     }

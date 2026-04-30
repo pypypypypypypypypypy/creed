@@ -101,7 +101,7 @@ module.exports = {
     const p = posts[Math.floor(Math.random() * posts.length)];
 
     const embed = new EmbedBuilder()
-      .setColor('#ff4500')
+      .setColor('#FFFFFF')
       .setTitle((p.title || 'Untitled').slice(0, 256))
       .setURL(`https://reddit.com${p.permalink}`)
       .setAuthor({ name: `r/${p.subreddit} • u/${p.author}` })

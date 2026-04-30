@@ -119,7 +119,7 @@ module.exports = {
         try {
           const guildOwner = await guild.fetchOwner();
           await guildOwner.send({ embeds: [new EmbedBuilder()
-            .setColor('#fe6464')
+            .setColor('#FFFFFF')
             .setTitle('Server Removed from Whitelist')
             .setDescription(`**${client.user.username}** has left **${guild.name}** because it has been removed from the approved whitelist.`)
             .setFooter({ text: `Guild ID: ${guildId}` })

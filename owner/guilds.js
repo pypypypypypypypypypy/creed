@@ -59,7 +59,7 @@ module.exports = {
     function buildEmbed(pageIndex) {
       return new EmbedBuilder()
         .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-        .setColor('#7fa5a8')
+        .setColor('#FFFFFF')
         .setFooter({ text: `Page ${pageIndex + 1}/${totalPages}` })
         .setDescription(getDescription(pageIndex));
     }

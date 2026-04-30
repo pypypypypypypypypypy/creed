@@ -13,7 +13,7 @@ module.exports = {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_guild\``)] });
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles) || !message.guild.members.me.permissions.has(PermissionFlagsBits.ManageChannels)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_roles\` or \`manage_channels\``)] });
 
-    const statusMsg = await message.channel.send({ embeds: [new EmbedBuilder().setColor("#6495ED").setDescription(`:gear: ${message.author}: Working moderation setup...`)] });
+    const statusMsg = await message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`:gear: ${message.author}: Working moderation setup...`)] });
 
     try {
       await message.guild.roles.create({ name: 'muted', permissions: [] });

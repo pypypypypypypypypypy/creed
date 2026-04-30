@@ -38,6 +38,6 @@ module.exports = {
 
     await channel.permissionOverwrites.edit(everyone, { SendMessages: false });
 
-    message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`:lock: ${message.author}: ${channel} locked. Use \`${prefix}unlock\` to remove this lockdown`)] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`:lock: ${message.author}: ${channel} locked. Use \`${prefix}unlock\` to remove this lockdown`)] });
   }
 };

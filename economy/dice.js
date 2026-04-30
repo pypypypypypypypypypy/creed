@@ -46,11 +46,11 @@ module.exports = {
     if (playerVal > botVal) {
       setWallet(guildId, userId, wallet + amount);
       desc = `${approve} ${message.author}: You rolled **${playerFace} ${playerVal}** vs bot's **${botFace} ${botVal}**. You won **${fmt(amount)}**!`;
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#2ecc71').setDescription(desc)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(desc)] });
     } else if (botVal > playerVal) {
       setWallet(guildId, userId, wallet - amount);
       desc = `${deny} ${message.author}: You rolled **${playerFace} ${playerVal}** vs bot's **${botFace} ${botVal}**. You lost **${fmt(amount)}**.`;
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(desc)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(desc)] });
     } else {
       desc = `${warn} ${message.author}: You rolled **${playerFace} ${playerVal}** vs bot's **${botFace} ${botVal}**. It's a **tie** — no money exchanged.`;
       message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(desc)] });

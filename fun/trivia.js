@@ -147,7 +147,7 @@ module.exports = {
           )
         );
         const timeoutEmbed = new EmbedBuilder()
-          .setColor('#efa23a')
+          .setColor('#FFFFFF')
           .setTitle('⏱️ Time\'s up!')
           .setDescription(`${message.author} ran out of time. The correct answer was **${correct}**.`)
           .setFooter({ text: 'Module: fun' })

@@ -25,7 +25,7 @@ module.exports = {
     const sub = (args[0] || 'list').toLowerCase();
     const player = client.lavalink?.getPlayer(message.guild.id);
     if (sub === 'list') {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#3498db').setTitle('Equalizer presets').setDescription(Object.keys(PRESETS).map(p => `\`${p}\``).join(' • '))] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setTitle('Equalizer presets').setDescription(Object.keys(PRESETS).map(p => `\`${p}\``).join(' • '))] });
     }
     if (!player) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Nothing is playing.`)] });
     const name = sub === 'reset' ? 'flat' : sub;
@@ -35,6 +35,6 @@ module.exports = {
       if (player.filterManager?.setEQ) await player.filterManager.setEQ(eq);
       else if (player.setEqualizer) await player.setEqualizer(eq);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Applied **${name}** preset.`)] });
-    } catch (e) { return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`Failed: ${e.message}`)] }); }
+    } catch (e) { return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Failed: ${e.message}`)] }); }
   }
 };

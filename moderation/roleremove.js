@@ -58,7 +58,7 @@ module.exports = {
     await mentionedMember.roles.remove(role.id)
     const rolegiveEmbed = new EmbedBuilder()
       .setDescription(`${remove} ${message.author}: Removed ${role} from ${mentionedMember}`)
-      .setColor("#46bcec")
+      .setColor('#FFFFFF')
     return message.channel.send({ embeds: [rolegiveEmbed] })
   }
 }

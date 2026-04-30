@@ -251,7 +251,7 @@ module.exports = {
     if (sub === 'nowplaying' || sub === 'playing' || sub === 'np') {
       const targetMember = message.mentions.members.first() || (args[1] && !args[1].startsWith('<') ? null : message.member);
       const fmUser = getFmUsername(db, targetMember ? targetMember.id : message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked. Use \`${prefix}lastfm set <username>\``)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked. Use \`${prefix}lastfm set <username>\``)] });
       message.channel.sendTyping().catch(() => {});
       const { track, nowPlaying, total } = await getNowPlaying(fmUser);
       const artist = track.artist?.['#text'] || track.artist?.name || 'Unknown';
@@ -272,7 +272,7 @@ module.exports = {
     // ── TOPARTISTS ────────────────────────────────────────────────────────────
     if (sub === 'topartists' || sub === 'ta') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const period = parsePeriod(args[2]);
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.gettopartists', user: fmUser, period, limit: 10 });
@@ -285,7 +285,7 @@ module.exports = {
     // ── TOPALBUMS ─────────────────────────────────────────────────────────────
     if (sub === 'topalbums' || sub === 'tal') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const period = parsePeriod(args[2]);
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.gettopalbums', user: fmUser, period, limit: 10 });
@@ -298,7 +298,7 @@ module.exports = {
     // ── TOPTRACKS ─────────────────────────────────────────────────────────────
     if (sub === 'toptracks' || sub === 'tt') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const period = parsePeriod(args[2]);
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.gettoptracks', user: fmUser, period, limit: 10 });
@@ -311,7 +311,7 @@ module.exports = {
     // ── TOPTENTRACKS (top 10 for artist) ─────────────────────────────────────
     if (sub === 'toptentracks') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.gettoptracks', user: fmUser, period: 'overall', limit: 200 });
@@ -324,7 +324,7 @@ module.exports = {
     // ── TOPTENALBUMS ──────────────────────────────────────────────────────────
     if (sub === 'toptenalbums') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.gettopalbums', user: fmUser, period: 'overall', limit: 200 });
@@ -337,7 +337,7 @@ module.exports = {
     // ── COUNT ─────────────────────────────────────────────────────────────────
     if (sub === 'count') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.getinfo', user: fmUser });
       const info = data.user;
@@ -347,7 +347,7 @@ module.exports = {
     // ── ARTIST ────────────────────────────────────────────────────────────────
     if (sub === 'artist') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       let targetArtist = artistName;
@@ -375,7 +375,7 @@ module.exports = {
     // ── TRACK ─────────────────────────────────────────────────────────────────
     if (sub === 'track') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       let artistName, trackName;
       if (args[2]) {
@@ -408,7 +408,7 @@ module.exports = {
     // ── ALBUM ─────────────────────────────────────────────────────────────────
     if (sub === 'album') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       let artistName, albumName;
       if (args[2]) {
@@ -443,7 +443,7 @@ module.exports = {
     // ── PLAYS (artist play count) ─────────────────────────────────────────────
     if (sub === 'plays') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       let targetArtist = artistName;
@@ -459,7 +459,7 @@ module.exports = {
     // ── PLAYSTRACK ────────────────────────────────────────────────────────────
     if (sub === 'playstrack') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const rest = args.slice(2).join(' ');
       const sep = rest.indexOf(' - ');
       let artistName, trackName;
@@ -477,7 +477,7 @@ module.exports = {
     // ── PLAYSALBUM ────────────────────────────────────────────────────────────
     if (sub === 'playsalbum' || sub === 'playsall') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const rest = args.slice(2).join(' ');
       const sep = rest.indexOf(' - ');
       let artistName, albumName;
@@ -496,7 +496,7 @@ module.exports = {
     // ── OVERVIEW ──────────────────────────────────────────────────────────────
     if (sub === 'overview') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       let targetArtist = artistName;
@@ -530,7 +530,7 @@ module.exports = {
     // ── RECENT ────────────────────────────────────────────────────────────────
     if (sub === 'recent') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const limit = Math.min(parseInt(args[2]) || 10, 20);
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.getrecenttracks', user: fmUser, limit });
@@ -545,7 +545,7 @@ module.exports = {
     // ── RECENTFOR ─────────────────────────────────────────────────────────────
     if (sub === 'recentfor') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistFilter = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.getrecenttracks', user: fmUser, limit: 200 });
@@ -558,7 +558,7 @@ module.exports = {
     // ── FAVORITES ─────────────────────────────────────────────────────────────
     if (sub === 'favorites' || sub === 'loved') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.getlovedtracks', user: fmUser, limit: 10 });
       const tracks = data.lovedtracks.track;
@@ -570,7 +570,7 @@ module.exports = {
     // ── MILESTONE ─────────────────────────────────────────────────────────────
     if (sub === 'milestone') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const num = parseInt(args[2]);
       if (isNaN(num) || num <= 0) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Provide a valid scrobble number.`)] });
       message.channel.sendTyping().catch(() => {});
@@ -587,7 +587,7 @@ module.exports = {
     // ── STREAK ────────────────────────────────────────────────────────────────
     if (sub === 'streak') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const data = await lfm({ method: 'user.getrecenttracks', user: fmUser, limit: 200 });
       const tracks = (data.recenttracks.track || []).filter(t => t.date);
@@ -598,7 +598,7 @@ module.exports = {
     // ── DISCOVERYDATE ─────────────────────────────────────────────────────────
     if (sub === 'discoverydate') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const artistName = args.slice(2).join(' ');
       message.channel.sendTyping().catch(() => {});
       let targetArtist = artistName;
@@ -708,7 +708,7 @@ module.exports = {
     // ── FRIENDWHOKNOWS / FRIENDWKTRACK / FRIENDWKALBUM ────────────────────────
     if (sub === 'friendwhoknows' || sub === 'friendwktrack' || sub === 'friendwkalbum') {
       const myFmUser = getFmUsername(db, message.author.id, null);
-      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const friends = db2.get(`lastfm.friends.${message.author.id}`) || [];
       if (!friends.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} You have no friends added. Use \`lastfm addfriends\`.`)] });
       const query = args.slice(1).join(' ');
@@ -796,7 +796,7 @@ module.exports = {
     // ── TASTE ─────────────────────────────────────────────────────────────────
     if (sub === 'taste') {
       const myFmUser = getFmUsername(db, message.author.id, null);
-      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const target = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
       if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Mention a user to compare with.`)] });
       const theirFmUser = getFmUsername(db, target.id, null);
@@ -818,7 +818,7 @@ module.exports = {
     // ── AFFINITY ──────────────────────────────────────────────────────────────
     if (sub === 'affinity') {
       const myFmUser = getFmUsername(db, message.author.id, null);
-      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!myFmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const members = await getLinkedMembers(db, message.guild);
       const myData = await lfm({ method: 'user.gettopartists', user: myFmUser, period: 'overall', limit: 50 });
@@ -974,7 +974,7 @@ module.exports = {
     // ── COLLAGE ───────────────────────────────────────────────────────────────
     if (sub === 'collage') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       const params = args[2] || '3x3';
       const period = parsePeriod(args[3] || '7day');
       const collageUrl = `https://www.tapmusic.net/collage.php?user=${encodeURIComponent(fmUser)}&type=${period}&size=${params}&caption=true`;
@@ -996,7 +996,7 @@ module.exports = {
     // ── RECOMMENDATION ────────────────────────────────────────────────────────
     if (sub === 'recommendation') {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const topData = await lfm({ method: 'user.gettopartists', user: fmUser, period: 'overall', limit: 5 });
       const topArtists = topData.topartists.artist || [];
@@ -1012,7 +1012,7 @@ module.exports = {
     // ── YOUTUBE / SPOTIFY / SOUNDCLOUD / ITUNES ───────────────────────────────
     if (['youtube', 'spotify', 'soundcloud', 'itunes'].includes(sub)) {
       const fmUser = getFmUsername(db, message.author.id, args[1]);
-      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
+      if (!fmUser) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: No Last.fm account linked.`)] });
       message.channel.sendTyping().catch(() => {});
       const { track } = await getNowPlaying(fmUser);
       const trackName = track.name, artistName = track.artist?.['#text'] || track.artist?.name;

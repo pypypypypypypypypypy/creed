@@ -996,8 +996,8 @@ async function handleClose(message, channel, reason, guildId, member, client) {
 
   const closeMsg = opt && opt.closeMessage;
   const embed = closeMsg
-    ? new EmbedBuilder().setColor('#ED4245').setDescription(resolveVars(closeMsg, { ticket, member, guild: message.guild, opt }))
-    : new EmbedBuilder().setColor('#ED4245').setDescription(`🔒 Ticket closed by ${member}.${reason ? ` Reason: ${reason}` : ''}`);
+    ? new EmbedBuilder().setColor('#FFFFFF').setDescription(resolveVars(closeMsg, { ticket, member, guild: message.guild, opt }))
+    : new EmbedBuilder().setColor('#FFFFFF').setDescription(`🔒 Ticket closed by ${member}.${reason ? ` Reason: ${reason}` : ''}`);
 
   const reopenRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(`tix_reopen_${channel.id}`).setLabel('Reopen').setStyle(ButtonStyle.Success).setEmoji('🔓'),
@@ -1029,7 +1029,7 @@ async function handleDelete(message, channel, reason, guildId, member, client) {
   allTickets[channel.id] = ticket;
   saveTickets(guildId, allTickets);
 
-  const embed = new EmbedBuilder().setColor('#ED4245').setDescription(`🚫 This ticket will be **deleted** in ${delay / 1000}s.${reason ? ` Reason: ${reason}` : ''}`);
+  const embed = new EmbedBuilder().setColor('#FFFFFF').setDescription(`🚫 This ticket will be **deleted** in ${delay / 1000}s.${reason ? ` Reason: ${reason}` : ''}`);
   await channel.send({ embeds: [embed] });
   if (channel.id !== message.channel.id) await message.channel.send({ embeds: [okEmbed(`${message.author}: Deleting ticket ${channel} in ${delay / 1000}s.`)] });
   await logTicketEvent(message.guild, guildId, opt, panel, 'delete', ticket, member);
@@ -1068,8 +1068,8 @@ async function handleReopen(message, channel, reason, guildId, member, client) {
 
   const reopenMsg = opt && opt.reopenMessage;
   const embed = reopenMsg
-    ? new EmbedBuilder().setColor('#57F287').setDescription(resolveVars(reopenMsg, { ticket, member, guild: message.guild, opt }))
-    : new EmbedBuilder().setColor('#57F287').setDescription(`🔓 Ticket reopened by ${member}.${reason ? ` Reason: ${reason}` : ''}`);
+    ? new EmbedBuilder().setColor('#FFFFFF').setDescription(resolveVars(reopenMsg, { ticket, member, guild: message.guild, opt }))
+    : new EmbedBuilder().setColor('#FFFFFF').setDescription(`🔓 Ticket reopened by ${member}.${reason ? ` Reason: ${reason}` : ''}`);
 
   const controlRow = buildTicketControlRow(ticket, opt);
   await channel.send({ embeds: [embed], components: controlRow ? [controlRow] : [] });
@@ -1533,7 +1533,7 @@ module.exports.handleTicketInteraction = async function(interaction, client) {
 
     await channel.permissionOverwrites.edit(ticket.authorId, { ViewChannel: false }).catch(() => {});
 
-    const embed = new EmbedBuilder().setColor('#ED4245').setDescription(`🔒 Ticket closed by ${interaction.user}.`);
+    const embed = new EmbedBuilder().setColor('#FFFFFF').setDescription(`🔒 Ticket closed by ${interaction.user}.`);
     const reopenRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId(`tix_reopen_${channelId}`).setLabel('Reopen').setStyle(ButtonStyle.Success).setEmoji('🔓'),
       new ButtonBuilder().setCustomId(`tix_delete_${channelId}`).setLabel('Delete').setStyle(ButtonStyle.Danger).setEmoji('🚫')
@@ -1562,7 +1562,7 @@ module.exports.handleTicketInteraction = async function(interaction, client) {
     const panel = ticket.panelId ? getPanel(guildId, ticket.panelId) : null;
     const delay = parseMs((opt && opt.deleteDelay) || (panel && panel.deleteDelay) || '5s') || 5000;
 
-    const embed = new EmbedBuilder().setColor('#ED4245').setDescription(`🚫 This ticket will be deleted in **${delay / 1000}s**.`);
+    const embed = new EmbedBuilder().setColor('#FFFFFF').setDescription(`🚫 This ticket will be deleted in **${delay / 1000}s**.`);
     await channel.send({ embeds: [embed] });
     await logTicketEvent(guild, guildId, opt, panel, 'delete', ticket, member);
     await interaction.editReply({ content: '✅ Deleting ticket...' });
@@ -1599,7 +1599,7 @@ module.exports.handleTicketInteraction = async function(interaction, client) {
       ViewChannel: true, SendMessages: true, ReadMessageHistory: true
     }).catch(() => {});
 
-    const embed = new EmbedBuilder().setColor('#57F287').setDescription(`🔓 Ticket reopened by ${interaction.user}.`);
+    const embed = new EmbedBuilder().setColor('#FFFFFF').setDescription(`🔓 Ticket reopened by ${interaction.user}.`);
     const controlRow = buildTicketControlRow(ticket, opt);
     await channel.send({ embeds: [embed], components: controlRow ? [controlRow] : [] });
     await logTicketEvent(guild, guildId, opt, null, 'reopen', ticket, member);

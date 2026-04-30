@@ -10,7 +10,7 @@ client.on("guildDelete", async guild => {
 
   const embed = new EmbedBuilder()
     .setDescription(`Left guild: **${guild.name}**, owned by ${ownerTag} (\`${guild.id}\`) | **${guild.memberCount}** members`)
-    .setColor('#e74c3c');
+    .setColor('#FFFFFF');
 
   const logChannel = client.channels.cache.get("868302839947100160");
   if (logChannel) logChannel.send({ embeds: [embed] });

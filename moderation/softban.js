@@ -44,7 +44,7 @@ module.exports = {
     const reason = args.slice(1).join(' ') || 'No reason provided';
 
     const dmEmbed = new EmbedBuilder()
-      .setColor('#efa23a')
+      .setColor('#FFFFFF')
       .setTitle('You have been softbanned')
       .addFields({ name: 'Server', value: message.guild.name, inline: true }, { name: 'Reason', value: reason, inline: true })
       .setTimestamp();

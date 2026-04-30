@@ -97,23 +97,23 @@ module.exports = {
     if (!canRunOwnerCmd(message.author.id, 'uploademojis')) return;
 
     const att = message.attachments.find(a => /\.zip$/i.test(a.name || a.url || ''));
-    if (!att) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${message.author}: Attach a **.zip** of emoji images.`)] });
+    if (!att) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${message.author}: Attach a **.zip** of emoji images.`)] });
 
     const status = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Downloading \`${att.name}\`...`)] });
 
     let buf;
     try { buf = await fetchBuffer(att.url); }
-    catch (e) { return status.edit({ embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`Download failed: \`${e.message}\``)] }); }
+    catch (e) { return status.edit({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Download failed: \`${e.message}\``)] }); }
 
     let entries;
     try {
       const zip = new AdmZip(buf);
       entries = zip.getEntries().filter(e => !e.isDirectory && VALID_EXT.includes(path.extname(e.entryName).toLowerCase()));
     } catch (e) {
-      return status.edit({ embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`Could not read zip: \`${e.message}\``)] });
+      return status.edit({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Could not read zip: \`${e.message}\``)] });
     }
 
-    if (!entries.length) return status.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`No image files found in zip.`)] });
+    if (!entries.length) return status.edit({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`No image files found in zip.`)] });
 
     await status.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Uploading **${entries.length}** emojis to **${message.guild.name}**...`)] });
 

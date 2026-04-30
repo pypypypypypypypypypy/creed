@@ -158,7 +158,7 @@ module.exports = {
     try { source = await buildSourceZip(); }
     catch (e) {
       return status.edit({
-        embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`Source zip failed: \`${e.message}\``)],
+        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Source zip failed: \`${e.message}\``)],
       }).catch(() => {});
     }
 
@@ -170,7 +170,7 @@ module.exports = {
     try { emojis = await buildEmojiZip(client); }
     catch (e) {
       return status.edit({
-        embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`Emoji zip failed: \`${e.message}\``)],
+        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Emoji zip failed: \`${e.message}\``)],
       }).catch(() => {});
     }
 
@@ -178,7 +178,7 @@ module.exports = {
     const emojiAtt = new AttachmentBuilder(emojis.buf, { name: 'bored-xd-emojis.zip' });
 
     const summary = new EmbedBuilder()
-      .setColor('#2ecc71')
+      .setColor('#FFFFFF')
       .setTitle('zipup complete')
       .setDescription(
         `**Source:** \`bored-xd-source.zip\` — ${fmtBytes(source.buf.length)}, ${source.fileCount} files\n` +
@@ -189,7 +189,7 @@ module.exports = {
     // them in two separate messages so at least one always lands.
     try {
       await message.author.send({ embeds: [summary], files: [sourceAtt, emojiAtt] });
-      await status.edit({ embeds: [new EmbedBuilder().setColor('#2ecc71').setDescription('Sent both zips to your DMs.')] }).catch(() => {});
+      await status.edit({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription('Sent both zips to your DMs.')] }).catch(() => {});
     } catch (e) {
       // DM closed or attachment too big — fall back to channel + split.
       try {
@@ -198,7 +198,7 @@ module.exports = {
         await message.channel.send({ files: [emojiAtt] });
       } catch (e2) {
         await status.edit({
-          embeds: [new EmbedBuilder().setColor('#e74c3c').setDescription(`Could not send files: \`${(e2 && e2.message) || e.message}\``)],
+          embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`Could not send files: \`${(e2 && e2.message) || e.message}\``)],
         }).catch(() => {});
       }
     }

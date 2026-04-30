@@ -43,7 +43,7 @@ module.exports = {
     const reason = args.slice(2).join(' ') || 'No reason provided';
     const unbanAt = Date.now() + duration;
 
-    const dmEmbed = new EmbedBuilder().setColor('#fe6464').setTitle('You have been temporarily banned')
+    const dmEmbed = new EmbedBuilder().setColor('#FFFFFF').setTitle('You have been temporarily banned')
       .addFields({ name: 'Server', value: message.guild.name, inline: true }, { name: 'Duration', value: args[1], inline: true }, { name: 'Reason', value: reason, inline: true })
       .setTimestamp();
     await member.send({ embeds: [dmEmbed] }).catch(() => {});

@@ -79,7 +79,7 @@ function buildEmbed(g) {
 function buildEndedEmbed(g) {
   return new EmbedBuilder()
     .setTitle('🎉 GIVEAWAY ENDED 🎉')
-    .setColor('#2b2d31')
+    .setColor('#FFFFFF')
     .addFields(
       { name: 'Prize', value: g.prize },
       { name: 'Winners', value: (g.winners && g.winners.length) ? g.winners.map(w => `<@${w}>`).join(', ') : 'No valid entries' },
@@ -307,7 +307,7 @@ module.exports = {
 
         db.set(`giveaway_${g.messageId}`, g);
         await refreshMessage(client, g);
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(successMsg)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(successMsg)] });
       }
 
       default:

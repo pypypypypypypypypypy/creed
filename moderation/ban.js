@@ -39,7 +39,7 @@ module.exports = {
         { name: `**Moderator**`, value: `${message.author.tag}`, inline: true },
         { name: `**Reason**`, value: `${reason}`, inline: true }
       )
-      .setColor("#e74c3c")
+      .setColor('#FFFFFF')
       .setThumbnail(message.author.avatarURL({ forceStatic: false, size: 2048 }))
       .setTimestamp()
       .setFooter({ text: 'If you would like to dispute this punishment, contact a staff member.' });

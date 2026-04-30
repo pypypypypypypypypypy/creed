@@ -39,7 +39,7 @@ module.exports = {
     const dbUser = (fmData.users || []).find(u => u.userID === target.id);
 
     if (!dbUser) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} ${message.author}: ${target.id === message.author.id ? "You don't" : `**${target.user.username}** doesn't`} have a Last.fm account linked.\nUse \`${prefix}lastfm set <username>\``)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} ${message.author}: ${target.id === message.author.id ? "You don't" : `**${target.user.username}** doesn't`} have a Last.fm account linked.\nUse \`${prefix}lastfm set <username>\``)] });
     }
 
     const fmUser = dbUser.lastFM;
@@ -80,7 +80,7 @@ module.exports = {
 
       message.channel.send({ embeds: [embed], components: [row] });
     } catch (err) {
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#d1202a').setDescription(`${lfEmoji} **Last.fm**: Failed to fetch data — the API may be unavailable. Try again shortly.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lfEmoji} **Last.fm**: Failed to fetch data — the API may be unavailable. Try again shortly.`)] });
     }
   }
 };

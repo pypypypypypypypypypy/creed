@@ -43,7 +43,7 @@ module.exports = {
     const bar = '█'.repeat(Math.floor(percent / 10)) + '░'.repeat(10 - Math.floor(percent / 10));
 
     const embed = new EmbedBuilder()
-      .setColor('#ff73fa')
+      .setColor('#FFFFFF')
       .setTitle(`💘 Ship: ${user1.username} × ${user2.username}`)
       .setDescription(`**${percent}%** ${desc}\n\`[${bar}]\``)
       .setTimestamp();

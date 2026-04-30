@@ -37,7 +37,7 @@ module.exports = {
     db.set(`warns.${guildId}.${userId}`, warns);
 
     const dmEmbed = new EmbedBuilder()
-      .setColor('#efa23a')
+      .setColor('#FFFFFF')
       .setTitle('You have been warned')
       .addFields(
         { name: 'Server', value: message.guild.name, inline: true },

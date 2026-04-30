@@ -31,7 +31,7 @@ module.exports = {
   name: 'impregnate',
   run: async (client, message, args) => {
     if (!message.channel.nsfw) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🔞 ${message.author}: This command can only be used in an **NSFW** channel.`)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`🔞 ${message.author}: This command can only be used in an **NSFW** channel.`)] });
     }
     const target = message.mentions.members.first();
     if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Please **mention** a member.`)] });

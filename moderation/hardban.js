@@ -40,7 +40,7 @@ module.exports = {
     const reason = args.slice(1).join(' ') || 'No reason provided';
 
     if (member) {
-      const dmEmbed = new EmbedBuilder().setColor('#fe6464').setTitle('You have been permanently (hard) banned')
+      const dmEmbed = new EmbedBuilder().setColor('#FFFFFF').setTitle('You have been permanently (hard) banned')
         .addFields({ name: 'Server', value: message.guild.name, inline: true }, { name: 'Reason', value: reason, inline: true })
         .setTimestamp();
       await member.send({ embeds: [dmEmbed] }).catch(() => {});

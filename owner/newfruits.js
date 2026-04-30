@@ -108,7 +108,7 @@ module.exports = {
     await statusMsg.edit({
       embeds: [
         new EmbedBuilder()
-          .setColor(success === FRUIT_KEYS.length ? '#2ecc71' : '#e74c3c')
+          .setColor('#FFFFFF')
           .setTitle(`🍒 New Fruits — ${success}/${FRUIT_KEYS.length} uploaded`)
           .setDescription(results.join('\n'))
           .setFooter({ text: 'Slot machine will now use the fresh 128x128 fruit emojis' })

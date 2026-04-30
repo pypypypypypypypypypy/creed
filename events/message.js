@@ -43,13 +43,13 @@ client.on("messageCreate", async message => {
 
   if (db.has(`afk-${message.author.id}+${message.guild.id}`)) {
     db.delete(`afk-${message.author.id}+${message.guild.id}`);
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor("#6495ED").setDescription(`:wave: ${message.author}: Welcome back, you're no longer **AFK**`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`:wave: ${message.author}: Welcome back, you're no longer **AFK**`)] });
   }
 
   const mentioned = message.mentions.members.first();
   if (mentioned && db.has(`afk-${mentioned.id}+${message.guild.id}`)) {
     const embed = new EmbedBuilder()
-      .setColor("#6495ED")
+      .setColor('#FFFFFF')
       .setDescription(`:zzz: ${mentioned} is AFK: ` + db.get(`afk-${mentioned.id}+${message.guild.id}`));
     message.channel.send({ embeds: [embed] });
   }
@@ -65,7 +65,7 @@ client.on("messageCreate", async message => {
       const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+/i;
       if (urlRegex.test(content)) {
         await message.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Links are not allowed in this server.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`🚫 ${message.author}: Links are not allowed in this server.`)] });
       }
     }
 
@@ -74,7 +74,7 @@ client.on("messageCreate", async message => {
       const inviteRegex = /discord\.gg\/[^\s]+|discord\.com\/invite\/[^\s]+/i;
       if (inviteRegex.test(content)) {
         await message.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Discord invites are not allowed in this server.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`🚫 ${message.author}: Discord invites are not allowed in this server.`)] });
       }
     }
 
@@ -90,7 +90,7 @@ client.on("messageCreate", async message => {
         global.spamTracker[key] = [];
         await message.delete().catch(() => {});
         await message.member?.timeout(10000, 'Anti-spam').catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`🚫 ${message.author}: Slow down! You have been timed out for spamming.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`🚫 ${message.author}: Slow down! You have been timed out for spamming.`)] });
       }
     }
   }

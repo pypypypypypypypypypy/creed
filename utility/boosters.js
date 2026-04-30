@@ -31,7 +31,7 @@ module.exports = {
 
     const list = boosters.map(m => `${m.user.tag} — since <t:${Math.floor(m.premiumSinceTimestamp / 1000)}:R>`).join('\n');
     const embed = new EmbedBuilder()
-      .setColor('#ff73fa')
+      .setColor('#FFFFFF')
       .setTitle(`🚀 Server Boosters (${boosters.size})`)
       .setDescription(list.slice(0, 2048))
       .setFooter({ text: `Boost Tier: ${message.guild.premiumTier}` })

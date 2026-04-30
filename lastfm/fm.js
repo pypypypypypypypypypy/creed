@@ -43,7 +43,7 @@ module.exports = {
       if (message.author.bot) return;
       if (!dbUser) {
         return message.channel.send({
-          embeds: [new EmbedBuilder().setColor("#d1202a").setDescription(
+          embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
             `${lastfm} ${message.author}: Looks like you dont have your username set.\nYou can connect your **Last.fm** using \`${prefix2}lastfm set <username>\``
           )]
         });
@@ -118,7 +118,7 @@ module.exports = {
             message.channel.send({ embeds: [embed], components: [row] });
           } catch (error) {
             console.log(error);
-            message.channel.send({ embeds: [new EmbedBuilder().setColor("#d1202a").setDescription(`${lastfm} **Last.fm**: Operation failed - The backend service most likely failed, please try again`)] });
+            message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`${lastfm} **Last.fm**: Operation failed - The backend service most likely failed, please try again`)] });
           }
         });
       });

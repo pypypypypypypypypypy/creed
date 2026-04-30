@@ -50,7 +50,7 @@ async function logModAction(guild, { action, user, moderator, reason, channel, u
     .setAuthor({ name: '🔒 Modlog Entry' })
     .setTitle('Information')
     .setDescription(lines.join('\n'))
-    .setColor(0x2b2d31)
+    .setColor('#FFFFFF')
     .setTimestamp();
 
   await logChannel.send({ embeds: [embed] }).catch(() => {});
