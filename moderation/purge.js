@@ -2,6 +2,7 @@ const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { color, default_prefix } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { paginate } = require('../utils/paginate');
+const { isOwner } = require('../utils/owners');
 const db = require('../db');
 
 function parseMessageId(input) {
@@ -27,7 +28,7 @@ module.exports = {
   ],
 
   run: async (client, message, args) => {
-    if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
+    if (!isOwner(message.author.id) && !message.member.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: You're **missing** permission: \`manage_messages\``)] });
     if (!message.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: I'm **missing** permission: \`manage_messages\``)] });
 
     const prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
