@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@discordjs/voice": "^0.19.2",
+    "@napi-rs/canvas": "^0.1.56",
     "adm-zip": "^0.5.16",
     "app-store-scraper": "^0.10.0",
     "comma-number": "^2.1.0",
