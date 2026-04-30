@@ -156,7 +156,7 @@ module.exports = {
     const username = (args[0] || '').trim();
     if (!username) return warn(message, 'Provide a TikTok username. `,tiktok kitten`');
 
-    const scanEmoji = '<a:loading:1496708542676074667>';
+    const scanEmoji = '<a:loading:1499216008257339514>';
     const thinking = await message.channel.send({
       embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} scanning **@${username.replace(/^@/, '')}**'s TikTok profile..`)],
     });
