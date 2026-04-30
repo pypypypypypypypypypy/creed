@@ -777,7 +777,7 @@ module.exports = {
     }
 
     const query = args.join(' ').trim();
-    const scanEmoji = '<a:loading:1496708542676074667>';
+    const scanEmoji = '<a:loading:1499216008257339514>';
     // The whole interactive lifecycle uses Components V2, so the initial
     // "scanning" message must also be created with the V2 flag — otherwise
     // we wouldn't be able to swap in V2 components on later edits.
