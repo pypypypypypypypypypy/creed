@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { warn } = require('../emojis.json');
+const { warn, loading: loadingEmoji } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
     if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
 
     const location = args.join(' ');
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Fetching weather...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} ${message.author}: Fetching weather...`)] });
 
     try {
       const url = `https://wttr.in/${encodeURIComponent(location)}?format=j1`;

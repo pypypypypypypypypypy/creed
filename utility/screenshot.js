@@ -1,6 +1,6 @@
 const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { warn, approve } = require('../emojis.json');
+const { warn, approve, loading: loadingEmoji } = require('../emojis.json');
 const fetch = require('node-fetch');
 const db = require('../db');
 
@@ -118,7 +118,7 @@ module.exports = {
       return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That isn't a valid URL.`)] });
     }
 
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Capturing screenshot...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} ${message.author}: Capturing screenshot...`)] });
 
     if (await isNsfwPage(target)) {
       return loading.edit({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: That URL appears to be NSFW. Refusing to capture.`)] });

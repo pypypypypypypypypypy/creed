@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
-const { warn } = require('../emojis.json');
+const { warn, loading: loadingEmoji } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
     if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
 
     const query = args.join(' ');
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Searching Wikipedia...`)] });
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} ${message.author}: Searching Wikipedia...`)] });
 
     try {
       const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&utf8=1`;

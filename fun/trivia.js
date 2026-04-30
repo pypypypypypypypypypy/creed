@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const { color } = require('../config.json');
-const { warn, approve } = require('../emojis.json');
+const { warn, approve, loading: loadingEmoji } = require('../emojis.json');
 const fetch = require('node-fetch');
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
@@ -50,7 +50,7 @@ module.exports = {
     const diffQuery = difficulty ? `&difficulty=${difficulty}` : '';
 
     const loading = await message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1496728277690089503> ${message.author}: Fetching a trivia question...`)]
+      embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} ${message.author}: Fetching a trivia question...`)]
     });
 
     let question;
