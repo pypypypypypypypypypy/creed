@@ -5,6 +5,14 @@ const {
   ButtonStyle,
   StringSelectMenuBuilder,
   ComponentType,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SectionBuilder,
+  ThumbnailBuilder,
+  SeparatorBuilder,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
+  MessageFlags,
 } = require('discord.js');
 const fetch = require('node-fetch');
 const moment = require('moment');
@@ -407,6 +415,71 @@ function buildLinkRow(userId) {
   );
 }
 
+// ---------- Components V2 helpers ----------
+function colorToInt(c) {
+  if (typeof c === 'number') return c >>> 0;
+  if (typeof c === 'string') {
+    const m = c.replace(/^#/, '');
+    const n = parseInt(m, 16);
+    if (!Number.isNaN(n)) return n;
+  }
+  return 0xFFFFFF;
+}
+
+// Convert any EmbedBuilder (or built embed) into a ContainerBuilder so we can
+// keep all of our existing embed authoring code while shipping the message
+// using Components V2. The conversion mirrors common embed pieces: title,
+// author, description (alongside thumbnail as a section accessory), fields,
+// image as a media gallery, and footer as small text below a separator.
+function embedToContainer(embedLike) {
+  const data = embedLike?.data || embedLike || {};
+  const c = new ContainerBuilder();
+  if (data.color != null) c.setAccentColor(colorToInt(data.color));
+
+  const headerBits = [];
+  if (data.author?.name) headerBits.push(data.author.name);
+  if (data.title) headerBits.push(data.title);
+  if (headerBits.length) {
+    c.addTextDisplayComponents((td) => td.setContent(`**${headerBits.join(' • ')}**`));
+  }
+
+  const desc = data.description || '';
+  const thumb = data.thumbnail?.url;
+  if (thumb && desc) {
+    c.addSectionComponents((s) =>
+      s.addTextDisplayComponents((td) => td.setContent(desc))
+       .setThumbnailAccessory((t) => t.setURL(thumb))
+    );
+  } else if (desc) {
+    c.addTextDisplayComponents((td) => td.setContent(desc));
+  } else if (thumb) {
+    c.addMediaGalleryComponents((g) => g.addItems((i) => i.setURL(thumb)));
+  }
+
+  if (Array.isArray(data.fields) && data.fields.length) {
+    for (const f of data.fields) {
+      c.addTextDisplayComponents((td) => td.setContent(`**${f.name}**\n${f.value}`));
+    }
+  }
+
+  if (data.image?.url) {
+    c.addMediaGalleryComponents((g) => g.addItems((i) => i.setURL(data.image.url)));
+  }
+
+  if (data.footer?.text) {
+    c.addSeparatorComponents((s) => s);
+    c.addTextDisplayComponents((td) => td.setContent(`-# ${data.footer.text}`));
+  }
+
+  return c;
+}
+
+function buildSimpleContainer(text, accent) {
+  return new ContainerBuilder()
+    .setAccentColor(colorToInt(accent || color))
+    .addTextDisplayComponents((td) => td.setContent(text));
+}
+
 // ---------- Embeds ----------
 function userLink(user) {
   return `https://www.roblox.com/users/${user.id}/profile`;
@@ -593,21 +666,28 @@ function buildNamesEmbed(guild, user, names, page) {
     .setFooter({ text: `Page ${page + 1}/${totalPages}` });
 }
 
-// Returns an array of embeds: a header summary + one mini-embed per person on
-// the current page so each person gets their own avatar thumbnail. Discord
-// allows up to 10 embeds per message; perPage stays at 5 so we ship at most 6.
-async function buildPeopleEmbed(guild, user, people, page, label, total, headshots) {
+// Builds a single Components V2 Container for a friends/followers/following
+// page. Each person becomes a Section with the person's text + their headshot
+// as a thumbnail accessory, separated by horizontal lines — matching the
+// "all in one embed" layout the user requested.
+async function buildPeopleContainer(guild, user, people, page, label, total, headshots) {
   const perPage = 5;
   const totalPages = Math.max(1, Math.ceil(people.length / perPage));
   const slice = people.slice(page * perPage, page * perPage + perPage);
   const header = `**${label} (${fmtNum(total)})** — ${userHandle(user)}`;
+
+  const container = new ContainerBuilder().setAccentColor(colorToInt(color));
+  container.addTextDisplayComponents((td) => td.setContent(header));
+
   if (!slice.length) {
     let emptyText;
     if (label === 'Friends') emptyText = 'This user has no friends.';
     else if (label === 'Followers') emptyText = 'This user has no followers.';
     else if (label === 'Following') emptyText = 'This user is not following anyone.';
     else emptyText = 'Nobody to show.';
-    return [new EmbedBuilder().setColor(color).setDescription(`${header}\n\n${emptyText}`)];
+    container.addSeparatorComponents((s) => s);
+    container.addTextDisplayComponents((td) => td.setContent(emptyText));
+    return container;
   }
 
   // Lazily fetch any missing headshots for this page so pagination still works.
@@ -619,25 +699,27 @@ async function buildPeopleEmbed(guild, user, people, page, label, total, headsho
     } catch { /* keep going without thumbnails */ }
   }
 
-  const headerEmbed = new EmbedBuilder()
-    .setColor(color)
-    .setDescription(`${header}`)
-    .setFooter({ text: `Page ${page + 1}/${totalPages}` });
-
-  const personEmbeds = slice.map((p) => {
+  for (const p of slice) {
+    container.addSeparatorComponents((s) => s);
     const link = `https://www.roblox.com/users/${p.id}/profile`;
-    const e = new EmbedBuilder()
-      .setColor(color)
-      .setDescription([
-        `[**${p.displayName || p.name}**](${link})`,
-        `[@${p.name}](${link})`,
-        `\`${p.id}\``,
-      ].join('\n'));
-    if (headshots && headshots[p.id]) e.setThumbnail(headshots[p.id]);
-    return e;
-  });
+    const text = [
+      `[**${p.displayName || p.name}**](${link}) [@${p.name}](${link})`,
+      `\`${p.id}\``,
+    ].join('\n');
+    const thumbUrl = headshots && headshots[p.id];
+    if (thumbUrl) {
+      container.addSectionComponents((s) =>
+        s.addTextDisplayComponents((td) => td.setContent(text))
+         .setThumbnailAccessory((t) => t.setURL(thumbUrl))
+      );
+    } else {
+      container.addTextDisplayComponents((td) => td.setContent(text));
+    }
+  }
 
-  return [headerEmbed, ...personEmbeds];
+  container.addSeparatorComponents((s) => s);
+  container.addTextDisplayComponents((td) => td.setContent(`-# Page ${page + 1}/${totalPages}`));
+  return container;
 }
 
 function buildRolimonsEmbed(guild, user, rolimons) {
@@ -696,14 +778,18 @@ module.exports = {
 
     const query = args.join(' ').trim();
     const scanEmoji = '<a:loading:1496708542676074667>';
+    // The whole interactive lifecycle uses Components V2, so the initial
+    // "scanning" message must also be created with the V2 flag — otherwise
+    // we wouldn't be able to swap in V2 components on later edits.
     const thinking = await message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} scanning **${query}**'s Roblox profile..`)],
+      components: [buildSimpleContainer(`${scanEmoji} scanning **${query}**'s Roblox profile..`, color)],
+      flags: MessageFlags.IsComponentsV2,
     });
 
     const user = await resolveUser(query);
     if (!user || !user.id) {
       return thinking.edit({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No Roblox user found for \`${query}\`.`)],
+        components: [buildSimpleContainer(`${warn} ${message.author}: No Roblox user found for \`${query}\`.`, '#efa23a')],
       });
     }
 
@@ -758,21 +844,28 @@ module.exports = {
 
     const state = { view: 'profile', page: 0 };
 
+    // Build the message body as Components V2 Containers. People views build
+    // their container natively (one Container with a Section per person);
+    // every other view still uses our existing EmbedBuilder code and gets
+    // converted to a Container via embedToContainer so the whole message can
+    // ship under one consistent V2 flag.
     const embedFor = async () => {
-      let out;
       switch (state.view) {
-        case 'profile':   out = await buildProfileEmbed(ctx); break;
-        case 'avatar':    out = buildAvatarEmbed(message.guild, user, fullBody, headshot); break;
-        case 'groups':    out = buildGroupEmbed(message.guild, user, ctx.groups, state.page); break;
-        case 'games':     out = buildGamesEmbed(message.guild, user, ctx.games, state.page, ctx.gameThumbs); break;
-        case 'wearing':   out = buildWearingEmbed(message.guild, user, ctx.wearingDetails, state.page); break;
-        case 'names':     out = buildNamesEmbed(message.guild, user, ctx.names, state.page); break;
-        case 'friends':   out = await buildPeopleEmbed(message.guild, user, ctx.friends, state.page, 'Friends', ctx.friends.length, ctx.peopleHeadshots); break;
-        case 'followers': out = await buildPeopleEmbed(message.guild, user, ctx.followers, state.page, 'Followers', followerCount, ctx.peopleHeadshots); break;
-        case 'following': out = await buildPeopleEmbed(message.guild, user, ctx.following, state.page, 'Following', followingCount, ctx.peopleHeadshots); break;
-        case 'rolimons':  out = buildRolimonsEmbed(message.guild, user, rolimons); break;
+        case 'friends':
+          return [await buildPeopleContainer(message.guild, user, ctx.friends,   state.page, 'Friends',   ctx.friends.length, ctx.peopleHeadshots)];
+        case 'followers':
+          return [await buildPeopleContainer(message.guild, user, ctx.followers, state.page, 'Followers', followerCount,      ctx.peopleHeadshots)];
+        case 'following':
+          return [await buildPeopleContainer(message.guild, user, ctx.following, state.page, 'Following', followingCount,     ctx.peopleHeadshots)];
+        case 'profile':   return [embedToContainer(await buildProfileEmbed(ctx))];
+        case 'avatar':    return [embedToContainer(buildAvatarEmbed(message.guild, user, fullBody, headshot))];
+        case 'groups':    return [embedToContainer(buildGroupEmbed(message.guild, user, ctx.groups, state.page))];
+        case 'games':     return [embedToContainer(buildGamesEmbed(message.guild, user, ctx.games, state.page, ctx.gameThumbs))];
+        case 'wearing':   return [embedToContainer(buildWearingEmbed(message.guild, user, ctx.wearingDetails, state.page))];
+        case 'names':     return [embedToContainer(buildNamesEmbed(message.guild, user, ctx.names, state.page))];
+        case 'rolimons':  return [embedToContainer(buildRolimonsEmbed(message.guild, user, rolimons))];
+        default:          return [embedToContainer(await buildProfileEmbed(ctx))];
       }
-      return Array.isArray(out) ? out : [out];
     };
 
     const pageInfo = () => {
@@ -796,7 +889,11 @@ module.exports = {
       return rows;
     };
 
-    await thinking.edit({ embeds: await embedFor(), components: components() });
+    // The thinking message was created with IsComponentsV2, so each edit
+    // simply replaces the components array (the flag is sticky and may not
+    // be removed). Container body + select/pager rows live side-by-side at
+    // the top level of the message.
+    await thinking.edit({ components: [...(await embedFor()), ...components()] });
 
     const collector = thinking.createMessageComponentCollector({ time: 5 * 60 * 1000 });
 
@@ -816,7 +913,7 @@ module.exports = {
           if (num >= 1 && num <= total) state.page = num - 1;
         } catch {}
         try { await i.deleteReply(); } catch {}
-        await thinking.edit({ embeds: await embedFor(), components: components() }).catch(() => {});
+        await thinking.edit({ components: [...(await embedFor()), ...components()] }).catch(() => {});
         return;
       }
       try {
@@ -833,7 +930,7 @@ module.exports = {
           collector.stop('closed');
           return i.update({ components: [] }).catch(() => {});
         }
-        await i.update({ embeds: await embedFor(), components: components() });
+        await i.update({ components: [...(await embedFor()), ...components()] });
       } catch (e) {
         try { await i.followUp({ content: 'Something went wrong updating the view.', ephemeral: true }); } catch {}
       }
