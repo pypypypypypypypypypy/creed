@@ -1,4 +1,4 @@
-const client = require('../bored');
+const client = require('../index');
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 

@@ -1,4 +1,4 @@
-const client = require('../bored');
+const client = require('../index');
 const { EmbedBuilder } = require('discord.js');
 
 client.on("guildDelete", async guild => {

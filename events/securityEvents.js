@@ -1,5 +1,5 @@
 const { EmbedBuilder, PermissionFlagsBits, AuditLogEvent } = require('discord.js');
-const client = require('../bored');
+const client = require('../index');
 const db = require('../db');
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
