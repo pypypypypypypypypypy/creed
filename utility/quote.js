@@ -139,6 +139,11 @@ async function generateQuoteImage({ avatarBuffer, text, displayName, username })
   return canvas.encode('png');
 }
 
+async function resolveDisplayName(guild, user) {
+  const member = guild ? await guild.members.fetch(user.id).catch(() => null) : null;
+  return (member && member.displayName) || user.globalName || user.username;
+}
+
 async function fetchAvatarBuffer(user) {
   try {
     const url = user.displayAvatarURL({ extension: 'png', forceStatic: true, size: 1024 });
@@ -230,3 +235,8 @@ module.exports = {
     }
   },
 };
+
+// Re-exported helpers so the slash-command handler can render the same image.
+module.exports.generateQuoteImage = generateQuoteImage;
+module.exports.fetchAvatarBuffer = fetchAvatarBuffer;
+module.exports.resolveDisplayName = resolveDisplayName;
