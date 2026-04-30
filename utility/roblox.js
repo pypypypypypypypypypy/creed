@@ -778,11 +778,14 @@ module.exports = {
 
     const query = args.join(' ').trim();
     const scanEmoji = '<a:loading:1499216008257339514>';
+    // Roblox supports a username-based redirect URL, so we can hyperlink
+    // the query immediately even before we've resolved the numeric ID.
+    const queryLink = `https://www.roblox.com/user.aspx?username=${encodeURIComponent(query)}`;
     // The whole interactive lifecycle uses Components V2, so the initial
     // "scanning" message must also be created with the V2 flag — otherwise
     // we wouldn't be able to swap in V2 components on later edits.
     const thinking = await message.channel.send({
-      components: [buildSimpleContainer(`${scanEmoji} scanning **${query}**'s Roblox profile..`, color)],
+      components: [buildSimpleContainer(`${scanEmoji} scanning [**${query}**](${queryLink})'s Roblox profile..`, color)],
       flags: MessageFlags.IsComponentsV2,
     });
 
@@ -792,6 +795,12 @@ module.exports = {
         components: [buildSimpleContainer(`${warn} ${message.author}: No Roblox user found for \`${query}\`.`, '#efa23a')],
       });
     }
+
+    // Now that we know the real user, update the scanning line with the
+    // proper display name + handle hyperlinked to the actual profile.
+    thinking.edit({
+      components: [buildSimpleContainer(`${scanEmoji} scanning ${userMention(user)} (${userHandle(user)})'s Roblox profile..`, color)],
+    }).catch(() => {});
 
     const [
       headshot, fullBody, presence,
@@ -928,7 +937,8 @@ module.exports = {
           state.page = (state.page + 1) % total;
         } else if (i.customId === 'rblx_close') {
           collector.stop('closed');
-          return i.update({ components: [] }).catch(() => {});
+          await i.deferUpdate().catch(() => {});
+          return thinking.delete().catch(() => {});
         }
         await i.update({ components: [...(await embedFor()), ...components()] });
       } catch (e) {
