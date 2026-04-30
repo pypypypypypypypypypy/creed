@@ -69,13 +69,12 @@ module.exports = {
     if (amount > wallet) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: You don't have enough. Wallet: **${fmt(wallet)}**`)] });
 
     const fruits = getFruits();
+    const e = freshEmojis();
+    const spinEmoji = e.slots || e.loading || '🎰';
 
-    // How long each reel spins before locking in. Discord limits message edits,
-    // so keep the cycle interval >= 700ms to stay safe.
-    const CYCLE_INTERVAL_MS = 750;
-    const CYCLES_PER_REEL = 3; // 3 random-fruit frames per reel ≈ 2.25s
-
-    const randEmoji = () => fruits[Math.floor(Math.random() * fruits.length)].emoji;
+    // Each reel shows the animated spin emoji, then switches to its fruit.
+    // Keep interval >= 700ms to stay within Discord edit rate limits.
+    const REEL_SPIN_MS = 1000;
 
     // Pick the final result up front so it's a fair, single roll — the
     // animation just hides the answer until each reel "lands".
@@ -87,35 +86,23 @@ module.exports = {
         .setTitle('🎰 Slot Machine')
         .setDescription(`${buildSlotDisplay(left, mid, right)}\n\n${footer}`);
 
-    // Initial frame — all three reels showing random fruits.
+    // Initial frame — all three reels showing the animated spin emoji.
     const spinMsg = await message.channel.send({
-      embeds: [renderEmbed(randEmoji(), randEmoji(), randEmoji())],
+      embeds: [renderEmbed(spinEmoji, spinEmoji, spinEmoji)],
     });
 
     const safeEdit = (embed) => spinMsg.edit({ embeds: [embed] }).catch(() => {});
 
-    // Phase 1: all three reels cycle through random fruits, then reel 1 locks.
-    for (let i = 0; i < CYCLES_PER_REEL; i++) {
-      await wait(CYCLE_INTERVAL_MS);
-      await safeEdit(renderEmbed(randEmoji(), randEmoji(), randEmoji()));
-    }
-    await wait(CYCLE_INTERVAL_MS);
-    await safeEdit(renderEmbed(a.emoji, randEmoji(), randEmoji()));
+    // Reel 1 lands.
+    await wait(REEL_SPIN_MS);
+    await safeEdit(renderEmbed(a.emoji, spinEmoji, spinEmoji));
 
-    // Phase 2: reels 2 + 3 keep cycling, then reel 2 locks.
-    for (let i = 0; i < CYCLES_PER_REEL; i++) {
-      await wait(CYCLE_INTERVAL_MS);
-      await safeEdit(renderEmbed(a.emoji, randEmoji(), randEmoji()));
-    }
-    await wait(CYCLE_INTERVAL_MS);
-    await safeEdit(renderEmbed(a.emoji, b.emoji, randEmoji()));
+    // Reel 2 lands.
+    await wait(REEL_SPIN_MS);
+    await safeEdit(renderEmbed(a.emoji, b.emoji, spinEmoji));
 
-    // Phase 3: reel 3 keeps cycling on its own, then locks for the result.
-    for (let i = 0; i < CYCLES_PER_REEL; i++) {
-      await wait(CYCLE_INTERVAL_MS);
-      await safeEdit(renderEmbed(a.emoji, b.emoji, randEmoji()));
-    }
-    await wait(CYCLE_INTERVAL_MS);
+    // Reel 3 lands.
+    await wait(REEL_SPIN_MS);
 
     const display = buildSlotDisplay(a.emoji, b.emoji, c.emoji);
 
