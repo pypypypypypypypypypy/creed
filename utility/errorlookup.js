@@ -1,6 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 const { warn } = require('../emojis.json');
+const moment = require('moment');
+const { getErrorRecord } = require('../utils/errorEmbed');
+const { canRunOwnerCmd } = require('../utils/owners');
 
 // Curated Discord JSON error codes — covers what you'll actually see day-to-day.
 // Reference: https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
@@ -229,14 +232,59 @@ module.exports = {
     const raw = (args[0] || '').trim();
     if (!raw) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an error code. \`,errorlookup 50013\``)],
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide an error code. \`,errorlookup QqoIzAxSFemE\` or \`,errorlookup 50013\``)],
       });
     }
 
+    // 1) Bot-generated alphanumeric code (e.g. "QqoIzAxSFemE") — these are
+    //    stored in the DB whenever a command throws.
+    if (/^[A-Za-z0-9]{8,16}$/.test(raw) && /[A-Za-z]/.test(raw)) {
+      const rec = getErrorRecord(raw);
+      if (!rec) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No record found for code \`${raw}\`. It may have rolled out of the recent log.`)],
+        });
+      }
+
+      // Owner-only details: stack trace + IDs. Everyone else gets the summary.
+      const isOwner = canRunOwnerCmd(message.author.id, 'errorlookup');
+      const when = moment(rec.timestamp).format('MMMM D, YYYY [at] h:mm A');
+
+      const lines = [
+        `**Code:** \`${rec.code}\``,
+        `**Command:** \`${rec.command || 'unknown'}\``,
+        `**When:** ${when} (${moment(rec.timestamp).fromNow()})`,
+        `**User:** ${rec.userTag || rec.userId || 'unknown'}${rec.userId ? ` (\`${rec.userId}\`)` : ''}`,
+        `**Server:** ${rec.guildName || 'DM'}${rec.guildId ? ` (\`${rec.guildId}\`)` : ''}`,
+        '',
+        `**Error:** \`${(rec.errorName || 'Error')}: ${rec.errorMessage || 'unknown'}\``,
+      ];
+
+      if (isOwner) {
+        if (rec.messageContent) {
+          lines.push('', `**Message:** \`\`\`\n${rec.messageContent.slice(0, 300)}\n\`\`\``);
+        }
+        if (rec.stack) {
+          const stack = rec.stack.slice(0, 1500);
+          lines.push(`**Stack:**\n\`\`\`\n${stack}\n\`\`\``);
+        }
+      }
+
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(color)
+            .setTitle(`Bot Error — ${rec.code}`)
+            .setDescription(lines.join('\n')),
+        ],
+      });
+    }
+
+    // 2) Numeric — Discord JSON / HTTP / gateway code
     const code = parseInt(raw, 10);
     if (Number.isNaN(code)) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${raw}\` is not a valid number.`)],
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: \`${raw}\` is not a valid error code.`)],
       });
     }
 
