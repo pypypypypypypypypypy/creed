@@ -10,7 +10,6 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildPresences,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
   ],
@@ -54,6 +53,8 @@ async function gracefulExit(signal) {
   if (shuttingDown) return;
   shuttingDown = true;
   console.log(`[backup] ${signal} received, flushing pending backup...`);
+  // Flush any pending in-memory DB writes to disk first.
+  try { require('./db').flushSync(); } catch {}
   try {
     await Promise.race([
       backup.flushPending(),
