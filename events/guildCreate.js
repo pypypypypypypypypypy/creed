@@ -4,7 +4,7 @@ const { default_prefix, color } = require("../config.json");
 const { EmbedBuilder, ChannelType, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 const DOCS_URL = 'https://bored.up.railway.app/docs';
-const DISCORD_URL = 'https://discord.gg/VWXFBA5AZH';
+const DISCORD_URL = 'https://discord.gg/J2uxnApqfH';
 
 client.on("guildCreate", async guild => {
   const guildBlacklist = db.get('bot_guild_blacklist') || [];
