@@ -838,7 +838,7 @@ module.exports = {
     // ,h or ,h <category> — send the Discord support server invite.
     // Per-command help (,h <command>) still works below.
     if (!input || aliasMap[input]) {
-      return message.channel.send('https://discord.gg/3Kuf5nDmg6');
+      return message.channel.send('https://discord.gg/J2uxnApqfH');
     }
 
     // ,h <command> [subcommand] — per-command help lookup (any args = old behavior)
