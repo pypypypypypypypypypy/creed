@@ -3,9 +3,22 @@ const path = require('path');
 
 const FILE = path.join(__dirname, 'db_data.json');
 
-function load() {
-  if (!fs.existsSync(FILE)) return {};
-  try { return JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { return {}; }
+// ---------- In-memory cache ----------
+// Load once at startup. All reads are served from memory — zero disk IO per
+// db.get() call. Writes update the in-memory object immediately and schedule
+// a debounced flush so rapid back-to-back writes produce only one disk write.
+let _cache = null;
+let _dirty = false;
+let _flushTimer = null;
+const FLUSH_DEBOUNCE_MS = 500;
+
+function getCache() {
+  if (_cache === null) {
+    if (!fs.existsSync(FILE)) { _cache = {}; return _cache; }
+    try { _cache = JSON.parse(fs.readFileSync(FILE, 'utf8')); }
+    catch { _cache = {}; }
+  }
+  return _cache;
 }
 
 // Lazy-resolve the backup module so this file stays usable even before
@@ -18,10 +31,28 @@ function getBackup() {
   return _backup;
 }
 
-function save(data) {
-  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-  const b = getBackup();
-  if (b && typeof b.scheduleBackup === 'function') b.scheduleBackup();
+function flushNow() {
+  if (!_dirty || _cache === null) return;
+  try {
+    fs.writeFileSync(FILE, JSON.stringify(_cache, null, 2));
+    _dirty = false;
+    const b = getBackup();
+    if (b && typeof b.scheduleBackup === 'function') b.scheduleBackup();
+  } catch (e) {
+    console.error('[db] flush failed:', e.message);
+  }
+}
+
+function scheduleFlush() {
+  _dirty = true;
+  if (_flushTimer) clearTimeout(_flushTimer);
+  _flushTimer = setTimeout(() => { _flushTimer = null; flushNow(); }, FLUSH_DEBOUNCE_MS);
+}
+
+// Expose so backup.flushPending / gracefulExit can force a synchronous write.
+function flushPendingSync() {
+  if (_flushTimer) { clearTimeout(_flushTimer); _flushTimer = null; }
+  flushNow();
 }
 
 function resolvePath(data, keys) {
@@ -57,8 +88,7 @@ function splitKey(key) {
 
 const db = {
   get(key) {
-    const data = load();
-    const val = resolvePath(data, splitKey(key));
+    const val = resolvePath(getCache(), splitKey(key));
     return val === undefined ? null : val;
   },
 
@@ -67,9 +97,8 @@ const db = {
   },
 
   set(key, value) {
-    const data = load();
-    setPath(data, splitKey(key), value);
-    save(data);
+    setPath(getCache(), splitKey(key), value);
+    scheduleFlush();
     return value;
   },
 
@@ -78,9 +107,8 @@ const db = {
   },
 
   delete(key) {
-    const data = load();
-    deletePath(data, splitKey(key));
-    save(data);
+    deletePath(getCache(), splitKey(key));
+    scheduleFlush();
     return true;
   },
 
@@ -98,7 +126,10 @@ const db = {
     const arr = this.get(key) || [];
     arr.push(element);
     return this.set(key, arr);
-  }
+  },
+
+  // Force an immediate synchronous write — used by graceful shutdown.
+  flushSync: flushPendingSync,
 };
 
 module.exports = db;
