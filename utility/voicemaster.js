@@ -72,7 +72,7 @@ function getEmojis() {
 
 function buildInterface(client, prefix) {
   const e = getEmojis();
-  const link = 'https://discord.gg/NgRtqVywe8';
+  const link = 'https://discord.gg/J2uxnApqfH';
 
   const embed = new EmbedBuilder()
     .setColor(color)
