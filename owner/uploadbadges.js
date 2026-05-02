@@ -169,18 +169,29 @@ module.exports = {
 
     const push = await pushEmojiJsonToGitHub(newContent);
 
+    const resultLines = results.join('\n').slice(0, 3500);
     const summary =
       `**${ok}** uploaded · **${skipped}** already existed · **${fail}** failed\n\n` +
-      results.join('\n').slice(0, 3800) +
-      `\n\n${push.ok ? '✅ emojis.json pushed to GitHub' : `⚠️ GitHub push: ${push.reason}`}`;
+      resultLines +
+      `\n\n${push.ok ? '✅ emojis.json pushed to GitHub' : `⚠️ GitHub push: ${push.reason} — file attached below`}`;
 
-    await status.edit({
+    const editPayload = {
       embeds: [
         new EmbedBuilder()
           .setColor(fail === 0 ? '#2ecc71' : color)
           .setTitle('Badge Emoji Upload')
           .setDescription(summary),
       ],
-    });
+    };
+
+    // If GitHub push failed, attach emojis.json as a file so it can be recovered
+    if (!push.ok) {
+      const { AttachmentBuilder } = require('discord.js');
+      editPayload.files = [
+        new AttachmentBuilder(Buffer.from(newContent, 'utf8'), { name: 'emojis.json' }),
+      ];
+    }
+
+    await status.edit(editPayload);
   },
 };
