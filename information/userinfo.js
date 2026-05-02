@@ -1,26 +1,52 @@
 const { EmbedBuilder, ActivityType } = require('discord.js');
 const moment = require('moment');
 const { color } = require('../config.json');
-const {
-  verifiedBotDev, bugHunter, bugHunterPlus, discordPartner, discordStaff,
-  hypeSquad, hypeSquadBravery, hypeSquadBril, hypeSquadBal,
-  verifiedBot, earlySupporter, active_developer,
-  boost, nitro, uptime, replyline,
-} = require('../emojis.json');
+const { verifiedBot, discordStaff, replyline, nitro: nitroEmoji, boost: boostEmoji } = require('../emojis.json');
 
-const flags = {
+// ── Custom badge emojis (provided) ────────────────────────────────────────
+const BADGE = {
+  boostHeart:      '<:boostheart:1219378385332207778>',
+  early:           '<:early:1488484682029989928>',
+  nitroplatinum:   '<:nitroplatinum:1488303638278443009>',
+  booster:         '<:boostheart:1219378385332207778>',
+  nitrodiamond:    '<:nitrodiamond:1488303630367854758>',
+  bughunter1:      '<:4475bughunter1:1488303644511178752>',
+  nitrogold:       '<:nitrogold:1488303634570805308>',
+  nitroruby:       '<:nitroruby:1488303628006719692>',
+  bughunter2:      '<:72030discordbughunter2:1488303645907750913>',
+  nitrosilver:     '<:nitrosilver:1488303629545766932>',
+  nitroopal:       '<:nitroopal:1488303636357316779>',
+  nitroemerald:    '<:nitroemerald:1488303633014718464>',
+  quest:           '<:quest:1488303642405507365>',
+  partner:         '<:partnerserverowner:1488484718398935240>',
+  orbs:            '<:orbs:1488303641314988042>',
+  earlyDev:        '<:96296discordearlybotdeveloper1:1488484694994452620>',
+  hype:            '<:HypeBadge:1145742145379119245>',
+};
+
+// Map UserFlags → badge emoji
+const FLAGS_MAP = {
   Staff:                   discordStaff,
-  Partner:                 discordPartner,
-  BugHunterLevel1:         bugHunter,
-  BugHunterLevel2:         bugHunterPlus,
-  HypeSquadEvents:         hypeSquad,
-  HypeSquadOnlineHouse1:   hypeSquadBravery,
-  HypeSquadOnlineHouse2:   hypeSquadBril,
-  HypeSquadOnlineHouse3:   hypeSquadBal,
-  PremiumEarlySupporter:   earlySupporter,
+  Partner:                 BADGE.partner,
+  BugHunterLevel1:         BADGE.bughunter1,
+  BugHunterLevel2:         BADGE.bughunter2,
+  HypeSquadEvents:         BADGE.hype,
+  HypeSquadOnlineHouse1:   BADGE.hype,
+  HypeSquadOnlineHouse2:   BADGE.hype,
+  HypeSquadOnlineHouse3:   BADGE.hype,
+  PremiumEarlySupporter:   BADGE.early,
   VerifiedBot:             verifiedBot,
-  VerifiedDeveloper:       verifiedBotDev,
-  ActiveDeveloper:         active_developer,
+  VerifiedDeveloper:       BADGE.earlyDev,
+  ActiveDeveloper:         BADGE.earlyDev,
+  Quarantined:             '🔒',
+};
+
+// Nitro premium_type → badge emoji
+// 0 = None, 1 = Nitro Classic, 2 = Nitro, 3 = Nitro Basic
+const NITRO_BADGE = {
+  1: BADGE.nitrosilver,   // Classic
+  2: BADGE.nitroopal,     // Nitro (base)
+  3: BADGE.nitrosilver,   // Basic
 };
 
 async function fetchDiscordProfile(userId, guildId, botToken) {
@@ -40,7 +66,7 @@ function formatEmoji(emojiObj) {
   const { id, name, animated } = emojiObj;
   const tag = animated ? `<a:${name}:${id}>` : `<:${name}:${id}>`;
   const url = `https://cdn.discordapp.com/emojis/${id}.${animated ? 'gif' : 'png'}?size=64`;
-  return { tag, url, name, id, animated };
+  return { tag, url, name, id };
 }
 
 const STATUS_EMOJI = { online: '🟢', idle: '🟡', dnd: '🔴', offline: '⚫', invisible: '⚫' };
@@ -66,10 +92,10 @@ module.exports = {
     const userPos  = [...message.guild.members.cache.values()].sort((a, b) => a.joinedTimestamp - b.joinedTimestamp);
     const position = userPos.findIndex(m => m.id === user.id) + 1;
 
-    const presence     = mentionedMember.presence;
-    const statusKey    = presence?.status || 'offline';
-    const statusEmoji  = STATUS_EMOJI[statusKey] || '⚫';
-    const statusLabel  = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+    const presence    = mentionedMember.presence;
+    const statusKey   = presence?.status || 'offline';
+    const statusEmoji = STATUS_EMOJI[statusKey] || '⚫';
+    const statusLabel = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
 
     // Listening activity
     let listeningLine = '';
@@ -83,37 +109,46 @@ module.exports = {
       }
     }
 
-    // Badge string
-    const badgeStr = userFlags.map(f => flags[f] || '').filter(Boolean).join(' ');
-
-    // Fetch profile for expression emojis
+    // Fetch profile in parallel
     const botToken    = process.env.DISCORD_TOKEN || process.env.TOKEN;
     const profileData = await fetchDiscordProfile(user.id, message.guild.id, botToken);
 
+    // Build badge row — flags + nitro badge
+    const badges = userFlags.map(f => FLAGS_MAP[f]).filter(Boolean);
+
+    const premiumType = profileData?.premium_type ?? 0;
+    if (premiumType > 0 && NITRO_BADGE[premiumType]) {
+      badges.unshift(NITRO_BADGE[premiumType]);
+    }
+    if (mentionedMember.premiumSince) {
+      badges.unshift(BADGE.booster);
+    }
+
+    // Expression emojis from profile
     const expressionEmojis = [];
     const globalEmoji = profileData?.user_profile?.emoji;
     if (globalEmoji) {
       const fmt = formatEmoji(globalEmoji);
-      if (fmt) expressionEmojis.push({ label: 'Profile Expression', ...fmt });
+      if (fmt) expressionEmojis.push({ label: 'Profile', ...fmt });
     }
     const guildEmoji = profileData?.guild_member_profile?.emoji;
     if (guildEmoji && guildEmoji.id !== globalEmoji?.id) {
       const fmt = formatEmoji(guildEmoji);
-      if (fmt) expressionEmojis.push({ label: 'Server Expression', ...fmt });
+      if (fmt) expressionEmojis.push({ label: 'Server', ...fmt });
     }
+
     const avatarDecoration = profileData?.user?.avatar_decoration_data || user.avatarDecorationData;
-
-    // Nickname / display
     const nickname  = mentionedMember.nickname || user.displayName || user.username;
-    const isNitro   = !!mentionedMember.premiumSince;
+    const isNitro   = premiumType > 0;
+    const isBooster = !!mentionedMember.premiumSince;
 
-    // Description block
+    // Description
     const descLines = [
       `${replyline} ${statusEmoji} **${statusLabel}**  •  🆔 \`${user.id}\`  •  📊 Join position **#${position || '?'}**`,
       listeningLine || null,
-      badgeStr ? `${replyline} ${badgeStr}` : null,
+      badges.length ? `${replyline} ${badges.join(' ')}` : null,
       user.bot ? `${replyline} 🤖 **Bot account**` : null,
-      isNitro ? `${replyline} ${nitro} **Nitro subscriber**  ${boost} Boosting since ${moment(mentionedMember.premiumSince).format('MMM D, YYYY')}` : null,
+      isBooster ? `${replyline} ${BADGE.boostHeart} **Server Booster** since ${moment(mentionedMember.premiumSince).format('MMM D, YYYY')}` : null,
     ].filter(Boolean).join('\n');
 
     const embed = new EmbedBuilder()
@@ -147,23 +182,22 @@ module.exports = {
         },
       );
 
-    // Expression emojis field
     if (expressionEmojis.length > 0) {
-      const lines = expressionEmojis.map(e => `✨ **${e.label}:** ${e.tag}  •  [open](${e.url})`);
-      embed.addFields({ name: '😶 Profile Emojis', value: lines.join('\n'), inline: false });
+      embed.addFields({
+        name: '😶 Profile Emojis',
+        value: expressionEmojis.map(e => `✨ **${e.label}:** ${e.tag}  •  [open](${e.url})`).join('\n'),
+        inline: false,
+      });
     }
 
-    // Avatar decoration
     if (avatarDecoration?.asset) {
       const decorUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${avatarDecoration.asset}.png?size=128`;
       embed.addFields({ name: '🖼️ Avatar Decoration', value: `[View decoration](${decorUrl})`, inline: true });
     }
 
-    // Profile banner
     if (user.banner) {
       const ext = user.banner.startsWith('a_') ? 'gif' : 'png';
-      const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${ext}?size=1024`;
-      embed.setImage(bannerUrl);
+      embed.setImage(`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${ext}?size=1024`);
     }
 
     await message.channel.send({ embeds: [embed] });
