@@ -6,20 +6,35 @@ function getEmojis() {
   try { delete require.cache[require.resolve('../emojis.json')]; return require('../emojis.json'); } catch { return {}; }
 }
 
-const FLAGS_MAP = (e) => ({
-  Staff:                 e.discordStaff    || '',
-  Partner:               e.partnerserverowner || '',
-  BugHunterLevel1:       e.bughunter1      || '',
-  BugHunterLevel2:       e.bughunter2      || '',
-  HypeSquadEvents:       e.hypebadge       || '',
-  HypeSquadOnlineHouse1: e.hypebadge       || '',
-  HypeSquadOnlineHouse2: e.hypebadge       || '',
-  HypeSquadOnlineHouse3: e.hypebadge       || '',
-  PremiumEarlySupporter: e.early           || '',
-  VerifiedBot:           e.verifiedBot     || '',
-  VerifiedDeveloper:     e.earlybotdeveloper || '',
-  ActiveDeveloper:       e.earlybotdeveloper || '',
-});
+// Build the flag→emoji map from emojis.json.
+// Prefers the prettier uploaded versions (bughunter1 etc.) when available,
+// falls back to the existing bot emojis that are already in emojis.json.
+function buildFlagsMap(e) {
+  return {
+    Staff:                 e.discordStaff                || '',
+    Partner:               e.partnerserverowner          || e.discordPartner              || '',
+    BugHunterLevel1:       e.bughunter1                  || e.bugHunter                   || '',
+    BugHunterLevel2:       e.bughunter2                  || e.bugHunterPlus               || '',
+    HypeSquadEvents:       e.hypebadge                   || e.hypeSquad                   || '',
+    HypeSquadOnlineHouse1: e.hypebadge                   || e.hypeSquadBravery             || '',
+    HypeSquadOnlineHouse2: e.hypebadge                   || e.hypeSquadBril               || '',
+    HypeSquadOnlineHouse3: e.hypebadge                   || e.hypeSquadBal                || '',
+    PremiumEarlySupporter: e.early                       || e.earlySupporter              || '',
+    VerifiedBot:           e.verifiedBot                 || '',
+    VerifiedDeveloper:     e.earlybotdeveloper           || e.verifiedBotDev              || '',
+    ActiveDeveloper:       e.earlybotdeveloper           || e.active_developer            || '',
+    CertifiedModerator:    e.discord_certified_moderator || '',
+  };
+}
+
+// Nitro premium_type → badge emoji (prefer uploaded prettier set, fall back to existing)
+function getNitroBadge(e, premiumType) {
+  if (!premiumType) return '';
+  // Types: 1 = Nitro Classic, 2 = Nitro, 3 = Nitro Basic
+  if (premiumType === 1) return e.nitrosilver  || e.nitro || '';
+  if (premiumType === 3) return e.nitrosilver  || e.nitro || '';
+  return e.nitroopal || e.nitro || '';
+}
 
 async function fetchDiscordProfile(userId, guildId, botToken) {
   if (!botToken) return null;
@@ -56,14 +71,10 @@ module.exports = {
     const user      = await client.users.fetch(mentionedMember.id, { force: true }).catch(() => null) || message.author;
     const userFlags = user.flags?.toArray() || [];
     const e         = getEmojis();
-    const flagsMap  = FLAGS_MAP(e);
+    const flagsMap  = buildFlagsMap(e);
 
-    const nickname  = mentionedMember.nickname ? `∙ ${mentionedMember.nickname}` : '';
-    const badgeParts = userFlags.map(f => flagsMap[f]).filter(Boolean);
-    if (mentionedMember.premiumSince) badgeParts.unshift(e.boostheart || e.booster || '');
-    const flagStr = badgeParts.filter(Boolean).length ? `∙ ${badgeParts.filter(Boolean).join(' ')}` : '';
-
-    const bot = user.bot ? 'Discord Bot' : 'N/A';
+    const nickname = mentionedMember.nickname ? `∙ ${mentionedMember.nickname}` : '';
+    const bot      = user.bot ? 'Discord Bot' : 'N/A';
 
     const userPos  = [...message.guild.members.cache.values()].sort((a, b) => a.joinedTimestamp - b.joinedTimestamp);
     const position = userPos.findIndex(m => m.id === user.id) + 1;
@@ -79,16 +90,35 @@ module.exports = {
       }
     }
 
-    // Fetch profile expression emojis in parallel
+    // Fetch profile (expression emojis + nitro type) — in parallel, never blocks
     const botToken    = process.env.DISCORD_TOKEN || process.env.TOKEN;
     const profileData = await fetchDiscordProfile(user.id, message.guild.id, botToken);
+    const premiumType = profileData?.premium_type ?? 0;
 
+    // Build badge row: nitro → booster → flags
+    const badgeParts = [];
+
+    const nitroBadge = getNitroBadge(e, premiumType);
+    if (nitroBadge) badgeParts.push(nitroBadge);
+
+    if (mentionedMember.premiumSince) {
+      const boosterBadge = e.boostheart || e.booster || e.boost || '';
+      if (boosterBadge) badgeParts.push(boosterBadge);
+    }
+
+    for (const flag of userFlags) {
+      const badge = flagsMap[flag];
+      if (badge && !badgeParts.includes(badge)) badgeParts.push(badge);
+    }
+
+    const flagStr = badgeParts.length ? `∙ ${badgeParts.join(' ')}` : '';
+
+    // Profile expression emojis (from Discord profile API)
     const expressionParts = [];
     const globalEmoji = profileData?.user_profile?.emoji;
     if (globalEmoji) { const r = renderEmoji(globalEmoji); if (r) expressionParts.push(r); }
     const guildEmoji = profileData?.guild_member_profile?.emoji;
     if (guildEmoji && guildEmoji.id !== globalEmoji?.id) { const r = renderEmoji(guildEmoji); if (r) expressionParts.push(r); }
-
     const expressionStr = expressionParts.length ? ` ∙ ${expressionParts.join(' ')}` : '';
 
     const embed = new EmbedBuilder()
