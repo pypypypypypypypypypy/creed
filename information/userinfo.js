@@ -39,9 +39,9 @@ function getNitroBadge(e, premiumType) {
 async function fetchDiscordProfile(userId, guildId, botToken) {
   if (!botToken) return null;
   try {
-    const qs = guildId ? `?with_mutual_guilds=false&guild_id=${guildId}` : `?with_mutual_guilds=false`;
+    const qs = guildId ? `?with_mutual_guilds=true&guild_id=${guildId}` : '?with_mutual_guilds=true';
     const res = await fetch(`https://discord.com/api/v10/users/${userId}/profile${qs}`, {
-      headers: { Authorization: `Bot ${botToken}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bot ${botToken}` },
     });
     if (!res.ok) return null;
     return await res.json();
@@ -73,12 +73,10 @@ module.exports = {
     const e         = getEmojis();
     const flagsMap  = buildFlagsMap(e);
 
-    const nickname = mentionedMember.nickname ? `∙ ${mentionedMember.nickname}` : '';
-    const bot      = user.bot ? 'Discord Bot' : 'N/A';
-
     const userPos  = [...message.guild.members.cache.values()].sort((a, b) => a.joinedTimestamp - b.joinedTimestamp);
     const position = userPos.findIndex(m => m.id === user.id) + 1;
 
+    // Spotify / listening activity
     const activities = [];
     const presence   = mentionedMember.presence;
     if (presence) {
@@ -90,20 +88,20 @@ module.exports = {
       }
     }
 
-    // Fetch profile (expression emojis + nitro type) — in parallel, never blocks
     const botToken    = process.env.DISCORD_TOKEN || process.env.TOKEN;
     const profileData = await fetchDiscordProfile(user.id, message.guild.id, botToken);
     const premiumType = profileData?.premium_type ?? 0;
+    const mutualCount = profileData?.mutual_guilds?.length ?? 0;
 
-    // Build badge row: nitro → booster → flags
+    // Badge row: nitro → booster → flags → expression emojis
     const badgeParts = [];
 
     const nitroBadge = getNitroBadge(e, premiumType);
     if (nitroBadge) badgeParts.push(nitroBadge);
 
     if (mentionedMember.premiumSince) {
-      const boosterBadge = e.boostheart || e.booster || e.boost || '';
-      if (boosterBadge) badgeParts.push(boosterBadge);
+      const b = e.boostheart || e.booster || e.boost || '';
+      if (b) badgeParts.push(b);
     }
 
     for (const flag of userFlags) {
@@ -111,28 +109,41 @@ module.exports = {
       if (badge && !badgeParts.includes(badge)) badgeParts.push(badge);
     }
 
-    const flagStr = badgeParts.length ? `∙ ${badgeParts.join(' ')}` : '';
-
-    // Profile expression emojis (from Discord profile API)
-    const expressionParts = [];
+    // Profile expression emojis
     const globalEmoji = profileData?.user_profile?.emoji;
-    if (globalEmoji) { const r = renderEmoji(globalEmoji); if (r) expressionParts.push(r); }
+    if (globalEmoji) { const r = renderEmoji(globalEmoji); if (r && !badgeParts.includes(r)) badgeParts.push(r); }
     const guildEmoji = profileData?.guild_member_profile?.emoji;
-    if (guildEmoji && guildEmoji.id !== globalEmoji?.id) { const r = renderEmoji(guildEmoji); if (r) expressionParts.push(r); }
-    const expressionStr = expressionParts.length ? ` ∙ ${expressionParts.join(' ')}` : '';
+    if (guildEmoji && guildEmoji.id !== globalEmoji?.id) { const r = renderEmoji(guildEmoji); if (r && !badgeParts.includes(r)) badgeParts.push(r); }
+
+    // ── Description layout matching the screenshot ──
+    // Line 1 (optional): Spotify activity
+    // Line 2: badges on their own line
+    // Blank line
+    // "Dates" header
+    // Created: MMM D, h:mm A (relative)
+    // Blank line
+    // X mutual servers
+    const descParts = [];
+    if (activities.length) descParts.push(activities.join('\n'));
+    if (badgeParts.length) descParts.push(badgeParts.join(' '));
+
+    const createdStr = `${moment(user.createdAt).format('MMM D, h:mm A')} (${moment(user.createdAt).fromNow()})`;
+    descParts.push(`\n**Dates**\n**Created**: ${createdStr}`);
+    descParts.push(`${mutualCount} mutual server${mutualCount !== 1 ? 's' : ''}`);
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ forceStatic: false }) })
-      .setTitle(`${user.tag} ${nickname} ${flagStr}${expressionStr}`.trim())
-      .setDescription(`${activities.join('\n')}\n\`\`${user.id}\`\` ∙ Join position: ${position || 'N/A'}`)
+      // Title: username (userID) — matches the screenshot
+      .setTitle(`${user.username} (${user.id})`)
+      .setDescription(descParts.join('\n'))
       .setColor(mentionedMember.displayHexColor || color)
       .setThumbnail(user.displayAvatarURL({ forceStatic: false, size: 2048 }))
-      .setFooter({ text: bot })
+      .setFooter({ text: user.bot ? 'Discord Bot' : `Join position: ${position || 'N/A'}` })
       .setTimestamp()
       .addFields(
         { name: '**Joined Discord On**', value: moment(user.createdAt).format('dddd, MMMM Do YYYY, h:mm A'), inline: true },
-        { name: '**Joined Guild On**', value: mentionedMember.joinedAt ? moment(mentionedMember.joinedAt).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
-        { name: '**Boosted Guild On**', value: mentionedMember.premiumSince ? moment(mentionedMember.premiumSince).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
+        { name: '**Joined Guild On**',   value: mentionedMember.joinedAt ? moment(mentionedMember.joinedAt).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
+        { name: '**Boosted Guild On**',  value: mentionedMember.premiumSince ? moment(mentionedMember.premiumSince).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
         {
           name: `**Roles [${mentionedMember.roles.cache.size - 1}]**`,
           value: mentionedMember.roles.cache
