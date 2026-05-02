@@ -60,12 +60,25 @@ module.exports = {
     const member = message.guild.members.cache.get(target.id)
       || await message.guild.members.fetch(target.id).catch(() => null);
 
-    const botToken  = process.env.DISCORD_TOKEN || process.env.TOKEN;
-    const profile   = await fetchProfile(target.id, message.guild.id, botToken);
-    const premiumType = profile?.premium_type ?? 0;
-    const premiumSince = profile?.premium_since ?? null; // when they got Nitro
+    const botToken    = process.env.DISCORD_TOKEN || process.env.TOKEN;
+    const profile     = await fetchProfile(target.id, message.guild.id, botToken);
+    const userFlags   = target.flags?.toArray() || [];
 
-    const tier     = TIERS[premiumType];
+    // Discord's profile API does NOT return premium_type for bot tokens.
+    // Infer nitro from: API field (if present) → boosting (requires Nitro) → Early Supporter flag
+    let premiumType  = profile?.premium_type ?? 0;
+    let premiumSince = profile?.premium_since ?? null;
+
+    if (!premiumType && member?.premiumSince) {
+      // Boosting requires Nitro — treat as Nitro (type 2)
+      premiumType = 2;
+    }
+    if (!premiumType && userFlags.includes('PremiumEarlySupporter')) {
+      // Had Nitro Classic back in the day
+      premiumType = 1;
+    }
+
+    const tier      = TIERS[premiumType];
     const tierEmoji = getTierEmoji(e, premiumType);
 
     // Build description
