@@ -1,32 +1,25 @@
 const { EmbedBuilder, ActivityType } = require('discord.js');
 const moment = require('moment');
 const { color } = require('../config.json');
-const { verifiedBot, discordStaff } = require('../emojis.json');
 
-const BADGE = {
-  booster:    '<:boostheart:1219378385332207778>',
-  early:      '<:early:1488484682029989928>',
-  bughunter1: '<:4475bughunter1:1488303644511178752>',
-  bughunter2: '<:72030discordbughunter2:1488303645907750913>',
-  partner:    '<:partnerserverowner:1488484718398935240>',
-  earlyDev:   '<:96296discordearlybotdeveloper1:1488484694994452620>',
-  hype:       '<:HypeBadge:1145742145379119245>',
-};
+function getEmojis() {
+  try { delete require.cache[require.resolve('../emojis.json')]; return require('../emojis.json'); } catch { return {}; }
+}
 
-const FLAGS_MAP = {
-  Staff:                 discordStaff,
-  Partner:               BADGE.partner,
-  BugHunterLevel1:       BADGE.bughunter1,
-  BugHunterLevel2:       BADGE.bughunter2,
-  HypeSquadEvents:       BADGE.hype,
-  HypeSquadOnlineHouse1: BADGE.hype,
-  HypeSquadOnlineHouse2: BADGE.hype,
-  HypeSquadOnlineHouse3: BADGE.hype,
-  PremiumEarlySupporter: BADGE.early,
-  VerifiedBot:           verifiedBot,
-  VerifiedDeveloper:     BADGE.earlyDev,
-  ActiveDeveloper:       BADGE.earlyDev,
-};
+const FLAGS_MAP = (e) => ({
+  Staff:                 e.discordStaff    || '',
+  Partner:               e.partnerserverowner || '',
+  BugHunterLevel1:       e.bughunter1      || '',
+  BugHunterLevel2:       e.bughunter2      || '',
+  HypeSquadEvents:       e.hypebadge       || '',
+  HypeSquadOnlineHouse1: e.hypebadge       || '',
+  HypeSquadOnlineHouse2: e.hypebadge       || '',
+  HypeSquadOnlineHouse3: e.hypebadge       || '',
+  PremiumEarlySupporter: e.early           || '',
+  VerifiedBot:           e.verifiedBot     || '',
+  VerifiedDeveloper:     e.earlybotdeveloper || '',
+  ActiveDeveloper:       e.earlybotdeveloper || '',
+});
 
 async function fetchDiscordProfile(userId, guildId, botToken) {
   if (!botToken) return null;
@@ -62,13 +55,13 @@ module.exports = {
 
     const user      = await client.users.fetch(mentionedMember.id, { force: true }).catch(() => null) || message.author;
     const userFlags = user.flags?.toArray() || [];
+    const e         = getEmojis();
+    const flagsMap  = FLAGS_MAP(e);
 
-    const nickname = mentionedMember.nickname ? `∙ ${mentionedMember.nickname}` : '';
-
-    // Badge row: Discord flags + booster
-    const badgeParts = userFlags.map(f => FLAGS_MAP[f]).filter(Boolean);
-    if (mentionedMember.premiumSince) badgeParts.unshift(BADGE.booster);
-    const flagStr = badgeParts.length ? `∙ ${badgeParts.join(' ')}` : '';
+    const nickname  = mentionedMember.nickname ? `∙ ${mentionedMember.nickname}` : '';
+    const badgeParts = userFlags.map(f => flagsMap[f]).filter(Boolean);
+    if (mentionedMember.premiumSince) badgeParts.unshift(e.boostheart || e.booster || '');
+    const flagStr = badgeParts.filter(Boolean).length ? `∙ ${badgeParts.filter(Boolean).join(' ')}` : '';
 
     const bot = user.bot ? 'Discord Bot' : 'N/A';
 
@@ -86,24 +79,16 @@ module.exports = {
       }
     }
 
-    // Fetch profile expression emojis — runs in background, never delays the embed
+    // Fetch profile expression emojis in parallel
     const botToken    = process.env.DISCORD_TOKEN || process.env.TOKEN;
     const profileData = await fetchDiscordProfile(user.id, message.guild.id, botToken);
 
-    // Collect expression emojis from the profile
     const expressionParts = [];
     const globalEmoji = profileData?.user_profile?.emoji;
-    if (globalEmoji) {
-      const rendered = renderEmoji(globalEmoji);
-      if (rendered) expressionParts.push(rendered);
-    }
+    if (globalEmoji) { const r = renderEmoji(globalEmoji); if (r) expressionParts.push(r); }
     const guildEmoji = profileData?.guild_member_profile?.emoji;
-    if (guildEmoji && guildEmoji.id !== globalEmoji?.id) {
-      const rendered = renderEmoji(guildEmoji);
-      if (rendered) expressionParts.push(rendered);
-    }
+    if (guildEmoji && guildEmoji.id !== globalEmoji?.id) { const r = renderEmoji(guildEmoji); if (r) expressionParts.push(r); }
 
-    // Append expression emojis to flagStr so they appear right after badges in the title
     const expressionStr = expressionParts.length ? ` ∙ ${expressionParts.join(' ')}` : '';
 
     const embed = new EmbedBuilder()
@@ -115,25 +100,9 @@ module.exports = {
       .setFooter({ text: bot })
       .setTimestamp()
       .addFields(
-        {
-          name: '**Joined Discord On**',
-          value: moment(user.createdAt).format('dddd, MMMM Do YYYY, h:mm A'),
-          inline: true,
-        },
-        {
-          name: '**Joined Guild On**',
-          value: mentionedMember.joinedAt
-            ? moment(mentionedMember.joinedAt).format('dddd, MMMM Do YYYY, h:mm A')
-            : 'N/A',
-          inline: true,
-        },
-        {
-          name: '**Boosted Guild On**',
-          value: mentionedMember.premiumSince
-            ? moment(mentionedMember.premiumSince).format('dddd, MMMM Do YYYY, h:mm A')
-            : 'N/A',
-          inline: true,
-        },
+        { name: '**Joined Discord On**', value: moment(user.createdAt).format('dddd, MMMM Do YYYY, h:mm A'), inline: true },
+        { name: '**Joined Guild On**', value: mentionedMember.joinedAt ? moment(mentionedMember.joinedAt).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
+        { name: '**Boosted Guild On**', value: mentionedMember.premiumSince ? moment(mentionedMember.premiumSince).format('dddd, MMMM Do YYYY, h:mm A') : 'N/A', inline: true },
         {
           name: `**Roles [${mentionedMember.roles.cache.size - 1}]**`,
           value: mentionedMember.roles.cache
