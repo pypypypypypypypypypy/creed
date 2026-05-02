@@ -6,32 +6,46 @@ function getEmojis() {
   try { delete require.cache[require.resolve('../emojis.json')]; return require('../emojis.json'); } catch { return {}; }
 }
 
-// Only use application emojis (populated by ,uploadbadges) or Unicode fallbacks.
-// Never fall back to guild emojis — they break if the bot left that server.
+// All badge keys match the names used in ,uploadbadges BADGES array.
+// Unicode fallbacks are used when the application emoji hasn't been uploaded yet.
 function buildFlagsMap(e) {
   return {
-    Staff:                 e.discordStaff       || '👮',
-    Partner:               e.partnerserverowner || '🤝',
-    BugHunterLevel1:       e.bughunter1         || '🐛',
-    BugHunterLevel2:       e.bughunter2         || '🐞',
-    HypeSquadEvents:       e.hypebadge          || '🏅',
-    HypeSquadOnlineHouse1: e.hypebadge          || '🏠',
-    HypeSquadOnlineHouse2: e.hypebadge          || '🏠',
-    HypeSquadOnlineHouse3: e.hypebadge          || '🏠',
-    PremiumEarlySupporter: e.early              || '⭐',
-    VerifiedBot:           e.verifiedBot        || '✅',
-    VerifiedDeveloper:     e.earlybotdeveloper  || '🔨',
-    ActiveDeveloper:       e.earlybotdeveloper  || '🔨',
-    CertifiedModerator:    e.certifiedmoderator || '🛡️',
+    Staff:                 e.discordstaff         || '👮',
+    Partner:               e.discordpartner       || '🤝',
+    BugHunterLevel1:       e.bughunter1           || '🐛',
+    BugHunterLevel2:       e.bughunter2           || '🐞',
+    HypeSquadEvents:       e.hypesquadevents      || '🏅',
+    HypeSquadOnlineHouse1: e.hypesquadbravery     || '🏠',
+    HypeSquadOnlineHouse2: e.hypesquadbrilliance  || '🏠',
+    HypeSquadOnlineHouse3: e.hypesquadbalance     || '🏠',
+    PremiumEarlySupporter: e.earlysupporter       || '⭐',
+    VerifiedBot:           '✅',
+    VerifiedDeveloper:     e.verifiedbotdev       || '🔨',
+    ActiveDeveloper:       e.activedeveloper       || '💻',
+    CertifiedModerator:    e.certifiedmoderator   || '🛡️',
+    ModeratorProgramsAlumni: e.moderatoralumni   || '🎓',
   };
 }
 
-// Application emojis first (from ,uploadbadges), then Unicode fallback. Never guild emojis.
+// Returns the correct boost tier badge based on how long the member has been boosting.
+// Tiers: 1mo · 2mo · 3mo · 6mo · 9mo · 1yr · 15mo · 18mo · 2yr
+function getBoostBadge(e, premiumSince) {
+  if (!premiumSince) return null;
+  const months = Math.floor(moment.duration(moment().diff(moment(premiumSince))).asMonths());
+  if (months >= 24) return e.boost2yr  || e.boost1yr || '🌸';
+  if (months >= 18) return e.boost18mo || e.boost1yr || '🌸';
+  if (months >= 15) return e.boost15mo || e.boost1yr || '🌸';
+  if (months >= 12) return e.boost1yr  || '🌸';
+  if (months >= 9)  return e.boost9mo  || e.boost6mo || '🌸';
+  if (months >= 6)  return e.boost6mo  || '🌸';
+  if (months >= 3)  return e.boost3mo  || '🌸';
+  if (months >= 2)  return e.boost2mo  || '🌸';
+  return e.boost1mo || '🌸';
+}
+
 function getNitroBadge(e, premiumType) {
   if (!premiumType) return '';
-  if (premiumType === 1) return e.nitrosilver || '💜';
-  if (premiumType === 3) return e.nitrosilver || '💜';
-  return e.nitroopal || '💎';
+  return e.nitro || '💜';
 }
 
 async function fetchDiscordProfile(userId, guildId, botToken) {
@@ -92,19 +106,19 @@ module.exports = {
 
     // Discord doesn't expose premium_type to bots — infer it
     let premiumType = profileData?.premium_type ?? 0;
-    if (!premiumType && mentionedMember.premiumSince) premiumType = 2; // boosting requires Nitro
+    if (!premiumType && mentionedMember.premiumSince) premiumType = 2;
     if (!premiumType && userFlags.includes('PremiumEarlySupporter')) premiumType = 1;
 
-    // Badge row: nitro → booster → flags → expression emojis
+    // Badge row: nitro → boost tier → profile flags → expression emojis
     const badgeParts = [];
 
     const nitroBadge = getNitroBadge(e, premiumType);
     if (nitroBadge) badgeParts.push(nitroBadge);
 
+    // Show the correct boost TIER badge (not just a generic heart)
     if (mentionedMember.premiumSince) {
-      // Only use application emoji (from ,uploadbadges) or Unicode — never guild emoji
-      const b = e.boostheart || '🌸';
-      badgeParts.push(b);
+      const boostBadge = getBoostBadge(e, mentionedMember.premiumSince);
+      if (boostBadge) badgeParts.push(boostBadge);
     }
 
     for (const flag of userFlags) {
@@ -118,14 +132,6 @@ module.exports = {
     const guildEmoji = profileData?.guild_member_profile?.emoji;
     if (guildEmoji && guildEmoji.id !== globalEmoji?.id) { const r = renderEmoji(guildEmoji); if (r && !badgeParts.includes(r)) badgeParts.push(r); }
 
-    // ── Description layout matching the screenshot ──
-    // Line 1 (optional): Spotify activity
-    // Line 2: badges on their own line
-    // Blank line
-    // "Dates" header
-    // Created: MMM D, h:mm A (relative)
-    // Blank line
-    // X mutual servers
     const descParts = [];
     if (activities.length) descParts.push(activities.join('\n'));
     if (badgeParts.length) descParts.push(badgeParts.join(' '));
@@ -136,7 +142,6 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ forceStatic: false }) })
-      // Title: username (userID) — matches the screenshot
       .setTitle(`${user.username} (${user.id})`)
       .setDescription(descParts.join('\n'))
       .setColor(mentionedMember.displayHexColor || color)
