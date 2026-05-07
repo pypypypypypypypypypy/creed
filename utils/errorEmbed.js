@@ -69,7 +69,7 @@ function buildErrorPayload(message, commandName, err) {
   const embed = new EmbedBuilder()
     .setColor('#FFFFFF')
     .setDescription(
-      `:warning: ${message.author}: Error occurred while performing command ` +
+      `⚠️ ${message.author}: Error occurred while performing command ` +
       `**${commandName}**. Use the given error code to report it to the developers in the ` +
       `[support server](${SUPPORT_INVITE})`
     );
