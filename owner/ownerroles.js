@@ -31,7 +31,7 @@ module.exports = {
     const me = guild.members.me;
     if (!me.permissions.has(P.ManageRoles)) {
       return message.channel.send({ embeds: [
-        new EmbedBuilder().setColor(color).setDescription(`${deny} ${message.author}: I need **Manage Roles**.`),
+        new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: I need **Manage Roles**.`),
       ] });
     }
 
@@ -41,9 +41,6 @@ module.exports = {
     const skipped = [];
     const errors = [];
 
-    // Iterate TOP-DOWN. Developer is created first → ends up highest, because
-    // every subsequent role gets inserted at position 1 and pushes the older
-    // ones up. NPC is created last → stays at the bottom.
     for (const def of ROLES) {
       const existing = guild.roles.cache.find((r) => r.name === def.name);
       if (existing) { skipped.push(def.name); continue; }
