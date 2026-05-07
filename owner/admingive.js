@@ -26,7 +26,7 @@ module.exports = {
 
   run: async (client, message, args) => {
     if (!canRunOwnerCmd(message.author.id, 'admingive')) {
-      return; // silently ignore non-owners / non-authorized
+      return;
     }
 
     const guildId = message.guild.id;
@@ -37,20 +37,20 @@ module.exports = {
 
     if (!target) {
       return message.channel.send({ embeds: [
-        new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Mention a user. \`,admingive @user 1b\``),
+        new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Mention a user. \`,admingive @user 1b\``),
       ] });
     }
 
     if (target.user.bot) {
       return message.channel.send({ embeds: [
-        new EmbedBuilder().setColor(color).setDescription(`${deny} ${message.author}: You cannot give to a bot.`),
+        new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} ${message.author}: You cannot give to a bot.`),
       ] });
     }
 
     const amount = parseAmount(args[1]);
     if (!isFinite(amount) || isNaN(amount) || amount <= 0) {
       return message.channel.send({ embeds: [
-        new EmbedBuilder().setColor(color).setDescription(`${warn} ${message.author}: Provide a **valid** amount. Examples: \`500\`, \`5k\`, \`1.5m\`, \`50,000\`, \`2.5b\`.`),
+        new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Provide a **valid** amount. Examples: \`500\`, \`5k\`, \`1.5m\`, \`50,000\`, \`2.5b\`.`),
       ] });
     }
 
@@ -58,7 +58,7 @@ module.exports = {
     setWallet(guildId, target.id, getWallet(guildId, target.id) + amount);
 
     return message.channel.send({ embeds: [
-      new EmbedBuilder().setColor(color).setDescription(
+      new EmbedBuilder().setColor('#a3eb7b').setDescription(
         `${approve} ${message.author}: Admin-gave **${fmt(amount)}** to **${target.user.username}**.`
       ),
     ] });
