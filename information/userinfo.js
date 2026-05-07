@@ -10,33 +10,33 @@ function getEmojis() {
 // These cover every badge that does NOT appear in user.flags.toArray().
 const HASH_TO_KEY = {
   // Standard / special badges
-  '5e74e9b61934fc1f67c65515d1f7e60d': 'discordstaff',
-  '3f9748e53446a137a052f3454e2de41e': 'discordpartner',
+  '5e74e9b61934fc1f67c65515d1f7e60d': 'discordStaff',
+  '3f9748e53446a137a052f3454e2de41e': 'discordPartner',
   'fee1624003e2fee35cb398e125dc479b': 'moderatoralumni',
-  'bf01d1073931f921909045f3a39fd264': 'hypesquadevents',
-  '8a88d63823d8a71cd5e390baa45efa02': 'hypesquadbravery',
-  '011940fd013da3f7fb926e4a1cd2e618': 'hypesquadbrilliance',
-  '3aa41de486fa12454c3761e8e223442e': 'hypesquadbalance',
-  '2717692c7dca7289b35297368a940dd0': 'bughunter1',
-  '848f79194d4be5ff5f81505cbd0ce1e6': 'bughunter2',
-  '6df5892e0f35b051f8b61eace34f4967': 'certifiedmoderator',
-  '7060786766c9c840eb3019e725d2b358': 'earlysupporter',
-  '6bdc42827a38498929a4920da12695d9': 'activedeveloper',
-  '6f9e37f9029ff57aef81db857890005e': 'verifiedbotdev',
+  'bf01d1073931f921909045f3a39fd264': 'hypeSquad',
+  '8a88d63823d8a71cd5e390baa45efa02': 'hypeSquadBravery',
+  '011940fd013da3f7fb926e4a1cd2e618': 'hypeSquadBril',
+  '3aa41de486fa12454c3761e8e223442e': 'hypeSquadBal',
+  '2717692c7dca7289b35297368a940dd0': 'bugHunter',
+  '848f79194d4be5ff5f81505cbd0ce1e6': 'bugHunterPlus',
+  '6df5892e0f35b051f8b61eace34f4967': 'discord_certified_moderator',
+  '7060786766c9c840eb3019e725d2b358': 'earlySupporter',
+  '6bdc42827a38498929a4920da12695d9': 'active_developer',
+  '6f9e37f9029ff57aef81db857890005e': 'verifiedBotDev',
   '7d9ae358c8c5e118768335dbe68b4fb8': 'quest',
   '83d8a1eb09a8d64e59233eec5d4d5c2d': 'orb',
   // Nitro
   '2ba85e8026a8614b640c2837bcdfe21b': 'nitro',
   // Boost tiers 1-9
-  '51040c70d4f20a921ad6674ff86fc95c': 'boost1mo',
-  '0e4080d1d333bc7ad29ef6528b6f2fb7': 'boost2mo',
-  '72bed924410c304dbe3d00a6e593ff59': 'boost3mo',
-  'df199d2050d3ed4ebf84d64ae83989f8': 'boost6mo',
-  '996b3e870e8a22ce519b3a50e6bdd52f': 'boost9mo',
-  '991c9f39ee33d7537d9f408c3e53141e': 'boost1yr',
-  'cb3ae83c15e970e8f3d410bc62cb8b99': 'boost15mo',
-  '7142225d31238f6387d9f09efaa02759': 'boost18mo',
-  'ec92202290b48d0879b7413d2dde3bab': 'boost2yr',
+  '51040c70d4f20a921ad6674ff86fc95c': 'boost',
+  '0e4080d1d333bc7ad29ef6528b6f2fb7': 'boost',
+  '72bed924410c304dbe3d00a6e593ff59': 'boost',
+  'df199d2050d3ed4ebf84d64ae83989f8': 'boost',
+  '996b3e870e8a22ce519b3a50e6bdd52f': 'boost',
+  '991c9f39ee33d7537d9f408c3e53141e': 'boost',
+  'cb3ae83c15e970e8f3d410bc62cb8b99': 'boost',
+  '7142225d31238f6387d9f09efaa02759': 'boost',
+  'ec92202290b48d0879b7413d2dde3bab': 'boost',
   // Account tenure badges
   '4f33c4a9c64ce221936bd256c356f91f': 'tenure1yr',
   '4514fab914bdbfb4ad2fa23df76121a6': 'tenure3yr',
@@ -48,20 +48,20 @@ const HASH_TO_KEY = {
 // Unicode fallbacks for flag-based badges (used when emoji isn't uploaded yet)
 function buildFlagsMap(e) {
   return {
-    Staff:                   e.discordstaff        || '👮',
-    Partner:                 e.discordpartner      || '🤝',
-    BugHunterLevel1:         e.bughunter1          || '🐛',
-    BugHunterLevel2:         e.bughunter2          || '🐞',
-    HypeSquadEvents:         e.hypesquadevents     || '🏅',
-    HypeSquadOnlineHouse1:   e.hypesquadbravery    || '🔺',
-    HypeSquadOnlineHouse2:   e.hypesquadbrilliance || '💎',
-    HypeSquadOnlineHouse3:   e.hypesquadbalance    || '⚖️',
-    PremiumEarlySupporter:   e.earlysupporter      || '⭐',
+    Staff:                   e.discordStaff        || '👮',
+    Partner:                 e.discordPartner      || '🤝',
+    BugHunterLevel1:         e.bugHunter           || '🐛',
+    BugHunterLevel2:         e.bugHunterPlus       || '🐞',
+    HypeSquadEvents:         e.hypeSquad           || '🏅',
+    HypeSquadOnlineHouse1:   e.hypeSquadBravery    || '🔺',
+    HypeSquadOnlineHouse2:   e.hypeSquadBril       || '💎',
+    HypeSquadOnlineHouse3:   e.hypeSquadBal        || '⚖️',
+    PremiumEarlySupporter:   e.earlySupporter      || '⭐',
     VerifiedBot:             '✅',
-    VerifiedDeveloper:       e.verifiedbotdev      || '🔨',
-    ActiveDeveloper:         e.activedeveloper     || '💻',
-    CertifiedModerator:      e.certifiedmoderator  || '🛡️',
-    ModeratorProgramsAlumni: e.moderatoralumni     || '🎓',
+    VerifiedDeveloper:       e.verifiedBotDev      || '🔨',
+    ActiveDeveloper:         e.active_developer    || '💻',
+    CertifiedModerator:      e.discord_certified_moderator || '🛡️',
+    ModeratorProgramsAlumni: e.moderatorAlumni     || '🎓',
   };
 }
 
@@ -69,15 +69,15 @@ function buildFlagsMap(e) {
 function getBoostBadge(e, premiumSince) {
   if (!premiumSince) return null;
   const months = Math.floor(moment.duration(moment().diff(moment(premiumSince))).asMonths());
-  if (months >= 24) return e.boost2yr  || e.boost1yr  || '🌸';
-  if (months >= 18) return e.boost18mo || e.boost1yr  || '🌸';
-  if (months >= 15) return e.boost15mo || e.boost1yr  || '🌸';
-  if (months >= 12) return e.boost1yr  || '🌸';
-  if (months >= 9)  return e.boost9mo  || e.boost6mo  || '🌸';
-  if (months >= 6)  return e.boost6mo  || '🌸';
-  if (months >= 3)  return e.boost3mo  || '🌸';
-  if (months >= 2)  return e.boost2mo  || '🌸';
-  return e.boost1mo || '🌸';
+  if (months >= 24) return e.boost  || '🌸';
+  if (months >= 18) return e.boost  || '🌸';
+  if (months >= 15) return e.boost  || '🌸';
+  if (months >= 12) return e.boost  || '🌸';
+  if (months >= 9)  return e.boost  || '🌸';
+  if (months >= 6)  return e.boost  || '🌸';
+  if (months >= 3)  return e.boost  || '🌸';
+  if (months >= 2)  return e.boost  || '🌸';
+  return e.boost || '🌸';
 }
 
 function getNitroBadge(e, premiumType) {
