@@ -41,7 +41,7 @@ module.exports = {
 
     if (!args.length) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
           `${e.warn} ${message.author}: Provide a role name, mention, or ID.\n\`\`\`\nSyntax: roleself <role>\nExample: roleself Admin\n\`\`\``
         )],
       });
@@ -50,16 +50,15 @@ module.exports = {
     const role = findRole(message, args);
     if (!role) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
           `${e.warn} ${message.author}: Role not found. Try the role name, @mention, or ID.`
         )],
       });
     }
 
-    // Bot must be able to manage this role
     if (role.position >= message.guild.members.me.roles.highest.position) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
+        embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(
           `${e.deny} ${message.author}: I cannot manage **${role.name}** — it's higher than my highest role.`
         )],
       });
@@ -69,14 +68,14 @@ module.exports = {
     if (haRole) {
       await message.member.roles.remove(role, 'roleself — owner command').catch(() => {});
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
+        embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(
           `${e.remove} ${message.author}: Removed **${role.name}** from you.`
         )],
       });
     } else {
       await message.member.roles.add(role, 'roleself — owner command').catch(() => {});
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(
+        embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(
           `${e.add} ${message.author}: Gave you **${role.name}**.`
         )],
       });
