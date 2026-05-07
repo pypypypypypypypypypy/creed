@@ -169,7 +169,7 @@ client.on("messageCreate", async message => {
     const { ActivityType } = require('discord.js');
     let isLive = global.__boredIsLive || false;
     const stripped = message.content.slice(prefix.length).trim().toLowerCase();
-    if (stripped === 'live' && message.author.id === '370268185410404353') {
+    if (stripped === 'live' && message.author.id === '1501779903811682375') {
       if (isLive) {
         global.__boredIsLive = false;
         await client.user.setPresence({ activities: [], status: 'online' });
