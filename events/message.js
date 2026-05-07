@@ -43,14 +43,14 @@ client.on("messageCreate", async message => {
 
   if (db.has(`afk-${message.author.id}+${message.guild.id}`)) {
     db.delete(`afk-${message.author.id}+${message.guild.id}`);
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`:wave: ${message.author}: Welcome back, you're no longer **AFK**`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`👋 ${message.author}: Welcome back, you're no longer **AFK**`)] });
   }
 
   const mentioned = message.mentions.members.first();
   if (mentioned && db.has(`afk-${mentioned.id}+${message.guild.id}`)) {
     const embed = new EmbedBuilder()
       .setColor('#FFFFFF')
-      .setDescription(`:zzz: ${mentioned} is AFK: ` + db.get(`afk-${mentioned.id}+${message.guild.id}`));
+      .setDescription(`💤 ${mentioned} is AFK: ` + db.get(`afk-${mentioned.id}+${message.guild.id}`));
     message.channel.send({ embeds: [embed] });
   }
 
@@ -218,6 +218,11 @@ client.on("messageCreate", async message => {
 
     try {
       global.__boredCmdCount = (global.__boredCmdCount || 0) + 1;
+      // Bot owner bypasses all user permission checks
+      const { isOwner: __isOwner } = require('../utils/owners');
+      if (__isOwner(message.author.id) && message.member) {
+        message.member.permissions.has = () => true;
+      }
       await command.run(client, message, args);
     } catch (err) {
       const payload = buildErrorPayload(message, command.name || cmd, err);
