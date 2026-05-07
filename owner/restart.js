@@ -32,7 +32,7 @@ module.exports = {
     await message.channel.send({
       embeds: [
         new EmbedBuilder()
-          .setColor(color)
+          .setColor('#a3eb7b')
           .setDescription(`${approve} ${message.author}: Restarting the bot...`)
       ]
     });
