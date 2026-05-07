@@ -38,19 +38,20 @@ function findMember(message, arg) {
   );
 }
 
-function send(message, emoji, text) {
-  return message.channel.send({ embeds: [new EmbedBuilder().setColor(BLUE).setDescription(`${emoji} ${message.author}: ${text}`)] });
+function send(message, emoji, text, clr = BLUE) {
+  return message.channel.send({ embeds: [new EmbedBuilder().setColor(clr).setDescription(`${emoji} ${message.author}: ${text}`)] });
 }
 
 function ok(message, text, kind = 'success') {
   const e = getEmojis();
   const emoji = kind === 'remove' ? e.remove : kind === 'add' ? e.add : e.approve;
-  return send(message, emoji, text);
+  const clr = kind === 'remove' ? '#fe6464' : '#a3eb7b';
+  return send(message, emoji, text, clr);
 }
 
 function fail(message, text) {
   const e = getEmojis();
-  return send(message, e.warn, text);
+  return send(message, e.warn, text, '#efa23a');
 }
 
 const SUBS = ['create','make','delete','del','edit','editname','rename','color','colour','topcolor','topcolour','tc','hoist','mentionable','mention','bots','humans','has','icon','restore','cancel','kill'];
