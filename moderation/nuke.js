@@ -33,7 +33,7 @@ module.exports = {
     const channel = message.mentions.channels.first() || message.channel;
 
     const confirm = new EmbedBuilder()
-      .setColor(color)
+      .setColor('#efa23a')
       .setDescription(`${warn} ${message.author}: Are you sure you want to **nuke** ${channel}? This will delete and recreate the channel. Type \`yes\` to confirm.`);
 
     await message.channel.send({ embeds: [confirm] });
