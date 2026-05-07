@@ -2,7 +2,10 @@ const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { color } = require("../config.json");
 const { isOwner } = require('../utils/owners');
 
-const SUCCESS = '<:success:1496708562695618641>';
+function getEmojis() {
+  delete require.cache[require.resolve('../emojis.json')];
+  return require('../emojis.json');
+}
 
 module.exports = {
   category: 'fun',
@@ -27,6 +30,7 @@ module.exports = {
 
     client.snipes?.delete(message.channel.id);
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${SUCCESS} ${message.author}: Cleared snipes`)] });
+    const { approve } = getEmojis();
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Cleared snipes`)] });
   }
 };
