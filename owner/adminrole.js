@@ -6,17 +6,25 @@ function getEmojis() {
   return require('../emojis.json');
 }
 
-function findRole(message, args) {
-  const mentioned = message.mentions.roles.first();
+function findMember(message, arg) {
+  if (!arg) return null;
+  const mentioned = message.mentions.members.first();
   if (mentioned) return mentioned;
-  const byId = message.guild.roles.cache.get(args[0]);
+  const clean = arg.replace(/[<@!>]/g, '');
+  return message.guild.members.cache.get(clean) || null;
+}
+
+function findRole(guild, args) {
+  if (!args.length) return null;
+  // Try by ID first
+  const byId = guild.roles.cache.get(args[0]);
   if (byId) return byId;
+  // Try by full name
   const query = args.join(' ').toLowerCase().trim();
-  if (!query) return null;
   return (
-    message.guild.roles.cache.find(r => r.name.toLowerCase() === query) ||
-    message.guild.roles.cache.find(r => r.name.toLowerCase().startsWith(query)) ||
-    message.guild.roles.cache.find(r => r.name.toLowerCase().includes(query))
+    guild.roles.cache.find(r => r.name.toLowerCase() === query) ||
+    guild.roles.cache.find(r => r.name.toLowerCase().startsWith(query)) ||
+    guild.roles.cache.find(r => r.name.toLowerCase().includes(query))
   );
 }
 
@@ -26,12 +34,12 @@ module.exports = {
   category: 'owner',
   help: [{
     name: 'adminrole',
-    description: 'Give or remove any role below the bot\'s highest role from yourself (owner only)',
+    description: 'Give or remove any role below the bot\'s highest role from a user (owner only)',
     aliases: 'ar',
-    parameters: '(role)',
+    parameters: '<user> <role name or id>',
     information: 'BOT_OWNER',
-    usage: 'adminrole (role)',
-    example: 'adminrole Admin',
+    usage: 'adminrole <user> <role name or id>',
+    example: 'adminrole @user Admin',
   }],
 
   run: async (client, message, args) => {
@@ -39,19 +47,30 @@ module.exports = {
 
     const e = getEmojis();
 
-    if (!args.length) {
+    if (args.length < 2) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
-          `${e.warn} ${message.author}: Provide a role name, mention, or ID.\n\`\`\`\nSyntax: adminrole <role>\nExample: adminrole Admin\n\`\`\``
+          `${e.warn} ${message.author}: Provide a user and a role.\n\`\`\`\nSyntax: adminrole <user> <role name or id>\nExample: adminrole @user Admin\n\`\`\``
         )],
       });
     }
 
-    const role = findRole(message, args);
+    const member = findMember(message, args[0]);
+    if (!member) {
+      return message.channel.send({
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+          `${e.warn} ${message.author}: Couldn't find that user. Mention them or use their ID.`
+        )],
+      });
+    }
+
+    // Role args = everything after the user arg
+    const roleArgs = args.slice(1);
+    const role = findRole(message.guild, roleArgs);
     if (!role) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
-          `${e.warn} ${message.author}: Role not found. Try the role name, @mention, or ID.`
+          `${e.warn} ${message.author}: Role \`${roleArgs.join(' ')}\` not found. Use the role name or ID.`
         )],
       });
     }
@@ -60,24 +79,24 @@ module.exports = {
     if (role.position >= botHighest.position) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(
-          `${e.deny} ${message.author}: I cannot manage **${role.name}** — it's at or above my highest role (**${botHighest.name}**).`
+          `${e.deny} ${message.author}: I can't manage **${role.name}** — it's at or above my highest role (**${botHighest.name}**).`
         )],
       });
     }
 
-    const hasRole = message.member.roles.cache.has(role.id);
+    const hasRole = member.roles.cache.has(role.id);
     if (hasRole) {
-      await message.member.roles.remove(role, 'adminrole — owner command').catch(() => {});
+      await member.roles.remove(role, 'adminrole — owner command').catch(() => {});
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(
-          `${e.remove} ${message.author}: Removed **${role.name}** from you.`
+          `${e.remove} ${message.author}: Removed **${role.name}** from ${member}.`
         )],
       });
     } else {
-      await message.member.roles.add(role, 'adminrole — owner command').catch(() => {});
+      await member.roles.add(role, 'adminrole — owner command').catch(() => {});
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(
-          `${e.add} ${message.author}: Gave you **${role.name}**.`
+          `${e.add} ${message.author}: Gave **${role.name}** to ${member}.`
         )],
       });
     }
