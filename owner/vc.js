@@ -59,7 +59,7 @@ module.exports = {
     if (arg && (arg.toLowerCase() === 'stop' || arg.toLowerCase() === 'leave')) {
       voice24.stop(message.guild.id);
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Stopped the 24/7 voice session.`)],
+        embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Stopped the 24/7 voice session.`)],
       });
     }
 
@@ -97,7 +97,7 @@ module.exports = {
     }
 
     return message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`${approve} ${message.author}: Joined ${channel} and started 24/7 playback. Bot will rejoin automatically if disconnected or restarted.`)],
+      embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${approve} ${message.author}: Joined ${channel} and started 24/7 playback. Bot will rejoin automatically if disconnected or restarted.`)],
     });
   },
 };
