@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const OWNER_ID = '370268185410404353';
+const OWNER_ID = '1501779903811682375';
 
 const ownerIds = new Set([OWNER_ID]);
 
