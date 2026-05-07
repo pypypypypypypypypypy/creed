@@ -16,10 +16,8 @@ function findMember(message, arg) {
 
 function findRole(guild, args) {
   if (!args.length) return null;
-  // Try by ID first
   const byId = guild.roles.cache.get(args[0]);
   if (byId) return byId;
-  // Try by full name
   const query = args.join(' ').toLowerCase().trim();
   return (
     guild.roles.cache.find(r => r.name.toLowerCase() === query) ||
@@ -36,10 +34,10 @@ module.exports = {
     name: 'adminrole',
     description: 'Give or remove any role below the bot\'s highest role from a user (owner only)',
     aliases: 'ar',
-    parameters: '<user> <role name or id>',
+    parameters: '<user> [+/-] <role name or id>',
     information: 'BOT_OWNER',
-    usage: 'adminrole <user> <role name or id>',
-    example: 'adminrole @user Admin',
+    usage: 'adminrole <user> <role>  |  adminrole <user> + <role>  |  adminrole <user> - <role>',
+    example: 'adminrole @user Admin  |  adminrole @user + Admin  |  adminrole @user - Admin',
   }],
 
   run: async (client, message, args) => {
@@ -50,7 +48,7 @@ module.exports = {
     if (args.length < 2) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
-          `${e.warn} ${message.author}: Provide a user and a role.\n\`\`\`\nSyntax: adminrole <user> <role name or id>\nExample: adminrole @user Admin\n\`\`\``
+          `${e.warn} ${message.author}: Provide a user and a role.\n\`\`\`\nSyntax: adminrole <user> <role name or id>\nOptional: adminrole <user> + <role>  →  force add\n         adminrole <user> - <role>  →  force remove\n\`\`\``
         )],
       });
     }
@@ -64,13 +62,25 @@ module.exports = {
       });
     }
 
-    // Role args = everything after the user arg
-    const roleArgs = args.slice(1);
+    // Check if second arg is a +/- flag
+    let forceAdd = null;
+    let roleArgs = args.slice(1);
+    if (roleArgs[0] === '+') { forceAdd = true; roleArgs = roleArgs.slice(1); }
+    else if (roleArgs[0] === '-') { forceAdd = false; roleArgs = roleArgs.slice(1); }
+
+    if (!roleArgs.length) {
+      return message.channel.send({
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+          `${e.warn} ${message.author}: Provide a role name or ID after the user.`
+        )],
+      });
+    }
+
     const role = findRole(message.guild, roleArgs);
     if (!role) {
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
-          `${e.warn} ${message.author}: Role \`${roleArgs.join(' ')}\` not found. Use the role name or ID.`
+          `${e.warn} ${message.author}: Role \`${roleArgs.join(' ')}\` not found. Use the exact role name or its ID.`
         )],
       });
     }
@@ -85,7 +95,18 @@ module.exports = {
     }
 
     const hasRole = member.roles.cache.has(role.id);
-    if (hasRole) {
+
+    // Determine action: forced add, forced remove, or toggle
+    const shouldAdd = forceAdd !== null ? forceAdd : !hasRole;
+
+    if (!shouldAdd) {
+      if (!hasRole) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+            `${e.warn} ${message.author}: ${member} doesn't have **${role.name}**.`
+          )],
+        });
+      }
       await member.roles.remove(role, 'adminrole — owner command').catch(() => {});
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(
@@ -93,6 +114,13 @@ module.exports = {
         )],
       });
     } else {
+      if (hasRole) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+            `${e.warn} ${message.author}: ${member} already has **${role.name}**.`
+          )],
+        });
+      }
       await member.roles.add(role, 'adminrole — owner command').catch(() => {});
       return message.channel.send({
         embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(
