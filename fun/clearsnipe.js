@@ -31,6 +31,6 @@ module.exports = {
 
     client.snipes?.delete(message.channel.id);
 
-    return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${e.approve} ${message.author}: Cleared snipes`)] });
+    return message.channel.send({ embeds: [new EmbedBuilder().setColor('#a3eb7b').setDescription(`${e.approve} ${message.author}: Cleared snipes`)] });
   }
 };
