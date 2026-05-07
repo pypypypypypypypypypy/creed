@@ -62,18 +62,12 @@ module.exports = {
       });
     }
 
-    // Check if second arg is a +/- flag
+    // Only treat +/- as a flag if there are more args after it (otherwise it's the role name)
     let forceAdd = null;
     let roleArgs = args.slice(1);
-    if (roleArgs[0] === '+') { forceAdd = true; roleArgs = roleArgs.slice(1); }
-    else if (roleArgs[0] === '-') { forceAdd = false; roleArgs = roleArgs.slice(1); }
-
-    if (!roleArgs.length) {
-      return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
-          `${e.warn} ${message.author}: Provide a role name or ID after the user.`
-        )],
-      });
+    if ((roleArgs[0] === '+' || roleArgs[0] === '-') && roleArgs.length > 1) {
+      forceAdd = roleArgs[0] === '+';
+      roleArgs = roleArgs.slice(1);
     }
 
     const role = findRole(message.guild, roleArgs);
@@ -95,8 +89,6 @@ module.exports = {
     }
 
     const hasRole = member.roles.cache.has(role.id);
-
-    // Determine action: forced add, forced remove, or toggle
     const shouldAdd = forceAdd !== null ? forceAdd : !hasRole;
 
     if (!shouldAdd) {
