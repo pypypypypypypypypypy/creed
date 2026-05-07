@@ -47,7 +47,7 @@ module.exports = {
       const desc = r.ok
         ? `${approve} ${message.author}: backup uploaded (**${r.size}** bytes).`
         : `${deny} ${message.author}: backup failed: \`${r.reason}\``;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(desc)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor(r.ok ? '#a3eb7b' : '#fe6464').setDescription(desc)] });
     }
 
     if (sub === 'restore' || sub === 'load') {
@@ -55,16 +55,16 @@ module.exports = {
       const desc = r.restored
         ? `${approve} ${message.author}: restored **${r.size}** bytes from snapshot <t:${Math.floor(new Date(r.ts).getTime() / 1000)}:R>. Restart the bot so any settings cached in memory at boot pick up the new data.`
         : `${deny} ${message.author}: restore failed: \`${r.reason}\``;
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(desc)] });
+      return message.channel.send({ embeds: [new EmbedBuilder().setColor(r.restored ? '#a3eb7b' : '#fe6464').setDescription(desc)] });
     }
 
     if (sub === 'setup') {
       if (!message.guild) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} Run this inside the server you want backups for.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} Run this inside the server you want backups for.`)] });
       }
       const me = message.guild.members.me;
       if (!me.permissions.has(PermissionFlagsBits.ManageChannels)) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${deny} I need **Manage Channels** to create the backup channel.`)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} I need **Manage Channels** to create the backup channel.`)] });
       }
 
       let ch;
@@ -88,7 +88,7 @@ module.exports = {
           ],
         });
       } catch (e) {
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${deny} Channel create failed: \`${e.message}\``)] });
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${deny} Channel create failed: \`${e.message}\``)] });
       }
 
       const envSetCorrectly = process.env.BACKUP_CHANNEL_ID === ch.id;
@@ -106,7 +106,7 @@ module.exports = {
       if (envSetCorrectly) lines.push('', `Env var already matches \u2014 running an initial backup now.`);
 
       const sent = await message.channel.send({
-        embeds: [new EmbedBuilder().setColor(color).setTitle('Backup channel created').setDescription(lines.join('\n'))],
+        embeds: [new EmbedBuilder().setColor('#a3eb7b').setTitle('Backup channel created').setDescription(lines.join('\n'))],
       });
 
       if (envSetCorrectly) {
@@ -114,14 +114,14 @@ module.exports = {
         const desc = r.ok
           ? `${approve} initial backup saved (**${r.size}** bytes).`
           : `${deny} initial backup failed: \`${r.reason}\``;
-        sent.reply({ embeds: [new EmbedBuilder().setColor(color).setDescription(desc)] }).catch(() => {});
+        sent.reply({ embeds: [new EmbedBuilder().setColor(r.ok ? '#a3eb7b' : '#fe6464').setDescription(desc)] }).catch(() => {});
       }
       return sent;
     }
 
     return message.channel.send({
       embeds: [
-        new EmbedBuilder().setColor(color).setDescription(
+        new EmbedBuilder().setColor('#efa23a').setDescription(
           `${warn} ${message.author}: usage \u2014 \`,backup setup\`, \`,backup now\`, \`,backup restore\`, \`,backup status\``
         ),
       ],
