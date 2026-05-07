@@ -3,9 +3,10 @@ const { default_prefix } = require('../config.json');
 const { paginate } = require('../utils/paginate');
 const db = require('../db');
 
-const ADD = '<:add:1496708513177538600>';
-const REMOVE = '<:remove:1496708551161155697>';
-const SUCCESS = '<:success:1496708562695618641>';
+function getEmojis() {
+  delete require.cache[require.resolve('../emojis.json')];
+  return require('../emojis.json');
+}
 const BLUE = '#5dade2';
 
 function findRole(message, parts) {
@@ -42,11 +43,15 @@ function send(message, emoji, text) {
 }
 
 function ok(message, text, kind = 'success') {
-  const emoji = kind === 'remove' ? REMOVE : kind === 'add' ? ADD : SUCCESS;
+  const e = getEmojis();
+  const emoji = kind === 'remove' ? e.remove : kind === 'add' ? e.add : e.approve;
   return send(message, emoji, text);
 }
 
-function fail(message, text) { return send(message, SUCCESS, text); }
+function fail(message, text) {
+  const e = getEmojis();
+  return send(message, e.warn, text);
+}
 
 const SUBS = ['create','make','delete','del','edit','editname','rename','color','colour','topcolor','topcolour','tc','hoist','mentionable','mention','bots','humans','has','icon','restore','cancel','kill'];
 
