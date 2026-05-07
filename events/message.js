@@ -220,17 +220,15 @@ client.on("messageCreate", async message => {
       global.__boredCmdCount = (global.__boredCmdCount || 0) + 1;
       // Bot owner bypasses all user permission checks
       const { isOwner: __isOwner } = require('../utils/owners');
-      const { PermissionsBitField: __PBF } = require('discord.js');
       if (__isOwner(message.author.id) && message.member) {
-        // Override the permissions getter so every .has() call returns true.
-        // We must use defineProperty because GuildMember.permissions is a getter
-        // that returns a new PermissionsBitField instance each time — patching
-        // one instance would not persist across multiple accesses.
-        const __allPerms = new __PBF(__PBF.All);
-        Object.defineProperty(message.member, 'permissions', {
-          get: () => __allPerms,
-          configurable: true,
-        });
+        const { PermissionsBitField: __PBF } = require('discord.js');
+        // Wrap message.member in a plain prototype-chained object and assign
+        // permissions as a simple own data property so every .has() returns true.
+        // Simple assignment never fails — avoids defineProperty throwing on the
+        // GuildMember instance and swallowing the command run entirely.
+        const __patched = Object.create(message.member);
+        __patched.permissions = new __PBF(__PBF.All);
+        message.member = __patched;
       }
       await command.run(client, message, args);
     } catch (err) {
