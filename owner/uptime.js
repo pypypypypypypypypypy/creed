@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 
-const OWNER_ID = '370268185410404353';
+const OWNER_ID = '1501779903811682375';
 let uptimeInterval = null;
 let uptimeChannelId = null;
 
@@ -82,7 +82,7 @@ module.exports = {
     // Default: show uptime to anyone
     const embed = new EmbedBuilder()
       .setColor(color)
-      .setDescription(`<:uptime:1496708571109396591> **${client.user.username}** has been up for: ${formatUptime(client.uptime)}`);
+      .setDescription(`**${client.user.username}** has been up for: ${formatUptime(client.uptime)}`);
     return message.channel.send({ embeds: [embed] }).catch(err => {
       console.error('uptime send failed:', err.message);
     });
