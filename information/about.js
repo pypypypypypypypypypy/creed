@@ -41,7 +41,7 @@ module.exports = {
       .setThumbnail(client.user.displayAvatarURL())
       .setURL(inviteURL)
       .setTitle('invite')
-      .setDescription(`<:uptime:1496708571109396591> <t:${launchedTs}:R>`)
+      .setDescription(`<t:${launchedTs}:R>`)
       .addFields(
         {
           name: '__**Client**__',
