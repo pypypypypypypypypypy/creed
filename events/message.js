@@ -13,18 +13,18 @@ client.on("messageCreate", async message => {
   if (message.partial) return;
   if (message.author.bot) return;
 
-  // DM handler — run a small allowlist of commands in DMs without guild checks
+  // DM handler — all commands work in DMs except the moderation category
   if (!message.guild) {
-    const DM_ALLOW = new Set(['invite', 'inv', 'ping', 'help', 'botinfo', 'bi']);
     if (!message.content.startsWith(default_prefix)) return;
     const dmArgs = message.content.slice(default_prefix.length).trim().split(/ +/g);
     const dmCmd = dmArgs.shift()?.toLowerCase();
-    if (!dmCmd || !DM_ALLOW.has(dmCmd)) return;
+    if (!dmCmd) return;
     let dmCommand = client.commands.get(dmCmd);
     if (!dmCommand) dmCommand = client.commands.get(client.aliases.get(dmCmd));
     if (!dmCommand) return;
-    try { await dmCommand.run(client, message, dmArgs); } catch (e) {
-      message.channel.send({ content: `Something went wrong: ${e.message}` }).catch(() => {});
+    if (dmCommand.category === 'moderation') return;
+    try { await dmCommand.run(client, message, dmArgs); } catch {
+      message.channel.send({ content: `\`${dmCmd}\` can't be used in DMs.` }).catch(() => {});
     }
     return;
   }
