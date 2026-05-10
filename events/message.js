@@ -12,6 +12,23 @@ function getEmojis() {
 client.on("messageCreate", async message => {
   if (message.partial) return;
   if (message.author.bot) return;
+
+  // DM handler — run a small allowlist of commands in DMs without guild checks
+  if (!message.guild) {
+    const DM_ALLOW = new Set(['invite', 'inv', 'ping', 'help', 'botinfo', 'bi']);
+    if (!message.content.startsWith(default_prefix)) return;
+    const dmArgs = message.content.slice(default_prefix.length).trim().split(/ +/g);
+    const dmCmd = dmArgs.shift()?.toLowerCase();
+    if (!dmCmd || !DM_ALLOW.has(dmCmd)) return;
+    let dmCommand = client.commands.get(dmCmd);
+    if (!dmCommand) dmCommand = client.commands.get(client.aliases.get(dmCmd));
+    if (!dmCommand) return;
+    try { await dmCommand.run(client, message, dmArgs); } catch (e) {
+      message.channel.send({ content: `Something went wrong: ${e.message}` }).catch(() => {});
+    }
+    return;
+  }
+
   if (!message.guild) return;
 
   // Bot owner blacklist enforcement — silently ignore blacklisted users / leave blacklisted guilds
