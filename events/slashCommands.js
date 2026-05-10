@@ -4,18 +4,10 @@ const {
   ContextMenuCommandBuilder,
   ApplicationCommandType,
   EmbedBuilder,
-  AttachmentBuilder,
   MessageFlags,
 } = require('discord.js');
 const { color } = require('../config.json');
-const {
-  generateQuoteImage,
-  fetchAvatarBuffer,
-  resolveDisplayName,
-} = require('../utility/quote');
 
-// One real slash command — earns the "Supports Commands" badge once it has
-// been used in at least one guild.
 const commands = [
   new SlashCommandBuilder()
     .setName('ping')
@@ -23,7 +15,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('quote')
-    .setDescription('Generate a stylized quote image.')
+    .setDescription('Quote someone in a stylized embed.')
     .addStringOption((o) =>
       o.setName('text').setDescription('The quote text').setRequired(true).setMaxLength(500)
     )
@@ -31,7 +23,6 @@ const commands = [
       o.setName('user').setDescription('Person being quoted (defaults to you)').setRequired(false)
     ),
 
-  // Right-click message → Apps → Quote
   new ContextMenuCommandBuilder()
     .setName('Quote')
     .setType(ApplicationCommandType.Message),
@@ -46,33 +37,34 @@ client.on('clientReady', async () => {
   }
 });
 
-async function renderAndReply(interaction, targetUser, rawText) {
+async function sendQuoteEmbed(interaction, targetUser, rawText) {
   let text = (rawText || '').trim();
   if (!text) {
     return interaction.reply({
-      embeds: [new EmbedBuilder().setColor('#efa23a').setDescription("That message has no text to quote.")],
+      embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('That message has no text to quote.')],
       flags: MessageFlags.Ephemeral,
     }).catch(() => {});
   }
   if (text.length > 500) text = text.slice(0, 500) + '…';
 
-  await interaction.deferReply().catch(() => {});
+  const displayName = targetUser.globalName || targetUser.username;
+
+  const embed = new EmbedBuilder()
+    .setColor(color)
+    .setAuthor({
+      name: displayName,
+      iconURL: targetUser.displayAvatarURL({ forceStatic: false }),
+    })
+    .setDescription(`>>> ${text}`)
+    .setFooter({
+      text: `@${targetUser.username}${interaction.user.id !== targetUser.id ? ` • quoted by ${interaction.user.tag}` : ''}`,
+    })
+    .setTimestamp();
 
   try {
-    const avatarBuffer = await fetchAvatarBuffer(targetUser);
-    const displayName = await resolveDisplayName(interaction.guild, targetUser);
-    const png = await generateQuoteImage({
-      avatarBuffer,
-      text,
-      displayName,
-      username: targetUser.username,
-    });
-    const file = new AttachmentBuilder(png, { name: 'quote.png' });
-    await interaction.editReply({ files: [file] });
-  } catch (e) {
-    await interaction.editReply({
-      embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`Failed to render quote — \`${(e && e.message) || 'unknown error'}\``)],
-    }).catch(() => {});
+    await interaction.reply({ embeds: [embed] });
+  } catch {
+    await interaction.editReply({ embeds: [embed] }).catch(() => {});
   }
 }
 
@@ -89,7 +81,7 @@ client.on('interactionCreate', async (interaction) => {
   if (interaction.isChatInputCommand() && interaction.commandName === 'quote') {
     const text = interaction.options.getString('text', true);
     const targetUser = interaction.options.getUser('user') || interaction.user;
-    return renderAndReply(interaction, targetUser, text);
+    return sendQuoteEmbed(interaction, targetUser, text);
   }
 
   // Right-click "Quote" message context menu
@@ -99,6 +91,6 @@ client.on('interactionCreate', async (interaction) => {
     if (!text && msg.embeds.length) {
       text = msg.embeds[0].description || msg.embeds[0].title || '';
     }
-    return renderAndReply(interaction, msg.author, text);
+    return sendQuoteEmbed(interaction, msg.author, text);
   }
 });
