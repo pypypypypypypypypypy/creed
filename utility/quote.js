@@ -1,5 +1,11 @@
 const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
-const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
+
+// Load system fonts so canvas text renders correctly on Linux servers.
+// Silently ignore paths that don't exist.
+for (const dir of ['/usr/share/fonts', '/usr/local/share/fonts', '/usr/share/fonts/truetype', '/usr/share/fonts/opentype']) {
+  try { GlobalFonts.loadFontsFromDir(dir); } catch {}
+}
 const { warn } = require('../emojis.json');
 
 // Match the reference image proportions exactly.
@@ -91,7 +97,12 @@ async function generateQuoteImage({ avatarBuffer, text, displayName, username })
     } catch {}
   }
 
-  const family = 'sans-serif';
+  // Prefer fonts that ship with most Linux distros; fall back to generic sans-serif.
+  const family = GlobalFonts.has('Ubuntu') ? 'Ubuntu'
+    : GlobalFonts.has('DejaVu Sans') ? 'DejaVu Sans'
+    : GlobalFonts.has('Liberation Sans') ? 'Liberation Sans'
+    : GlobalFonts.has('Noto Sans') ? 'Noto Sans'
+    : 'sans-serif';
   const cx = TEXT_X0 + TEXT_W / 2;
 
   // Fit the quote
