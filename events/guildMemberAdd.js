@@ -4,7 +4,57 @@ const { color } = require("../config.json");
 const { EmbedBuilder } = require('discord.js');
 const { parseEmbed, buildWelcomeVars } = require('../utils/embedParser');
 
+// ─── Apply-to-join enforcement ───────────────────────────────────────────────
 client.on("guildMemberAdd", async member => {
+  // Apply-to-join: kick new joiners and DM them the application link
+  const applyMode = db.get(`apply_mode_${member.guild.id}`);
+  if (applyMode) {
+    const inviteLink = db.get(`apply_invite_${member.guild.id}`);
+    const applyChannelId = db.get(`apply_channel_${member.guild.id}`);
+
+    // DM the user before kicking so they know what happened
+    try {
+      const dmEmbed = new EmbedBuilder()
+        .setColor(color)
+        .setAuthor({ name: member.guild.name, iconURL: member.guild.iconURL({ forceStatic: false }) })
+        .setTitle('You need to apply to join')
+        .setDescription(
+          `**${member.guild.name}** requires you to apply before joining.\n\n` +
+          `Click the link below to submit your application. Once approved, you'll receive an invite.\n\n` +
+          (inviteLink ? `**Apply here:** ${inviteLink}` : 'Please contact the server admins for an application link.')
+        )
+        .setTimestamp();
+      await member.send({ embeds: [dmEmbed] }).catch(() => {});
+    } catch {}
+
+    // Kick the member
+    await member.kick('Apply-to-join mode is enabled').catch(() => {});
+
+    // Log to the apply channel
+    if (applyChannelId) {
+      const applyChannel = client.channels.cache.get(applyChannelId);
+      if (applyChannel) {
+        const logEmbed = new EmbedBuilder()
+          .setColor('#efa23a')
+          .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ forceStatic: false }) })
+          .setTitle('Apply-to-Join — Member Kicked')
+          .addFields(
+            { name: 'User', value: `${member} (${member.user.tag})`, inline: true },
+            { name: 'User ID', value: member.user.id, inline: true },
+            { name: 'Account Created', value: `<t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`, inline: true },
+            { name: 'DM Sent', value: inviteLink ? `Yes — sent application link` : 'Yes — no link configured', inline: false }
+          )
+          .setThumbnail(member.user.displayAvatarURL({ forceStatic: false }))
+          .setFooter({ text: 'Apply-to-join mode is active' })
+          .setTimestamp();
+        applyChannel.send({ embeds: [logEmbed] }).catch(() => {});
+      }
+    }
+
+    return; // Stop here — skip welcome, autorole, etc.
+  }
+
+  // ─── Normal member join flow (apply mode off) ─────────────────────────────
   const antiNew = db.get(`anti-new_${member.guild.id}`);
   if (antiNew) {
     if (member.user.createdTimestamp + 1210000000 > Date.now()) {
