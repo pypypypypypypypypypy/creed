@@ -3,91 +3,75 @@ const { color } = require('../config.json');
 const { warn, loading: loadingEmoji } = require('../emojis.json');
 const fetch = require('node-fetch');
 
+const langMap = {
+  spanish:'es', french:'fr', german:'de', italian:'it', portuguese:'pt',
+  russian:'ru', japanese:'ja', korean:'ko', chinese:'zh', arabic:'ar',
+  dutch:'nl', polish:'pl', turkish:'tr', hindi:'hi', swedish:'sv',
+  norwegian:'no', danish:'da', finnish:'fi', greek:'el', hebrew:'he',
+  thai:'th', vietnamese:'vi', indonesian:'id', malay:'ms', ukrainian:'uk',
+  czech:'cs', romanian:'ro', hungarian:'hu', english:'en'
+};
+
+async function doTranslate(lang, text) {
+  const targetLang = langMap[lang.toLowerCase()] || lang.toLowerCase();
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLang}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!data || data.responseStatus !== 200) throw new Error('Translation failed');
+  return { translated: data.responseData.translatedText, targetLang };
+}
+
 module.exports = {
   category: 'utility',
-  help: [
-    {
-        name: 'translate',
-        description: 'Translate text into another language',
-        aliases: 'tr, trans',
-        parameters: '(language) (text)',
-        information: 'n/a',
-        usage: 'translate (language) (text)',
-        example: 'translate language text'
-    }
-],
-
-    name: 'translate',
+  name: 'translate',
   aliases: ['tr', 'trans'],
-  category: 'utility',
+  help: [{ name: 'translate', description: 'Translate text to another language', aliases: 'tr, trans', parameters: '(language) (text)', information: 'n/a', usage: 'translate (lang) (text)', example: 'translate spanish Hello!' }],
+
+  slashData: {
+    name: 'translate',
+    description: 'Translate text into another language',
+    dm_permission: true,
+    options: [
+      { type: 3, name: 'language', description: 'Target language (e.g. spanish, french, ja)', required: true },
+      { type: 3, name: 'text', description: 'Text to translate', required: true },
+    ],
+  },
+  runSlash: async (client, interaction) => {
+    const lang = interaction.options.getString('language');
+    const text = interaction.options.getString('text');
+    await interaction.deferReply();
+    try {
+      const { translated } = await doTranslate(lang, text);
+      const embed = new EmbedBuilder().setColor(color).setTitle('Translation')
+        .addFields(
+          { name: '**Original**', value: `\`\`\`${text.slice(0, 900)}\`\`\`` },
+          { name: `**Translated (${lang})**`, value: `\`\`\`${translated.slice(0, 900)}\`\`\`` }
+        ).setFooter({ text: 'Powered by MyMemory' }).setTimestamp();
+      await interaction.editReply({ embeds: [embed] });
+    } catch {
+      await interaction.editReply({ content: 'Could not translate. Make sure the language is valid.' });
+    }
+  },
 
   run: async (client, message, args) => {
-    const helpEmbed = new EmbedBuilder()
-      .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
-      .setTitle('Command: translate')
-      .setDescription('Translate text to another language.')
-      .addFields(
-        { name: '**Aliases**', value: 'tr, trans', inline: true },
-        { name: '**Parameters**', value: '[language] [text]', inline: true },
-        { name: '**Information**', value: 'N/A', inline: true },
-        { name: '**Usage**', value: '```Syntax: ,translate <language> <text>\nExample: ,translate spanish Hello, how are you?```' }
-      )
-      .setFooter({ text: 'Module: utility' })
-      .setTimestamp()
-      .setColor(color);
-
-    if (!args[0]) return message.channel.send({ embeds: [helpEmbed] });
-
+    if (!args[0] || !args[1]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`,translate <language> <text>\``)] });
     const lang = args[0];
     const text = args.slice(1).join(' ');
-
-    if (!text) {
-      return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Please provide text to translate.\n**Usage:** \`,translate <language> <text>\``)] });
-    }
-
-    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} ${message.author}: Translating...`)] });
-
+    const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${loadingEmoji} Translating...`)] });
     try {
-      const langMap = {
-        spanish: 'es', french: 'fr', german: 'de', italian: 'it', portuguese: 'pt',
-        russian: 'ru', japanese: 'ja', korean: 'ko', chinese: 'zh', arabic: 'ar',
-        dutch: 'nl', polish: 'pl', turkish: 'tr', hindi: 'hi', swedish: 'sv',
-        norwegian: 'no', danish: 'da', finnish: 'fi', greek: 'el', hebrew: 'he',
-        thai: 'th', vietnamese: 'vi', indonesian: 'id', malay: 'ms', ukrainian: 'uk',
-        czech: 'cs', romanian: 'ro', hungarian: 'hu', english: 'en'
-      };
-
-      const targetLang = langMap[lang.toLowerCase()] || lang.toLowerCase();
-      const encoded = encodeURIComponent(text);
-      const url = `https://api.mymemory.translated.net/get?q=${encoded}&langpair=autodetect|${targetLang}`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (!data || data.responseStatus !== 200) {
-        await loading.delete().catch(() => {});
-        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not translate the text. Make sure the language is valid.`)] });
-      }
-
-      const translated = data.responseData.translatedText;
-      const detectedLang = data.responseData.detectedLanguage || 'Unknown';
-
-      const embed = new EmbedBuilder()
-        .setColor(color)
+      const { translated } = await doTranslate(lang, text);
+      const embed = new EmbedBuilder().setColor(color)
         .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL({ forceStatic: false }) })
         .setTitle('Translation')
         .addFields(
-          { name: '**Original**', value: `\`\`\`${text.length > 900 ? text.slice(0, 900) + '...' : text}\`\`\``, inline: false },
-          { name: `**Translated (${lang})**`, value: `\`\`\`${translated.length > 900 ? translated.slice(0, 900) + '...' : translated}\`\`\``, inline: false }
-        )
-        .setFooter({ text: `Powered by MyMemory` })
-        .setTimestamp();
-
+          { name: '**Original**', value: `\`\`\`${text.slice(0, 900)}\`\`\`` },
+          { name: `**Translated (${lang})**`, value: `\`\`\`${translated.slice(0, 900)}\`\`\`` }
+        ).setFooter({ text: 'Powered by MyMemory' }).setTimestamp();
       await loading.delete().catch(() => {});
       message.channel.send({ embeds: [embed] });
-    } catch (e) {
+    } catch {
       await loading.delete().catch(() => {});
-      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: An error occurred while translating.`)] });
+      message.channel.send({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`${warn} ${message.author}: Could not translate. Make sure the language is valid.`)] });
     }
   }
 };
