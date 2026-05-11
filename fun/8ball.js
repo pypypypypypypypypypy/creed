@@ -14,39 +14,40 @@ const responses = [
   'Outlook not so good.', 'Very doubtful.'
 ];
 
+function buildEmbed(question, user) {
+  const response = responses[Math.floor(Math.random() * responses.length)];
+  return new EmbedBuilder()
+    .setColor(color)
+    .setTitle('🎱 Magic 8-Ball')
+    .addFields(
+      { name: 'Question', value: question, inline: false },
+      { name: 'Answer', value: response, inline: false }
+    )
+    .setFooter({ text: `Asked by ${user.username}` })
+    .setTimestamp();
+}
+
 module.exports = {
   category: 'fun',
-  help: [
-    {
-        name: '8ball',
-        description: 'Ask the magic 8-ball a question',
-        aliases: '8b',
-        parameters: '(question)',
-        information: 'n/a',
-        usage: '8ball (question)',
-        example: '8ball question'
-    }
-],
-
-    name: '8ball',
+  name: '8ball',
   aliases: ['8b'],
+  help: [{ name: '8ball', description: 'Ask the magic 8-ball a question', aliases: '8b', parameters: '(question)', information: 'n/a', usage: '8ball (question)', example: '8ball will I win?' }],
+
+  slashData: {
+    name: '8ball',
+    description: 'Ask the magic 8-ball a question',
+    dm_permission: true,
+    options: [{ type: 3, name: 'question', description: 'Your question', required: true }],
+  },
+  runSlash: async (client, interaction) => {
+    const question = interaction.options.getString('question');
+    await interaction.reply({ embeds: [buildEmbed(question, interaction.user)] });
+  },
 
   run: async (client, message, args) => {
-    let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
-
+    const prefix = db.get(`prefix_${message.guild?.id}`) || default_prefix;
     const question = args.join(' ');
     if (!question) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}8ball <question>\``)] });
-
-    const response = responses[Math.floor(Math.random() * responses.length)];
-    const embed = new EmbedBuilder()
-      .setColor(color)
-      .setTitle('🎱 Magic 8-Ball')
-      .addFields(
-        { name: 'Question', value: question, inline: false },
-        { name: 'Answer', value: response, inline: false }
-      )
-      .setTimestamp();
-
-    message.channel.send({ embeds: [embed] });
+    message.channel.send({ embeds: [buildEmbed(question, message.author)] });
   }
 };
