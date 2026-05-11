@@ -3,31 +3,29 @@ const { color } = require('../config.json');
 const { approve, warn, deny } = require('../emojis.json');
 const { canRunOwnerCmd } = require('../utils/owners');
 
-// Keys that are Railway/system internals — not useful to display
+// Everything Railway injects automatically — filter these out
+const RAILWAY_AUTO_KEYS = new Set([
+  'RAILWAY_STATIC_URL', 'RAILWAY_PUBLIC_DOMAIN', 'RAILWAY_PRIVATE_DOMAIN',
+  'RAILWAY_PROJECT_ID', 'RAILWAY_PROJECT_NAME', 'RAILWAY_ENVIRONMENT_ID',
+  'RAILWAY_ENVIRONMENT_NAME', 'RAILWAY_SERVICE_ID', 'RAILWAY_SERVICE_NAME',
+  'RAILWAY_REPLICA_ID', 'RAILWAY_DEPLOYMENT_ID', 'RAILWAY_SNAPSHOT_ID',
+  'RAILWAY_GIT_COMMIT_SHA', 'RAILWAY_GIT_AUTHOR', 'RAILWAY_GIT_BRANCH',
+  'RAILWAY_GIT_REPO_NAME', 'RAILWAY_GIT_REPO_OWNER', 'RAILWAY_RUN_UID',
+  'RAILWAY_HEALTHCHECK_TIMEOUT_SEC', 'RAILWAY_LOG_TIMESTAMP_FORMAT',
+  'PORT', 'NIXPACKS_METADATA',
+]);
+
 const SYSTEM_PREFIXES = [
   'npm_', 'NODE_', 'PATH', 'HOME', 'USER', 'SHELL', 'LANG', 'LC_',
-  'PWD', 'OLDPWD', 'SHLVL', 'LOGNAME', 'HOSTNAME', 'TERM',
-  'RAILWAY_STATIC_URL', 'RAILWAY_PUBLIC_DOMAIN', 'RAILWAY_PRIVATE_DOMAIN',
-  'RAILWAY_GIT_', 'NIXPKGS_', 'NIX_', 'MANPATH', 'INFOPATH', 'PKG_CONFIG',
+  'PWD', 'OLDPWD', 'SHLVL', 'LOGNAME', 'HOSTNAME', 'TERM', 'COLORTERM',
+  'NIX_', 'NIXPKGS_', 'MANPATH', 'INFOPATH', 'PKG_CONFIG', 'XDG_',
+  'DBUS_', 'DISPLAY', 'EDITOR', 'PAGER', 'LESS', 'LS_COLORS',
 ];
 
-// Keys that look like real secrets/api keys
-const SECRET_PATTERNS = [
-  /token/i, /secret/i, /key/i, /password/i, /pass/i, /pwd/i,
-  /api/i, /auth/i, /credential/i, /private/i, /dsn/i, /url/i,
-];
-
-function isSystem(key) {
-  return SYSTEM_PREFIXES.some(p => key.startsWith(p));
-}
-
-function isSecret(key) {
-  return SECRET_PATTERNS.some(r => r.test(key));
-}
-
-function mask(value) {
-  if (!value || value.length <= 6) return '••••••';
-  return value.slice(0, 4) + '••••' + value.slice(-2);
+function isAutoSet(key) {
+  if (RAILWAY_AUTO_KEYS.has(key)) return true;
+  if (SYSTEM_PREFIXES.some(p => key.startsWith(p))) return true;
+  return false;
 }
 
 module.exports = {
@@ -37,45 +35,45 @@ module.exports = {
   help: [
     {
       name: 'envs',
-      description: 'DM yourself all Railway environment variables',
+      description: 'DM yourself all your Railway environment variables',
       aliases: 'railwayvars, vars, apikeys',
-      parameters: 'reveal',
+      parameters: 'n/a',
       information: 'BOT_OWNER',
-      usage: 'envs [reveal]',
-      example: 'envs reveal',
+      usage: 'envs',
+      example: 'envs',
     },
   ],
 
   run: async (client, message, args) => {
     if (!canRunOwnerCmd(message.author.id, 'envs')) return;
 
-    const reveal = (args[0] || '').toLowerCase() === 'reveal';
+    // Only vars the user set themselves
+    const userVars = Object.entries(process.env).filter(([k]) => !isAutoSet(k));
 
-    // Collect all env vars, skip pure system noise
-    const all = Object.entries(process.env).filter(([k]) => !isSystem(k));
-
-    if (all.length === 0) {
+    if (userVars.length === 0) {
       return message.channel.send({
-        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No environment variables found.`)]
+        embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: No custom environment variables found.`)]
       });
     }
 
-    // Sort: secrets/api keys first, then rest
-    const secrets = all.filter(([k]) => isSecret(k));
-    const rest = all.filter(([k]) => !isSecret(k));
-    const sorted = [...secrets, ...rest];
+    // Format each line — full value wrapped in spoiler tags
+    const lines = userVars.map(([k, v]) => `**[${k}]:** ||${v}||`);
 
-    // Build pages of lines — Discord embeds cap at 4096 chars
-    const lines = sorted.map(([k, v]) => {
-      const val = reveal ? `\`${v}\`` : (isSecret(k) ? `\`${mask(v)}\`` : `\`${v}\``);
-      return `**${k}** — ${val}`;
-    });
-
-    const CHUNK = 30;
+    // Split into pages keeping lines whole — never cut a line in half
     const pages = [];
-    for (let i = 0; i < lines.length; i += CHUNK) {
-      pages.push(lines.slice(i, i + CHUNK));
+    let current = [];
+    let currentLen = 0;
+    for (const line of lines) {
+      // 4096 char embed description limit, leave buffer
+      if (currentLen + line.length + 1 > 3800 && current.length > 0) {
+        pages.push(current);
+        current = [];
+        currentLen = 0;
+      }
+      current.push(line);
+      currentLen += line.length + 1;
     }
+    if (current.length > 0) pages.push(current);
 
     try {
       const dm = await message.author.createDM();
@@ -83,13 +81,9 @@ module.exports = {
       for (let i = 0; i < pages.length; i++) {
         const embed = new EmbedBuilder()
           .setColor(color)
-          .setTitle(i === 0 ? `Railway Environment Variables (${sorted.length} total)` : `Railway Env Vars (cont.)`)
+          .setTitle(i === 0 ? `Your Railway Variables (${userVars.length})` : `Your Railway Variables (cont.)`)
           .setDescription(pages[i].join('\n'))
-          .setFooter({
-            text: reveal
-              ? `⚠️ Values revealed — do not share this message`
-              : `Values masked — run \`,envs reveal\` to see full values`
-          });
+          .setFooter({ text: 'Click the spoilers to reveal each value' });
         if (i === pages.length - 1) embed.setTimestamp();
         await dm.send({ embeds: [embed] });
       }
@@ -97,7 +91,7 @@ module.exports = {
       return message.channel.send({
         embeds: [new EmbedBuilder()
           .setColor('#a3eb7b')
-          .setDescription(`${approve} ${message.author}: Sent **${sorted.length}** env vars to your DMs.${reveal ? '\n⚠️ Values are revealed — delete the DM after use.' : ''}`)
+          .setDescription(`${approve} ${message.author}: Sent **${userVars.length}** variable(s) to your DMs.`)
         ]
       });
     } catch (e) {
