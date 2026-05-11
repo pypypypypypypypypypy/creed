@@ -3,22 +3,23 @@ const db = require('../db');
 const { color } = require('../config.json');
 const { warn, approve } = require('../emojis.json');
 const { default_prefix } = require('../config.json');
+const { parseEmbed, buildVars } = require('../utils/embedParser');
 
 module.exports = {
   category: 'utility',
   help: [
     {
-        name: 'embed',
-        description: 'Send text as an embed message',
-        aliases: 'n/a',
-        parameters: '(text)',
-        information: 'MANAGE_MESSAGES',
-        usage: 'embed (text)',
-        example: 'embed text'
+      name: 'embed',
+      description: 'Send text or a full embed script as a message. Supports all variables.',
+      aliases: 'n/a',
+      parameters: '(text or embed script)',
+      information: 'MANAGE_MESSAGES',
+      usage: 'embed (text)',
+      example: 'embed Welcome {user.name} to {guild.name}!'
     }
-],
+  ],
 
-    name: 'embed',
+  name: 'embed',
 
   run: async (client, message, args) => {
     let prefix = db.get(`prefix_${message.guild.id}`) || default_prefix;
@@ -29,6 +30,7 @@ module.exports = {
 
     const sub = args[0]?.toLowerCase();
     const key = `saved_embeds_${message.guild.id}`;
+    const vars = buildVars(message);
 
     if (['create', 'c', 'edit'].includes(sub)) {
       const name = args[1]?.toLowerCase();
@@ -44,6 +46,8 @@ module.exports = {
       const name = args[1]?.toLowerCase();
       const saved = db.get(key) || {};
       if (!name || !saved[name]) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Saved embed not found.`)] });
+      const payload = parseEmbed(saved[name].text, vars);
+      if (payload && (payload.content || payload.embeds?.length)) return message.channel.send(payload);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(saved[name].text).setFooter({ text: `Embed: ${name}` }).setTimestamp()] });
     }
 
@@ -75,7 +79,20 @@ module.exports = {
     const text = args.join(' ');
     if (!text) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} ${message.author}: Usage: \`${prefix}embed <text>\``)] });
 
+    // If it looks like an embed script, parse it with vars; otherwise send as plain embed
+    const trimmed = text.trim();
+    if (trimmed.startsWith('{embed}') || trimmed.includes('$v')) {
+      const payload = parseEmbed(text, vars);
+      if (payload && (payload.content || payload.embeds?.length)) {
+        await message.delete().catch(() => {});
+        return message.channel.send(payload);
+      }
+    }
+
+    // Plain text with variable substitution
+    const { applyVars } = require('../utils/embedParser');
+    const resolved = applyVars(text, vars);
     await message.delete().catch(() => {});
-    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(text).setTimestamp()] });
+    message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(resolved).setTimestamp()] });
   }
 };
