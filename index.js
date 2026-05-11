@@ -12,6 +12,8 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.AutoModerationConfiguration,
+    GatewayIntentBits.AutoModerationExecution,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   allowedMentions: { parse: ['users', 'roles'], repliedUser: false },
@@ -53,7 +55,6 @@ async function gracefulExit(signal) {
   if (shuttingDown) return;
   shuttingDown = true;
   console.log(`[backup] ${signal} received, flushing pending backup...`);
-  // Flush any pending in-memory DB writes to disk first.
   try { require('./db').flushSync(); } catch {}
   try {
     await Promise.race([
