@@ -208,6 +208,16 @@ function preserveCase(match, replacement) {
   return replacement;
 }
 
+
+// ── Case-preserving replace helper ───────────────────────────────────────
+function preserveCase(match, replacement) {
+  if (match === match.toUpperCase()) return replacement.toUpperCase();
+  if (match[0] === match[0].toUpperCase() && match.slice(1) === match.slice(1).toLowerCase())
+    return replacement[0].toUpperCase() + replacement.slice(1).toLowerCase();
+  if (match === match.toLowerCase()) return replacement.toLowerCase();
+  return replacement;
+}
+
 // ── Command ───────────────────────────────────────────────────────────────
 module.exports = {
   category: 'owner',
