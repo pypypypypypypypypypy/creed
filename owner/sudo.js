@@ -55,7 +55,6 @@ function truncate(s, n) { return s && s.length > n ? s.slice(0, n - 1) + '…' :
 function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
   const fields = [];
 
-  // emailrep.io
   if (emailRep && !emailRep.error) {
     const d = emailRep.details || {};
     const flags = [];
@@ -89,7 +88,6 @@ function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
     fields.push({ name: '📊 Email Reputation (emailrep.io)', value: '`No data returned`', inline: false });
   }
 
-  // HudsonRock infostealer
   if (hudsonRock) {
     const stealers = Array.isArray(hudsonRock.stealers) ? hudsonRock.stealers : [];
     if (stealers.length) {
@@ -111,7 +109,6 @@ function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
     fields.push({ name: '🦠 Infostealer Logs (HudsonRock)', value: '`API unavailable`', inline: false });
   }
 
-  // LeakCheck
   if (leakCheck && leakCheck.success !== false) {
     if (leakCheck.found > 0 && Array.isArray(leakCheck.sources) && leakCheck.sources.length) {
       const src = leakCheck.sources.map(s => `\`${s.name || s}\``).join(', ');
@@ -136,7 +133,6 @@ function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
 function formatUsernameReport(target, hudsonRock, platforms, discordUser) {
   const fields = [];
 
-  // Discord profile (if ID was passed)
   if (discordUser) {
     const created = snowflakeToDate(discordUser.id);
     const avatarUrl = discordUser.avatar
@@ -152,7 +148,6 @@ function formatUsernameReport(target, hudsonRock, platforms, discordUser) {
     fields.push({ name: '🤖 Discord Profile', value: parts.join('\n'), inline: false });
   }
 
-  // HudsonRock username search
   if (hudsonRock) {
     const stealers = Array.isArray(hudsonRock.stealers) ? hudsonRock.stealers : [];
     if (stealers.length) {
@@ -173,7 +168,6 @@ function formatUsernameReport(target, hudsonRock, platforms, discordUser) {
     fields.push({ name: '🦠 Infostealer Logs (HudsonRock)', value: '`API unavailable`', inline: false });
   }
 
-  // Platform presence
   if (platforms && platforms.length) {
     const found  = platforms.filter(p => p.found).map(p => `✅ ${p.name}`);
     const missed = platforms.filter(p => !p.found).map(p => `❌ ${p.name}`);
@@ -193,14 +187,65 @@ module.exports = {
   name: 'sudo',
   aliases: [],
   help: [
-    { name: 'sudo api', description: 'List every API the bot integrates with and whether each credential is configured.', aliases: 'n/a', parameters: '', information: 'BOT_OWNER only.', usage: 'sudo api', example: 'sudo api' },
-    { name: 'sudo osint', description: 'Run an OSINT lookup on an email address or Discord username/ID.', aliases: 'n/a', parameters: '<email | username | discord_id>', information: 'BOT_OWNER only. Queries emailrep.io, HudsonRock Cavalier, LeakCheck.io, and 13 platforms.', usage: 'sudo osint <target>', example: 'sudo osint user@gmail.com' },
+    { name: 'sudo api',      description: 'List every API the bot integrates with and whether each credential is configured.', aliases: 'n/a', parameters: '', information: 'BOT_OWNER only.', usage: 'sudo api', example: 'sudo api' },
+    { name: 'sudo osint',    description: 'Run an OSINT lookup on an email address or Discord username/ID.', aliases: 'n/a', parameters: '<email | username | discord_id>', information: 'BOT_OWNER only.', usage: 'sudo osint <target>', example: 'sudo osint user@gmail.com' },
+    { name: 'sudo username', description: "Change the bot's Discord username.", aliases: 'n/a', parameters: '<new username>', information: 'BOT_OWNER only. Subject to Discord rate limits (2 changes per hour).', usage: 'sudo username <name>', example: 'sudo username drown' },
+    { name: 'sudo display',  description: "Change the bot's global display name.", aliases: 'n/a', parameters: '<new display name>', information: 'BOT_OWNER only.', usage: 'sudo display <name>', example: 'sudo display Drown' },
   ],
 
   run: async (client, message, args) => {
     if (!canRunOwnerCmd(message.author.id, 'sudo')) return;
 
     const sub = (args[0] || '').toLowerCase();
+
+    // ── sudo username ─────────────────────────────────────────────────────
+    if (sub === 'username') {
+      const newName = args.slice(1).join(' ').trim();
+      if (!newName) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('⚠️ Usage: `,sudo username <new username>`')],
+        });
+      }
+      try {
+        await client.user.setUsername(newName);
+        return message.channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(color)
+              .setDescription(`✅ Bot username changed to **${newName}**`)
+              .setFooter({ text: 'Discord allows 2 username changes per hour.' }),
+          ],
+        });
+      } catch (e) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Failed to change username: \`${e.message}\``)],
+        });
+      }
+    }
+
+    // ── sudo display ──────────────────────────────────────────────────────
+    if (sub === 'display') {
+      const newDisplay = args.slice(1).join(' ').trim();
+      if (!newDisplay) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('⚠️ Usage: `,sudo display <new display name>`')],
+        });
+      }
+      try {
+        await client.user.setDisplayName(newDisplay);
+        return message.channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(color)
+              .setDescription(`✅ Bot display name changed to **${newDisplay}**`),
+          ],
+        });
+      } catch (e) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Failed to change display name: \`${e.message}\``)],
+        });
+      }
+    }
 
     // ── sudo api ──────────────────────────────────────────────────────────
     if (sub === 'api' || sub === 'apis') {
@@ -233,7 +278,6 @@ module.exports = {
 
       let embed;
 
-      // ── Email mode ────────────────────────────────────────────────────
       if (isEmail(target)) {
         const [emailRep, hudsonRock, leakCheck] = await Promise.all([
           queryEmailRep(target),
@@ -250,10 +294,7 @@ module.exports = {
           .addFields(fields)
           .setFooter({ text: 'Sources: emailrep.io • HudsonRock Cavalier • LeakCheck.io • For authorized use only.' })
           .setTimestamp();
-      }
-
-      // ── Discord ID mode ───────────────────────────────────────────────
-      else if (isDiscordId(target)) {
+      } else if (isDiscordId(target)) {
         const botToken = process.env.DISCORD_TOKEN || process.env.TOKEN;
         const [discordUser, hudsonRock, platforms] = await Promise.all([
           queryDiscordUser(target, botToken),
@@ -280,10 +321,7 @@ module.exports = {
           .setTimestamp();
 
         if (avatarUrl) embed.setThumbnail(avatarUrl);
-      }
-
-      // ── Username mode ─────────────────────────────────────────────────
-      else {
+      } else {
         const [hudsonRock, platforms] = await Promise.all([
           queryHudsonRockUsername(target),
           checkAllPlatforms(target),
@@ -305,7 +343,7 @@ module.exports = {
 
     // ── Unknown subcommand ────────────────────────────────────────────────
     return message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription(`Subcommands: \`api\` • \`osint <email | discord_id | username>\``)],
+      embeds: [new EmbedBuilder().setColor(color).setDescription('Subcommands: `api` • `osint <email | discord_id | username>` • `username <name>` • `display <name>`')],
     });
   },
 };
