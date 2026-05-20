@@ -245,6 +245,7 @@ module.exports = {
     { name: 'sys zipup',       description: 'DM full source zip + emoji zip.',                aliases: 'n/a', parameters: '',                    information: 'BOT_OWNER', usage: 'sys zipup', example: 'sys zipup' },
     { name: 'sys variables',   description: 'DM all Railway environment variables.',          aliases: 'n/a', parameters: '',                    information: 'BOT_OWNER', usage: 'sys variables', example: 'sys variables' },
     { name: 'sys changename',  description: 'Repo-wide rename with persistent name log.',    aliases: 'n/a', parameters: '<new name>',           information: 'BOT_OWNER', usage: 'sys changename <name>', example: 'sys changename drown' },
+    { name: 'sys syncvariables', description: 'View, push, set or delete Railway environment variables via the Railway API.', aliases: 'syncvars', parameters: '[push | set KEY val | delete KEY]', information: 'BOT_OWNER. Requires RAILWAY_TOKEN env var.', usage: 'sys syncvariables', example: 'sys syncvariables push' },
   ],
 
   run: async (client, message, args) => {
@@ -478,6 +479,157 @@ module.exports = {
       const fields = [{ name: 'Files updated', value: `${updated}`, inline: true }, { name: 'Skipped', value: `${skipped}`, inline: true }, { name: 'Failed', value: `${failed}`, inline: true }, { name: 'Name now logged', value: `\`${newName}\``, inline: false }];
       if (failedPaths.length) fields.push({ name: 'Failed paths', value: failedPaths.slice(0, 10).join('\n'), inline: false });
       return loading.edit({ embeds: [new EmbedBuilder().setColor(color).setTitle(`Rename: ${currentName} → ${newName}`).addFields(fields).setFooter({ text: 'Next ,sys changename will replace the new name.' })] });
+    }
+
+
+    // ── sys syncvariables ──────────────────────────────────────────────────
+    if (sub === 'syncvariables' || sub === 'syncvars') {
+      const RAILWAY_TOKEN  = process.env.RAILWAY_TOKEN || process.env.RAILWAY_API_KEY;
+      const SERVICE_ID     = process.env.RAILWAY_SERVICE_ID;
+      const ENVIRONMENT_ID = process.env.RAILWAY_ENVIRONMENT_ID;
+
+      if (!RAILWAY_TOKEN) {
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+          '⚠️ `RAILWAY_TOKEN` is not set.\nGo to **Railway → Account Settings → Tokens**, create a token, then add it as a variable named `RAILWAY_TOKEN` on your Railway service.'
+        )] });
+      }
+      if (!SERVICE_ID || !ENVIRONMENT_ID) {
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+          '⚠️ `RAILWAY_SERVICE_ID` or `RAILWAY_ENVIRONMENT_ID` not found. Is this bot running on Railway?'
+        )] });
+      }
+
+      const s2 = (rest[0] || '').toLowerCase();
+
+      // Helper: call Railway GraphQL
+      async function railwayGQL(query, variables) {
+        const res = await fetch('https://backboard.railway.app/graphql/v2', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RAILWAY_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query, variables }),
+        });
+        return res.json();
+      }
+
+      // Fetch Railway's stored variables
+      async function fetchRailwayVars() {
+        const data = await railwayGQL(
+          `query Variables($serviceId: String!, $environmentId: String!) {
+             variables(serviceId: $serviceId, environmentId: $environmentId)
+           }`,
+          { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID }
+        );
+        if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL error');
+        return data.data?.variables || {};
+      }
+
+      // Upsert a single variable on Railway
+      async function upsertVar(name, value) {
+        const data = await railwayGQL(
+          `mutation Upsert($input: VariableUpsertInput!) {
+             variableUpsert(input: $input)
+           }`,
+          { input: { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID, name, value } }
+        );
+        if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL error');
+        return data.data?.variableUpsert;
+      }
+
+      // Delete a variable from Railway
+      async function deleteVar(name) {
+        const data = await railwayGQL(
+          `mutation Delete($input: VariableDeleteInput!) {
+             variableDelete(input: $input)
+           }`,
+          { input: { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID, name } }
+        );
+        if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL error');
+        return data.data?.variableDelete;
+      }
+
+      // ── sys syncvariables set KEY value ────────────────────────────────
+      if (s2 === 'set') {
+        const key   = rest[1];
+        const value = rest.slice(2).join(' ').trim();
+        if (!key || !value) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('⚠️ Usage: `,sys syncvariables set KEY value`')] });
+        const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1499216008257339514> Setting \`${key}\` on Railway…`)] });
+        try {
+          await upsertVar(key, value);
+          return loading.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`✅ Set \`${key}\` on Railway. **Redeploy** for it to take effect.`)] });
+        } catch (e) {
+          return loading.edit({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Failed: \`${e.message}\``)] });
+        }
+      }
+
+      // ── sys syncvariables delete KEY ───────────────────────────────────
+      if (s2 === 'delete' || s2 === 'del' || s2 === 'remove') {
+        const key = rest[1];
+        if (!key) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('⚠️ Usage: `,sys syncvariables delete KEY`')] });
+        const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`<a:loading:1499216008257339514> Deleting \`${key}\` from Railway…`)] });
+        try {
+          await deleteVar(key);
+          return loading.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`✅ Deleted \`${key}\` from Railway.`)] });
+        } catch (e) {
+          return loading.edit({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Failed: \`${e.message}\``)] });
+        }
+      }
+
+      // ── sys syncvariables push ─────────────────────────────────────────
+      if (s2 === 'push') {
+        const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription('<a:loading:1499216008257339514> Pushing all running variables to Railway…')] });
+        try {
+          const railwayVars = await fetchRailwayVars();
+          const userVars = Object.entries(process.env).filter(([k]) => !isAutoSet(k));
+          let pushed = 0, skipped = 0;
+          for (const [k, v] of userVars) {
+            if (railwayVars[k] === v) { skipped++; continue; }
+            await upsertVar(k, v);
+            pushed++;
+          }
+          return loading.edit({ embeds: [new EmbedBuilder().setColor(color)
+            .setTitle('Variables pushed to Railway')
+            .addFields(
+              { name: 'Pushed / updated', value: `${pushed}`, inline: true },
+              { name: 'Already in sync',  value: `${skipped}`, inline: true },
+            )
+            .setFooter({ text: 'Redeploy on Railway for new values to apply.' })
+          ] });
+        } catch (e) {
+          return loading.edit({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Failed: \`${e.message}\``)] });
+        }
+      }
+
+      // ── sys syncvariables (diff view, default) ─────────────────────────
+      const loading = await message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription('<a:loading:1499216008257339514> Fetching Railway variables…')] });
+      try {
+        const railwayVars = await fetchRailwayVars();
+        const userVars    = Object.fromEntries(Object.entries(process.env).filter(([k]) => !isAutoSet(k)));
+
+        const railwayKeys = new Set(Object.keys(railwayVars));
+        const runningKeys = new Set(Object.keys(userVars));
+
+        const inSync     = [...railwayKeys].filter(k => runningKeys.has(k) && railwayVars[k] === userVars[k]);
+        const diffValue  = [...railwayKeys].filter(k => runningKeys.has(k) && railwayVars[k] !== userVars[k]);
+        const onlyRailway = [...railwayKeys].filter(k => !runningKeys.has(k));
+        const onlyRunning = [...runningKeys].filter(k => !railwayKeys.has(k));
+
+        const lines = [];
+        if (inSync.length)      lines.push(`**✅ In sync (${inSync.length}):** ${inSync.map(k => \`\\`${k}\\`\`).join(', ')}`);
+        if (diffValue.length)   lines.push(`**⚠️ Value differs (${diffValue.length}):** ${diffValue.map(k => \`\\`${k}\\`\`).join(', ')}`);
+        if (onlyRailway.length) lines.push(`**🔵 Railway only (${onlyRailway.length}):** ${onlyRailway.map(k => \`\\`${k}\\`\`).join(', ')}`);
+        if (onlyRunning.length) lines.push(`**🟡 Running only (${onlyRunning.length}):** ${onlyRunning.map(k => \`\\`${k}\\`\`).join(', ')}`);
+
+        return loading.edit({ embeds: [new EmbedBuilder().setColor(color)
+          .setTitle(`Variable Sync — ${Object.keys(railwayVars).length} on Railway / ${Object.keys(userVars).length} running`)
+          .setDescription(lines.join('\n\n') || '*(no user variables found)*')
+          .setFooter({ text: 'Use ,sys syncvariables push to push running vars → Railway | set KEY val | delete KEY' })
+        ] });
+      } catch (e) {
+        return loading.edit({ embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ Railway API error: \`${e.message}\``)] });
+      }
     }
 
     // ── help ───────────────────────────────────────────────────────────────
