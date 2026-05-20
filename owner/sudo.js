@@ -1,6 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 const { canRunOwnerCmd } = require('../utils/owners');
+const db = require('../db');
+const fetch = require('node-fetch');
 const {
   isEmail, isDiscordId,
   queryEmailRep, queryHudsonRockEmail, queryHudsonRockUsername,
@@ -8,7 +10,25 @@ const {
   checkAllPlatforms, snowflakeToDate,
 } = require('../utils/osint');
 
-// ── API list (existing sudo api subcommand) ───────────────────────────────
+// ── GitHub helpers ────────────────────────────────────────────────────────
+const REPO = 'abannition/drown-xd';
+
+function ghHeaders() {
+  const token = process.env.DROWN_GITHUB_TOKEN || process.env.GITHUB_TOKEN || '';
+  return { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+}
+
+async function ghGet(path) {
+  const r = await fetch(`https://api.github.com${path}`, { headers: ghHeaders() });
+  return r.json();
+}
+
+async function ghPut(path, body) {
+  const r = await fetch(`https://api.github.com${path}`, { method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body) });
+  return r.json();
+}
+
+// ── API list ──────────────────────────────────────────────────────────────
 const APIS = [
   { name: 'Discord (bot gateway)', keys: ['DISCORD_TOKEN', 'TOKEN'], belongs: 'Bot login token.' },
   { name: 'GitHub API', keys: ['DROWN_GITHUB_TOKEN', 'GITHUB_TOKEN'], belongs: 'Auto-pushes emojis.json after ,uploademojis.' },
@@ -58,21 +78,18 @@ function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
   if (emailRep && !emailRep.error) {
     const d = emailRep.details || {};
     const flags = [];
-    if (d.data_breach)             flags.push('💀 Data breach');
-    if (d.credentials_leaked)      flags.push('🔑 Credentials leaked');
+    if (d.data_breach)               flags.push('💀 Data breach');
+    if (d.credentials_leaked)        flags.push('🔑 Credentials leaked');
     if (d.credentials_leaked_recent) flags.push('🔑 Recently leaked');
-    if (d.malicious_activity)      flags.push('☣️ Malicious activity');
-    if (d.blacklisted)             flags.push('🚫 Blacklisted');
-    if (d.spam)                    flags.push('📨 Spam');
-    if (d.disposable)              flags.push('🗑️ Disposable address');
-    if (d.free_provider)           flags.push('🆓 Free provider');
-
+    if (d.malicious_activity)        flags.push('☣️ Malicious activity');
+    if (d.blacklisted)               flags.push('🚫 Blacklisted');
+    if (d.spam)                      flags.push('📨 Spam');
+    if (d.disposable)                flags.push('🗑️ Disposable address');
+    if (d.free_provider)             flags.push('🆓 Free provider');
     const profileList = Array.isArray(d.profiles) && d.profiles.length
       ? d.profiles.map(p => `\`${p}\``).join(', ')
       : 'none found';
-
     const repEmoji = { high: '🟢', medium: '🟡', low: '🔴', none: '⚫' }[emailRep.reputation] || '⚫';
-
     fields.push({
       name: '📊 Email Reputation (emailrep.io)',
       value: truncate(
@@ -93,11 +110,11 @@ function formatEmailReport(target, emailRep, hudsonRock, leakCheck) {
     if (stealers.length) {
       const lines = stealers.slice(0, 5).map((s, i) => {
         const parts = [];
-        if (s.stealerFamily)    parts.push(`**Malware:** \`${s.stealerFamily}\``);
-        if (s.dateAdded)        parts.push(`**Date:** ${s.dateAdded.slice(0, 10)}`);
-        if (s.computerName)     parts.push(`**PC:** \`${s.computerName}\``);
-        if (s.operatingSystem)  parts.push(`**OS:** ${s.operatingSystem}`);
-        if (s.ip)               parts.push(`**IP:** \`${s.ip}\``);
+        if (s.stealerFamily)   parts.push(`**Malware:** \`${s.stealerFamily}\``);
+        if (s.dateAdded)       parts.push(`**Date:** ${s.dateAdded.slice(0, 10)}`);
+        if (s.computerName)    parts.push(`**PC:** \`${s.computerName}\``);
+        if (s.operatingSystem) parts.push(`**OS:** ${s.operatingSystem}`);
+        if (s.ip)              parts.push(`**IP:** \`${s.ip}\``);
         return `${i + 1}. ${parts.join(' • ')}`;
       });
       if (stealers.length > 5) lines.push(`…and ${stealers.length - 5} more hits`);
@@ -187,10 +204,11 @@ module.exports = {
   name: 'sudo',
   aliases: [],
   help: [
-    { name: 'sudo api',      description: 'List every API the bot integrates with and whether each credential is configured.', aliases: 'n/a', parameters: '', information: 'BOT_OWNER only.', usage: 'sudo api', example: 'sudo api' },
-    { name: 'sudo osint',    description: 'Run an OSINT lookup on an email address or Discord username/ID.', aliases: 'n/a', parameters: '<email | username | discord_id>', information: 'BOT_OWNER only.', usage: 'sudo osint <target>', example: 'sudo osint user@gmail.com' },
-    { name: 'sudo username', description: "Change the bot's Discord username.", aliases: 'n/a', parameters: '<new username>', information: 'BOT_OWNER only. Subject to Discord rate limits (2 changes per hour).', usage: 'sudo username <name>', example: 'sudo username drown' },
-    { name: 'sudo display',  description: "Change the bot's global display name.", aliases: 'n/a', parameters: '<new display name>', information: 'BOT_OWNER only.', usage: 'sudo display <name>', example: 'sudo display Drown' },
+    { name: 'sudo api',        description: 'List every API the bot integrates with and whether each credential is configured.', aliases: 'n/a', parameters: '', information: 'BOT_OWNER only.', usage: 'sudo api', example: 'sudo api' },
+    { name: 'sudo osint',      description: 'Run an OSINT lookup on an email address or Discord username/ID.', aliases: 'n/a', parameters: '<email | username | discord_id>', information: 'BOT_OWNER only.', usage: 'sudo osint <target>', example: 'sudo osint user@gmail.com' },
+    { name: 'sudo username',   description: "Change the bot's Discord username.", aliases: 'n/a', parameters: '<new username>', information: 'BOT_OWNER only. 2 changes/hour limit.', usage: 'sudo username <name>', example: 'sudo username drown' },
+    { name: 'sudo display',    description: "Change the bot's global display name.", aliases: 'n/a', parameters: '<new display name>', information: 'BOT_OWNER only.', usage: 'sudo display <name>', example: 'sudo display Drown' },
+    { name: 'sudo changename', description: 'Replace every occurrence of the current bot name in the GitHub repo with a new name. The previous name is logged so future renames start from the new name, not the original.', aliases: 'n/a', parameters: '<new name>', information: 'BOT_OWNER only. Requires GITHUB_TOKEN env var.', usage: 'sudo changename <name>', example: 'sudo changename drown' },
   ],
 
   run: async (client, message, args) => {
@@ -247,10 +265,119 @@ module.exports = {
       }
     }
 
+    // ── sudo changename ───────────────────────────────────────────────────
+    if (sub === 'changename') {
+      const newName = args.slice(1).join(' ').trim();
+      if (!newName) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(
+            `⚠️ Usage: \`,sudo changename <new name>\`\n` +
+            `Current logged name: \`${db.get('botName') || 'bored'}\``
+          )],
+        });
+      }
+
+      const currentName = db.get('botName') || 'bored';
+
+      if (currentName.toLowerCase() === newName.toLowerCase()) {
+        return message.channel.send({
+          embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`⚠️ The logged name is already \`${currentName}\`.`)],
+        });
+      }
+
+      const loading = await message.channel.send({
+        embeds: [new EmbedBuilder().setColor(color).setDescription(
+          `<a:loading:1499216008257339514> Searching for \`${currentName}\` across the repo…`
+        )],
+      });
+
+      // Search GitHub for files containing the current name
+      let items = [];
+      try {
+        const searchData = await ghGet(
+          `/search/code?q=${encodeURIComponent(currentName)}+repo:${REPO}&per_page=100`
+        );
+        items = searchData.items || [];
+      } catch (e) {
+        return loading.edit({
+          embeds: [new EmbedBuilder().setColor('#fe6464').setDescription(`❌ GitHub search failed: \`${e.message}\``)],
+        });
+      }
+
+      if (items.length === 0) {
+        // No files found — still update the log
+        db.set('botName', newName);
+        return loading.edit({
+          embeds: [new EmbedBuilder().setColor(color).setDescription(
+            `✅ No files contained \`${currentName}\`.\nName log updated: \`${currentName}\` → **${newName}**`
+          )],
+        });
+      }
+
+      await loading.edit({
+        embeds: [new EmbedBuilder().setColor(color).setDescription(
+          `<a:loading:1499216008257339514> Found **${items.length}** file(s). Replacing \`${currentName}\` → **${newName}**…`
+        )],
+      });
+
+      // Escape the current name for use in a regex
+      const escaped = currentName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex   = new RegExp(escaped, 'gi');
+
+      let updated = 0, skipped = 0, failed = 0;
+      const failedPaths = [];
+
+      for (const item of items) {
+        try {
+          const fileData = await ghGet(`/repos/${REPO}/contents/${item.path}`);
+          if (!fileData.content) { skipped++; continue; }
+
+          const original = Buffer.from(fileData.content, 'base64').toString('utf8');
+          const replaced = original.replace(regex, newName);
+
+          if (replaced === original) { skipped++; continue; }
+
+          await ghPut(`/repos/${REPO}/contents/${item.path}`, {
+            message: `chore: rename ${currentName} → ${newName}`,
+            content:  Buffer.from(replaced).toString('base64'),
+            sha:      fileData.sha,
+          });
+
+          updated++;
+        } catch (e) {
+          failed++;
+          failedPaths.push(item.path);
+        }
+      }
+
+      // Persist new name — this is the source of truth for the next rename
+      db.set('botName', newName);
+
+      const fields = [
+        { name: 'Files updated',  value: `${updated}`,  inline: true },
+        { name: 'Skipped',        value: `${skipped}`,  inline: true },
+        { name: 'Failed',         value: `${failed}`,   inline: true },
+        { name: 'Name now logged', value: `\`${newName}\``, inline: false },
+      ];
+      if (failedPaths.length) {
+        fields.push({ name: 'Failed paths', value: failedPaths.slice(0, 10).join('\n'), inline: false });
+      }
+
+      return loading.edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(color)
+            .setTitle(`Rename complete: ${currentName} → ${newName}`)
+            .addFields(fields)
+            .setFooter({ text: 'Next ,sudo changename will replace the new name, not the original.' }),
+        ],
+      });
+    }
+
     // ── sudo api ──────────────────────────────────────────────────────────
     if (sub === 'api' || sub === 'apis') {
       const description = renderApiList();
-      const configured = APIS.filter(a => checkPresent(a).configured).length;
+      const configured  = APIS.filter(a => checkPresent(a).configured).length;
       return message.channel.send({
         embeds: [
           new EmbedBuilder()
@@ -284,9 +411,7 @@ module.exports = {
           queryHudsonRockEmail(target),
           queryLeakCheck(target),
         ]);
-
         const { fields, dangerous } = formatEmailReport(target, emailRep, hudsonRock, leakCheck);
-
         embed = new EmbedBuilder()
           .setColor(dangerous ? '#ff3333' : '#1e1e2e')
           .setTitle(`🔍 OSINT — ${target}`)
@@ -301,17 +426,13 @@ module.exports = {
           queryHudsonRockUsername(target),
           checkAllPlatforms(target),
         ]);
-
         const { fields } = formatUsernameReport(target, hudsonRock, platforms, discordUser);
-
         const displayName = discordUser
           ? (discordUser.username + (discordUser.discriminator && discordUser.discriminator !== '0' ? `#${discordUser.discriminator}` : ''))
           : target;
-
         const avatarUrl = discordUser?.avatar
           ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
           : null;
-
         embed = new EmbedBuilder()
           .setColor('#5865F2')
           .setTitle(`🔍 OSINT — ${displayName}`)
@@ -319,16 +440,13 @@ module.exports = {
           .addFields(fields)
           .setFooter({ text: 'Sources: Discord API • HudsonRock Cavalier • 13 platform checks • For authorized use only.' })
           .setTimestamp();
-
         if (avatarUrl) embed.setThumbnail(avatarUrl);
       } else {
         const [hudsonRock, platforms] = await Promise.all([
           queryHudsonRockUsername(target),
           checkAllPlatforms(target),
         ]);
-
         const { fields } = formatUsernameReport(target, hudsonRock, platforms, null);
-
         embed = new EmbedBuilder()
           .setColor('#1e1e2e')
           .setTitle(`🔍 OSINT — ${target}`)
@@ -343,7 +461,9 @@ module.exports = {
 
     // ── Unknown subcommand ────────────────────────────────────────────────
     return message.channel.send({
-      embeds: [new EmbedBuilder().setColor(color).setDescription('Subcommands: `api` • `osint <email | discord_id | username>` • `username <name>` • `display <name>`')],
+      embeds: [new EmbedBuilder().setColor(color).setDescription(
+        'Subcommands: `api` • `osint <target>` • `username <name>` • `display <name>` • `changename <name>`'
+      )],
     });
   },
 };
