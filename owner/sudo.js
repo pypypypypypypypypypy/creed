@@ -198,6 +198,16 @@ function formatUsernameReport(target, hudsonRock, platforms, discordUser) {
   return { fields };
 }
 
+
+// ── Case-preserving replace helper ───────────────────────────────────────
+function preserveCase(match, replacement) {
+  if (match === match.toUpperCase()) return replacement.toUpperCase();
+  if (match[0] === match[0].toUpperCase() && match.slice(1) === match.slice(1).toLowerCase())
+    return replacement[0].toUpperCase() + replacement.slice(1).toLowerCase();
+  if (match === match.toLowerCase()) return replacement.toLowerCase();
+  return replacement;
+}
+
 // ── Command ───────────────────────────────────────────────────────────────
 module.exports = {
   category: 'owner',
@@ -333,7 +343,7 @@ module.exports = {
           if (!fileData.content) { skipped++; continue; }
 
           const original = Buffer.from(fileData.content, 'base64').toString('utf8');
-          const replaced = original.replace(regex, newName);
+          const replaced = original.replace(regex, (match) => preserveCase(match, newName));
 
           if (replaced === original) { skipped++; continue; }
 
