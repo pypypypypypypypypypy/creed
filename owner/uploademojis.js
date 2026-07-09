@@ -57,21 +57,30 @@ function sanitizeName(raw) {
 
 async function pushEmojiJsonToGitHub(content) {
   const token = process.env.DROWN_GITHUB_TOKEN || process.env.GITHUB_TOKEN;
-  if (!token) return { ok: false, reason: 'no token' };
-  const owner = process.env.DROWN_GITHUB_OWNER || 'abannition';
-  const repo = process.env.DROWN_GITHUB_REPO || 'bored';
+  if (!token) return { ok: false, reason: 'no GITHUB_TOKEN set' };
+
+  // Always push to the bot's own repo so Railway picks it up on next deploy
+  const owner = process.env.DROWN_GITHUB_OWNER || 'blesspython';
+  const repo  = process.env.DROWN_GITHUB_REPO  || 'drown-xd';
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/emojis.json`;
+
   try {
-    const getRes = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bored-bot' } });
-    const sha = getRes.ok ? (await getRes.json()).sha : null;
-    const body = { message: 'Auto-update emojis.json from ,uploademojis', content: Buffer.from(content).toString('base64'), branch: 'main' };
-    if (sha) body.sha = sha;
+    const getRes = await fetch(apiUrl, {
+      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot' },
+    });
+    const existing = getRes.ok ? await getRes.json() : {};
+    const body = {
+      message: 'chore: auto-update emojis.json from ,uploademojis',
+      content: Buffer.from(content).toString('base64'),
+      branch: 'main',
+    };
+    if (existing.sha) body.sha = existing.sha;
     const putRes = await fetch(apiUrl, {
       method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bored-bot', 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot', 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    return { ok: putRes.ok, reason: putRes.ok ? 'pushed' : `HTTP ${putRes.status}` };
+    return { ok: putRes.ok, reason: putRes.ok ? 'pushed to blesspython/drown-xd' : `HTTP ${putRes.status}` };
   } catch (e) {
     return { ok: false, reason: e.message };
   }
@@ -118,7 +127,7 @@ module.exports = {
     try {
       await client.application.emojis.fetch();
       appEmojis = client.application.emojis.cache;
-    } catch (e) {
+    } catch {
       appEmojis = null;
     }
 
@@ -138,7 +147,6 @@ module.exports = {
       const name = sanitizeName(base);
       const data = entry.getData();
 
-      // Delete existing application emoji with same name
       if (appEmojis) {
         const dupe = appEmojis.find(e => e.name === name);
         if (dupe) {
@@ -175,17 +183,29 @@ module.exports = {
       }
     }
 
+    // Write updated emojis.json to disk
     const newContent = JSON.stringify(currentEmojis, null, 2);
     fs.writeFileSync(emojiJsonPath, newContent);
+
+    // Bust the require cache so commands that call require() fresh pick up new values immediately
     delete require.cache[require.resolve('../emojis.json')];
 
+    // Also update the global emojis reference used by modules that imported at startup
+    // by patching the cached module's exports in-place
+    try {
+      const cached = require('../emojis.json');
+      Object.keys(currentEmojis).forEach(k => { cached[k] = currentEmojis[k]; });
+    } catch {}
+
+    // Push to GitHub so the correct IDs survive the next Railway deploy
     const push = await pushEmojiJsonToGitHub(newContent);
 
     const description =
       `**${ok}** uploaded · **${fail}** failed · **${replaced}** replaced${quotaHit ? ' · **bot slot limit reached**' : ''}\n\n` +
       results.slice(0, 30).join('\n') +
       (results.length > 30 ? `\n…and ${results.length - 30} more` : '') +
-      `\n\n${push.ok ? 'emojis.json pushed to GitHub ✅' : `GitHub push: ${push.reason}`}`;
+      `\n\n${push.ok ? `✅ emojis.json pushed to GitHub (${push.reason})` : `⚠️ GitHub push failed: ${push.reason}`}` +
+      `\n\n⚠️ **Restart the bot** to fully reload all command modules with the new emoji IDs.`;
 
     await status.edit({ embeds: [new EmbedBuilder().setColor(ok && !fail ? '#2ecc71' : color).setTitle('Bot Emoji Upload').setDescription(description)] });
   },
