@@ -83,7 +83,7 @@ module.exports = {
   category: 'owner',
   help: [{
     name: 'uploademojis',
-    description: 'Upload every image inside an attached .zip as an emoji in this server',
+    description: 'Upload every image inside an attached .zip as a bot application emoji',
     aliases: 'uploademoji',
     parameters: '(attach .zip)',
     information: 'Bot owner only',
@@ -113,11 +113,19 @@ module.exports = {
 
     if (!entries.length) return status.edit({ embeds: [new EmbedBuilder().setColor('#FFFFFF').setDescription(`No image files found in zip.`)] });
 
-    await status.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Uploading **${entries.length}** emojis to **${message.guild.name}**...`)] });
+    // Fetch existing application emojis so we can replace dupes
+    let appEmojis;
+    try {
+      await client.application.emojis.fetch();
+      appEmojis = client.application.emojis.cache;
+    } catch (e) {
+      appEmojis = null;
+    }
+
+    await status.edit({ embeds: [new EmbedBuilder().setColor(color).setDescription(`Uploading **${entries.length}** emojis to the **bot**...`)] });
 
     const emojiJsonPath = path.join(__dirname, '..', 'emojis.json');
     const currentEmojis = JSON.parse(fs.readFileSync(emojiJsonPath, 'utf8'));
-    const existing = await message.guild.emojis.fetch().catch(() => null);
     const results = [];
     let ok = 0, fail = 0, replaced = 0, quotaHit = false;
 
@@ -130,13 +138,18 @@ module.exports = {
       const name = sanitizeName(base);
       const data = entry.getData();
 
-      if (existing) {
-        const dupe = existing.find(e => e.name === name);
-        if (dupe) { await dupe.delete('Replaced by ,uploademojis').catch(() => {}); replaced++; await sleep(250); }
+      // Delete existing application emoji with same name
+      if (appEmojis) {
+        const dupe = appEmojis.find(e => e.name === name);
+        if (dupe) {
+          await client.application.emojis.delete(dupe.id).catch(() => {});
+          replaced++;
+          await sleep(250);
+        }
       }
 
       try {
-        const created = await message.guild.emojis.create({ attachment: data, name });
+        const created = await client.application.emojis.create({ attachment: data, name });
         const tag = `<${created.animated ? 'a' : ''}:${created.name}:${created.id}>`;
         currentEmojis[name] = tag;
         for (const aliasKey of (NAME_ALIASES[name] || [])) currentEmojis[aliasKey] = tag;
@@ -148,12 +161,12 @@ module.exports = {
         results.push(`FAIL \`${name}\` — ${msg.slice(0, 80)}`);
         if (/Maximum number of emojis|50138|30008/i.test(msg)) {
           quotaHit = true;
-          results.push(`Stopped: server emoji slots are full.`);
+          results.push(`Stopped: bot emoji slot limit reached (2000 max).`);
           break;
         }
       }
 
-      await sleep(500);
+      await sleep(400);
 
       const nowT = Date.now();
       if (nowT - lastProgressEdit > 4000 || i === entries.length - 1) {
@@ -169,11 +182,11 @@ module.exports = {
     const push = await pushEmojiJsonToGitHub(newContent);
 
     const description =
-      `**${ok}** uploaded · **${fail}** failed · **${replaced}** replaced${quotaHit ? ' · **server slot limit reached**' : ''}\n\n` +
+      `**${ok}** uploaded · **${fail}** failed · **${replaced}** replaced${quotaHit ? ' · **bot slot limit reached**' : ''}\n\n` +
       results.slice(0, 30).join('\n') +
       (results.length > 30 ? `\n…and ${results.length - 30} more` : '') +
-      `\n\n${push.ok ? 'emojis.json pushed to GitHub' : `GitHub push: ${push.reason}`}`;
+      `\n\n${push.ok ? 'emojis.json pushed to GitHub ✅' : `GitHub push: ${push.reason}`}`;
 
-    await status.edit({ embeds: [new EmbedBuilder().setColor(ok && !fail ? '#2ecc71' : color).setTitle('Emoji Upload').setDescription(description)] });
+    await status.edit({ embeds: [new EmbedBuilder().setColor(ok && !fail ? '#2ecc71' : color).setTitle('Bot Emoji Upload').setDescription(description)] });
   },
 };
