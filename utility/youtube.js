@@ -83,7 +83,7 @@ module.exports = {
     if (!input) return warn(message, 'Provide a YouTube URL. `,youtube https://youtu.be/...`');
     if (!isYouTubeUrl(input)) return warn(message, 'That doesn\'t look like a YouTube URL.');
 
-    const scanEmoji = '<a:loading:1499216008257339514>';
+    const scanEmoji = getEmojis().loading || '⏳';
     const thinking = await message.channel.send({
       embeds: [new EmbedBuilder().setColor(color).setDescription(`${scanEmoji} fetching YouTube video..`)],
     });

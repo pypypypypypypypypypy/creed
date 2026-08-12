@@ -23,6 +23,37 @@ const KNOWN_EMOJI_KEYS = {
   chip: 'chip',
 };
 
+const APPLICATION_EMOJI_ALIASES = {
+  warning: ['warn'],
+  fail: ['deny'],
+  success: ['approve', 'verifiedBot', 'verifiedServer'],
+  loading: ['slots'],
+  bug_hunter: ['bugHunter'],
+  bug_hunter_level_2: ['bugHunterPlus'],
+  verified_bot_developer: ['verifiedBotDev'],
+  hypesquad: ['hypeSquad'],
+  hypesquad_balance: ['hypeSquadBal'],
+  hypesquad_bravery: ['hypeSquadBravery'],
+  hypesquad_brilliance: ['hypeSquadBril'],
+  staff: ['discordStaff'],
+  partner: ['discordPartner'],
+  early_supporter: ['earlySupporter'],
+  lock: ['vm_lock'],
+  unlock: ['vm_unlock'],
+  ghost: ['vm_ghost'],
+  reveal: ['vm_reveal'],
+  claim: ['vm_claim'],
+  disconnect: ['vm_disconnect'],
+  activity: ['vm_activity'],
+  information: ['vm_info'],
+  increase: ['vm_increase'],
+  decrease: ['vm_decrease'],
+};
+
+function emojiTag(emoji) {
+  return `<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
+}
+
 function reloadCommands() {
   client.commands.clear();
   client.aliases.clear();
@@ -50,20 +81,56 @@ function reloadCommands() {
   }
 }
 
-async function loadGuildEmojis() {
+async function loadApplicationEmojis() {
   const emojiPath = path.join(__dirname, '..', 'emojis.json');
   const current = JSON.parse(fs.readFileSync(emojiPath, 'utf8'));
   let updated = false;
 
   if (!global.botEmojis) global.botEmojis = {};
 
+  try {
+    await client.application.emojis.fetch();
+  } catch {
+    return 0;
+  }
+
+  for (const [, emoji] of client.application.emojis.cache) {
+    const tag = emojiTag(emoji);
+    const keys = [emoji.name, ...(APPLICATION_EMOJI_ALIASES[emoji.name] || [])];
+    for (const key of keys) {
+      if (current[key] !== tag) {
+        current[key] = tag;
+        updated = true;
+      }
+      global.botEmojis[key] = tag;
+    }
+  }
+
+  if (updated) {
+    fs.writeFileSync(emojiPath, JSON.stringify(current, null, 2));
+    delete require.cache[require.resolve('../emojis.json')];
+    reloadCommands();
+    console.log(`Auto-synced ${client.application.emojis.cache.size} application emoji(s).`);
+  }
+
+  return client.application.emojis.cache.size;
+}
+
+async function loadGuildEmojis() {
+  const emojiPath = path.join(__dirname, '..', 'emojis.json');
+  const current = JSON.parse(fs.readFileSync(emojiPath, 'utf8'));
+  let updated = false;
+
+  if (!global.botEmojis) global.botEmojis = {};
+  const applicationNames = new Set(client.application.emojis.cache.keys());
+
   for (const guild of client.guilds.cache.values()) {
     try {
       const emojis = await guild.emojis.fetch();
       for (const [, emoji] of emojis) {
         const key = KNOWN_EMOJI_KEYS[emoji.name];
-        if (key) {
-          const tag = `<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
+        if (key && !applicationNames.has(emoji.name)) {
+          const tag = emojiTag(emoji);
           if (current[key] !== tag) { current[key] = tag; updated = true; }
           global.botEmojis[key] = tag;
         }
@@ -84,7 +151,12 @@ async function loadGuildEmojis() {
 client.on('clientReady', async () => {
   console.log(`${client.user.username} is now up and running!`);
 
-  // Auto-discover server emojis so the bot works after redeploy
+  // Sync application emojis first so commands use the bot's current custom emoji IDs.
+  const applicationFound = await loadApplicationEmojis().catch(() => 0);
+  if (applicationFound > 0) console.log(`Loaded ${applicationFound} application emoji(s).`);
+
+  // Auto-discover server emojis so the bot works after redeploy.
+  // Application emojis take precedence when names overlap.
   const found = await loadGuildEmojis().catch(() => 0);
   if (found > 0) console.log(`Loaded ${found} custom emojis from guild(s).`);
 

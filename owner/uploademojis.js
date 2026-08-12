@@ -60,7 +60,7 @@ async function pushEmojiJsonToGitHub(content) {
   if (!token) return { ok: false, reason: 'no GITHUB_TOKEN set' };
 
   // Always push to the bot's own repo so Railway picks it up on next deploy
-  const owner = process.env.DROWN_GITHUB_OWNER || 'blesspython';
+  const owner = process.env.DROWN_GITHUB_OWNER || 'pypypypypypypypypypy';
   const repo  = process.env.DROWN_GITHUB_REPO  || 'drown-xd';
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/emojis.json`;
 
@@ -80,7 +80,7 @@ async function pushEmojiJsonToGitHub(content) {
       headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'drown-bot', 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    return { ok: putRes.ok, reason: putRes.ok ? 'pushed to blesspython/drown-xd' : `HTTP ${putRes.status}` };
+    return { ok: putRes.ok, reason: putRes.ok ? 'pushed to pypypypypypypypypypy/drown-xd' : `HTTP ${putRes.status}` };
   } catch (e) {
     return { ok: false, reason: e.message };
   }

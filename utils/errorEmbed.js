@@ -1,6 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
 const db = require('../db');
 
+function getEmojis() {
+  try { return require('../emojis.json'); } catch { return {}; }
+}
+
 const SUPPORT_INVITE = 'https://discord.gg/stain';
 
 // Keep at most this many error records so the JSON store doesn't grow forever.
@@ -65,6 +69,9 @@ function buildErrorPayload(message, commandName, err) {
     errorMessage: err?.message || null,
     stack: err?.stack ? String(err.stack).slice(0, 1800) : null,
   });
+
+  const e = getEmojis();
+  const warningEmoji = e.warn || '⚠️';
 
   const embed = new EmbedBuilder()
     .setColor('#FFFFFF')
