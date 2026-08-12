@@ -266,7 +266,7 @@ module.exports = {
   run: async (client, message, args) => {
     if (!canRunOwnerCmd(message.author.id, 'sys')) return;
 
-    const sub  = (args[0] || '').toLowerCase();
+    const sub  = (args[0] || '').toLowerCase().replace(/:$/, '');
     const rest = args.slice(1);
 
     // ── sys list ───────────────────────────────────────────────────────────
@@ -314,7 +314,10 @@ module.exports = {
     // ── sys status ─────────────────────────────────────────────────────────
     if (sub === 'status') {
       if (!rest.length) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription('⚠️ Usage: `,sys status <text>` • `,sys status clear`')] });
-      const presenceStatus = client.user.presence?.status || 'online';
+      const currentPresenceStatus = client.user.presence?.status;
+      const presenceStatus = ['online', 'idle', 'dnd', 'invisible'].includes(currentPresenceStatus)
+        ? currentPresenceStatus
+        : 'online';
       if (['clear', 'off', 'none', 'remove'].includes(rest[0].toLowerCase())) {
         await client.user.setPresence({ activities: [], status: presenceStatus });
         return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription('✅ Custom status **cleared**.')] });

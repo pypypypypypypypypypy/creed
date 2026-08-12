@@ -13,6 +13,12 @@ function getEmojis() {
   return require('./emojis.json');
 }
 const jointocreatemap = new Map();
+const pendingJoins = new Set();
+
+function logVoiceMasterError(action, error, guildId) {
+  const detail = error?.message || String(error || 'unknown error');
+  console.error(`[voicemaster] ${action} failed in guild ${guildId}: ${detail}`);
+}
 
 module.exports = function (client) {
   setInterval(() => {
@@ -44,10 +50,15 @@ module.exports = function (client) {
   }
 
   client.on("voiceStateUpdate", async (oldState, newState) => {
+    if (!newState.guild) return;
+
     if (!oldState.channelId && newState.channelId) {
       const vmChannelId = db.get(`vm_join_channel_${newState.guild.id}`) || config.JOINTOCREATECHANNEL;
-      if (newState.channelId !== vmChannelId) return;
-      await jointocreatechannel(newState);
+      if (newState.channelId === vmChannelId) {
+        await jointocreatechannel(newState).catch((error) => {
+          logVoiceMasterError('creating a voice channel', error, newState.guild.id);
+        });
+      }
     }
 
     if (oldState.channelId && !newState.channelId) {
@@ -62,7 +73,11 @@ module.exports = function (client) {
 
     if (oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId) {
       const vmChannelId = db.get(`vm_join_channel_${newState.guild.id}`) || config.JOINTOCREATECHANNEL;
-      if (newState.channelId === vmChannelId) await jointocreatechannel(newState);
+      if (newState.channelId === vmChannelId) {
+        await jointocreatechannel(newState).catch((error) => {
+          logVoiceMasterError('creating a voice channel', error, newState.guild.id);
+        });
+      }
 
       tryDeleteIfEmpty(oldState.guild, oldState.channelId);
     }
@@ -78,34 +93,65 @@ module.exports = function (client) {
 
   async function jointocreatechannel(state) {
     const guildId = state.guild.id;
-    const defaultName = db.get(`vm_default_name_${guildId}`) || `{user}'s channel`;
-    const name = defaultName.replace('{user}', state.member.user.username);
-    const defaultBitrate = db.get(`vm_default_bitrate_${guildId}`) || 64000;
-    const defaultRegion = db.get(`vm_default_region_${guildId}`) || null;
+    const memberId = state.member?.id;
+    const sourceChannel = state.channel;
+    if (!memberId || !sourceChannel) return;
 
-    const vc = await state.guild.channels.create({
-      name,
-      type: ChannelType.GuildVoice,
-      parent: state.channel.parent?.id,
-      bitrate: defaultBitrate,
-      rtcRegion: defaultRegion,
-      permissionOverwrites: [
-        { id: state.member.id, allow: [PermissionFlagsBits.ManageChannels, PermissionFlagsBits.Connect, PermissionFlagsBits.ViewChannel] },
-        { id: state.guild.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect] },
-      ],
-    }).catch(() => null);
+    const pendingKey = `${guildId}:${memberId}`;
+    if (pendingJoins.has(pendingKey)) return;
+    pendingJoins.add(pendingKey);
 
-    if (!vc) return;
-    state.setChannel(vc).catch(() => {});
+    try {
+      const me = state.guild.members.me || await state.guild.members.fetch(client.user.id).catch(() => null);
+      if (!me) throw new Error('unable to resolve the bot member in this guild');
+      const missingPermissions = [
+        ['ManageChannels', PermissionFlagsBits.ManageChannels],
+        ['MoveMembers', PermissionFlagsBits.MoveMembers],
+      ].filter(([, permission]) => !me.permissions.has(permission)).map(([name]) => name);
 
-    const key = `tempvoicechannel_${vc.guild.id}_${vc.id}`;
-    jointocreatemap.set(key, vc.id);
-    db.set(`vm_owner_${guildId}_${vc.id}`, state.member.id);
+      if (missingPermissions.length) {
+        throw new Error(`bot is missing ${missingPermissions.join(' and ')} permission${missingPermissions.length > 1 ? 's' : ''}`);
+      }
 
-    const defaultRoleId = db.get(`vm_default_role_${guildId}`);
-    if (defaultRoleId) {
-      const role = state.guild.roles.cache.get(defaultRoleId);
-      if (role) state.member.roles.add(role).catch(() => {});
+      const defaultName = db.get(`vm_default_name_${guildId}`) || `{user}'s channel`;
+      const name = defaultName.replace('{user}', state.member.user.username);
+      const configuredBitrate = Number(db.get(`vm_default_bitrate_${guildId}`) || 64000);
+      const bitrate = Math.min(Math.max(Number.isFinite(configuredBitrate) ? configuredBitrate : 64000, 8000), 384000);
+      const defaultRegion = db.get(`vm_default_region_${guildId}`);
+      const parentId = sourceChannel.parentId || sourceChannel.parent?.id;
+
+      const vc = await state.guild.channels.create({
+        name,
+        type: ChannelType.GuildVoice,
+        ...(parentId ? { parent: parentId } : {}),
+        bitrate,
+        ...(defaultRegion ? { rtcRegion: defaultRegion } : {}),
+        permissionOverwrites: [
+          { id: state.member.id, allow: [PermissionFlagsBits.ManageChannels, PermissionFlagsBits.Connect, PermissionFlagsBits.ViewChannel] },
+          { id: state.guild.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect] },
+        ],
+      });
+
+      const key = `tempvoicechannel_${vc.guild.id}_${vc.id}`;
+      jointocreatemap.set(key, vc.id);
+      db.set(`vm_owner_${guildId}_${vc.id}`, state.member.id);
+
+      try {
+        await state.setChannel(vc);
+      } catch (error) {
+        jointocreatemap.delete(key);
+        db.delete(`vm_owner_${guildId}_${vc.id}`);
+        await vc.delete().catch(() => {});
+        throw error;
+      }
+
+      const defaultRoleId = db.get(`vm_default_role_${guildId}`);
+      if (defaultRoleId) {
+        const role = state.guild.roles.cache.get(defaultRoleId);
+        if (role) state.member.roles.add(role).catch((error) => logVoiceMasterError('adding the VoiceMaster role', error, guildId));
+      }
+    } finally {
+      pendingJoins.delete(pendingKey);
     }
   }
 };
