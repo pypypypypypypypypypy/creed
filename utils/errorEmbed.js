@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const db = require('../db');
 
-const SUPPORT_INVITE = 'https://discord.gg/J2uxnApqfH';
+const SUPPORT_INVITE = 'https://discord.gg/stain';
 
 // Keep at most this many error records so the JSON store doesn't grow forever.
 const MAX_STORED = 200;
