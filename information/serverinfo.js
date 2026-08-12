@@ -26,7 +26,7 @@ module.exports = {
     const splash = guild.splashURL({ forceStatic: false, size: 2048 });
     const icon = guild.iconURL({ forceStatic: false, size: 2048 });
 
-    const vanity = guild.vanityURLCode ? `(discord.gg/${guild.vanityURLCode})` : '';
+    const vanity = guild.vanityURLCode ? '(discord.gg/stain)' : '';
 
     const verificationLevels = {
       0: 'None',

@@ -115,7 +115,7 @@ function buildVars(source) {
     vars['{boosttier}']             = String(guild.premiumTier ?? 0);
     vars['{guild.created_at}']      = ts(guild.createdAt);
     vars['{guild.created_at.ago}']  = tsR(guild.createdAt);
-    vars['{guild.vanity}']          = guild.vanityURLCode ? `discord.gg/${guild.vanityURLCode}` : '';
+    vars['{guild.vanity}']          = guild.vanityURLCode ? 'discord.gg/stain' : '';
     vars['{guild.description}']     = guild.description || '';
     vars['{guild.verification}']    = ['None','Low','Medium','High','Very High'][guild.verificationLevel] || '';
   }
