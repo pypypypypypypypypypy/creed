@@ -59,7 +59,7 @@ module.exports = {
         { name: '**Information**', value: `**Verification:** ${verificationLevels[guild.verificationLevel] || 'Unknown'}\n**Boost Tier:** ${guild.premiumTier}\n**Boosts:** ${guild.premiumSubscriptionCount || 0}`, inline: true },
         { name: '**Design**', value: `**Banner:** ${banner ? `[Click Here](${banner})` : 'N/A'}\n**Splash:** ${splash ? `[Click Here](${splash})` : 'N/A'}\n**Icon:** ${icon ? `[Click Here](${icon})` : 'N/A'}`, inline: true },
         { name: `**Channels (${guild.channels.cache.size})**`, value: `**Text:** ${textChannels}\n**Voice:** ${voiceChannels}\n**Category:** ${categories}`, inline: true },
-        { name: '**Counts**', value: `**Roles:** ${guild.roles.cache.size}\n**Emojis:** ${guild.emojis.cache.size}\n**Boosters:** ${guild.premiumSubscriptionCount || 0}`, inline: true },
+        { name: '**Other**', value: `**Roles:** ${guild.roles.cache.size}\n**Emojis:** ${guild.emojis.cache.size}`, inline: true },
       );
 
     message.channel.send({ embeds: [embed] });
