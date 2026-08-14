@@ -1,3 +1,5 @@
+const { EmbedBuilder } = require('discord.js');
+const { color } = require('../config.json');
 const { approve } = require('../emojis.json');
 const { canRunOwnerCmd } = require('../utils/owners');
 
@@ -18,10 +20,19 @@ module.exports = {
   run: async (client, message) => {
     if (!canRunOwnerCmd(message.author.id, 'restart')) return;
 
-    // Use plain content so the confirmation still works without Embed Links permission.
-    await message.channel.send({
-      content: `${approve} Restarting the bot now. It should be back online shortly.`,
-    });
+    const confirmation = `${approve} Restarting the bot now. It should be back online shortly.`;
+    try {
+      await message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(color)
+            .setDescription(confirmation),
+        ],
+      });
+    } catch {
+      // Fall back to plain content if the bot lacks Embed Links permission.
+      await message.channel.send({ content: confirmation });
+    }
 
     // index.js handles SIGTERM by flushing the database/backup before exiting.
     // Railway's ALWAYS restart policy then starts the bot again.
