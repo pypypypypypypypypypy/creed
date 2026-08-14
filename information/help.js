@@ -935,8 +935,7 @@ module.exports = {
         `A refined, feature-rich Discord bot.\n` +
         `Use \`${prefix}help\` or \`${prefix}h\` to view this menu.\n` +
         `Navigate pages with the buttons below.\n\n` +
-        `**Invite**\n[Add ${client.user.username} to your server](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot)\n` +
-        `**Support**\nContact @ abannition for any issues.`
+        `**Invite**\n[Add ${client.user.username} to your server](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot)`
       )
       .setFooter({ text: `Page 1/${total} • Prefix: ${prefix}` })
       .setTimestamp();
