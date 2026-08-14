@@ -835,13 +835,8 @@ module.exports = {
 
     const input = args[0] ? args[0].toLowerCase() : null;
 
-    // ,h or ,h <category> — send the Discord support server invite.
-    // Per-command help (,h <command>) still works below.
-    if (!input || aliasMap[input]) {
-      return message.channel.send('https://discord.gg/stain');
-    }
-
-    // ,h <command> [subcommand] — per-command help lookup (any args = old behavior)
+    // ,h <command> [subcommand] — per-command help lookup.
+    // With no command or a category alias, continue to the paginated overview below.
     if (input) {
       const cmdName = input;
       let command = client.commands.get(cmdName);
