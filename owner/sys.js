@@ -2,6 +2,7 @@ const { EmbedBuilder, AttachmentBuilder, ActivityType } = require('discord.js');
 const { color } = require('../config.json');
 const { warn, deny, approve } = require('../emojis.json');
 const { canRunOwnerCmd, isOwner, authorizeUser, revokeUser, listAuthorizations } = require('../utils/owners');
+const { fmt, getWallet, setWallet, isEnabled, hasAccount, openAccount, parseAmount } = require('../economy/utils');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
@@ -122,6 +123,7 @@ const SUBCOMMANDS = [
   { name: 'username',       desc: 'Change the bot\'s Discord username',                usage: 'sys username <name>' },
   { name: 'displayname',    desc: 'Change the bot\'s global display name',             usage: 'sys displayname <name>' },
   { name: 'authorize',      desc: 'Grant / revoke owner cmd access to a user',         usage: 'sys authorize @user <cmd> | remove @user <cmd> | list' },
+  { name: 'give',           desc: 'Add coins to a user\'s wallet',                     usage: 'sys give <user> <amount>' },
   { name: 'botbanner',      desc: 'Update the bot\'s profile banner',                  usage: 'sys botbanner <attachment | url | remove>' },
   { name: 'zipup',          desc: 'DM full source zip + emoji zip',                    usage: 'sys zipup' },
   { name: 'list',           desc: 'List all sys subcommands',                          usage: 'sys list' },
@@ -247,6 +249,34 @@ module.exports = {
       if (cmdName === 'sys') return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${deny} \`sys\` cannot be delegated.`)] });
       const added = authorizeUser(userId, cmdName);
       return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(added ? `${approve} Authorized <@${userId}> for \`,${cmdName}\`.` : `${warn} Already authorized.`)] });
+    }
+
+    // ── sys give ───────────────────────────────────────────────────────────
+    if (sub === 'give') {
+      if (!isEnabled(message.guild.id)) return message.channel.send({ embeds: [new EmbedBuilder().setColor(color).setDescription(`${warn} The economy system is **disabled** in this server.`)] });
+
+      const targetId = resolveUserId(message, rest[0]);
+      if (!targetId) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} Usage: \`,sys give @user <amount>\``)] });
+
+      const target = await message.guild.members.fetch(targetId).catch(() => null);
+      if (!target) return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} Please mention a valid server member.`)] });
+
+      const amount = parseAmount(rest[1]);
+      if (!rest[1] || !Number.isFinite(amount) || amount <= 0) {
+        return message.channel.send({ embeds: [new EmbedBuilder().setColor('#efa23a').setDescription(`${warn} Please provide a valid amount, such as \`1000\`, \`5k\`, or \`1m\`.`)] });
+      }
+
+      const guildId = message.guild.id;
+      if (!hasAccount(guildId, target.id)) openAccount(guildId, target.id);
+      setWallet(guildId, target.id, getWallet(guildId, target.id) + amount);
+
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(color)
+            .setDescription(`${approve} Added **${fmt(amount)}** to **${target.user.username}**'s wallet.`),
+        ],
+      });
     }
 
     // ── sys botbanner ──────────────────────────────────────────────────────
