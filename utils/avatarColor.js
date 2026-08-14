@@ -10,6 +10,7 @@ let currentColor = DEFAULT_COLOR;
 let lastAvatarKey = null;
 let refreshPromise = null;
 let installed = false;
+const imageColorCache = new Map();
 
 function isNeutralColor(value) {
   if (typeof value === 'number') return value === 0xffffff;
@@ -79,6 +80,33 @@ function avatarAccentColor(data) {
   return DEFAULT_COLOR;
 }
 
+async function sampleImageURL(imageURL) {
+  const response = await fetch(imageURL);
+  if (!response.ok) throw new Error(`image fetch failed with ${response.status}`);
+
+  const image = await loadImage(Buffer.from(await response.arrayBuffer()));
+  const canvas = createCanvas(64, 64);
+  const context = canvas.getContext('2d');
+  context.drawImage(image, 0, 0, 64, 64);
+  return avatarAccentColor(context.getImageData(0, 0, 64, 64).data);
+}
+
+async function getImageAccentColor(imageURL, fallback = currentColor) {
+  if (!imageURL) return fallback;
+  if (imageColorCache.has(imageURL)) return imageColorCache.get(imageURL);
+
+  try {
+    const sampledColor = await sampleImageURL(imageURL);
+    if (imageColorCache.size >= 256) {
+      imageColorCache.delete(imageColorCache.keys().next().value);
+    }
+    imageColorCache.set(imageURL, sampledColor);
+    return sampledColor;
+  } catch {
+    return fallback;
+  }
+}
+
 async function refreshAvatarColor(client, { force = false } = {}) {
   if (!client?.user) return currentColor;
 
@@ -93,15 +121,7 @@ async function refreshAvatarColor(client, { force = false } = {}) {
         forceStatic: true,
         size: 128,
       });
-      const response = await fetch(avatarURL);
-      if (!response.ok) throw new Error(`avatar fetch failed with ${response.status}`);
-
-      const image = await loadImage(Buffer.from(await response.arrayBuffer()));
-      const canvas = createCanvas(64, 64);
-      const context = canvas.getContext('2d');
-      context.drawImage(image, 0, 0, 64, 64);
-
-      currentColor = avatarAccentColor(context.getImageData(0, 0, 64, 64).data, 64, 64);
+      currentColor = await sampleImageURL(avatarURL);
       lastAvatarKey = avatarKey;
     } catch {
       // Keep the last successful color if the avatar cannot be fetched.
@@ -140,5 +160,6 @@ function installDynamicEmbedColors(client) {
 module.exports = {
   installDynamicEmbedColors,
   refreshAvatarColor,
+  getImageAccentColor,
   getCurrentColor: () => currentColor,
 };

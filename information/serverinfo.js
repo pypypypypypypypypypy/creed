@@ -1,8 +1,8 @@
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const moment = require('moment');
 const ms = require('ms');
-const { color } = require('../config.json');
 const { verifiedServer } = require('../emojis.json');
+const { getCurrentColor, getImageAccentColor } = require('../utils/avatarColor');
 
 module.exports = {
   name: 'serverinfo',
@@ -25,6 +25,8 @@ module.exports = {
     const banner = guild.bannerURL({ forceStatic: false, size: 2048 });
     const splash = guild.splashURL({ forceStatic: false, size: 2048 });
     const icon = guild.iconURL({ forceStatic: false, size: 2048 });
+    const iconForColor = guild.iconURL({ extension: 'png', forceStatic: true, size: 128 });
+    const embedColor = await getImageAccentColor(iconForColor, getCurrentColor());
 
     const vanity = guild.vanityURLCode ? '(discord.gg/stain)' : '';
 
@@ -44,7 +46,7 @@ module.exports = {
     const categories = guild.channels.cache.filter(c => c.type === ChannelType.GuildCategory).size;
 
     const embed = new EmbedBuilder()
-      .setColor(color)
+      .setColor(embedColor)
       .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ forceStatic: false }) })
       .setTitle(`${guild.name} ${vanity} ${guild.verified ? verifiedServer : ''}`)
       .setDescription(`Server created on __${create}__`)
@@ -57,7 +59,7 @@ module.exports = {
         { name: '**Information**', value: `**Verification:** ${verificationLevels[guild.verificationLevel] || 'Unknown'}\n**Boost Tier:** ${guild.premiumTier}\n**Boosts:** ${guild.premiumSubscriptionCount || 0}`, inline: true },
         { name: '**Design**', value: `**Banner:** ${banner ? `[Click Here](${banner})` : 'N/A'}\n**Splash:** ${splash ? `[Click Here](${splash})` : 'N/A'}\n**Icon:** ${icon ? `[Click Here](${icon})` : 'N/A'}`, inline: true },
         { name: `**Channels (${guild.channels.cache.size})**`, value: `**Text:** ${textChannels}\n**Voice:** ${voiceChannels}\n**Category:** ${categories}`, inline: true },
-        { name: '**Other**', value: `**Roles:** ${guild.roles.cache.size}\n**Emojis:** ${guild.emojis.cache.size}`, inline: true },
+        { name: '**Counts**', value: `**Roles:** ${guild.roles.cache.size}\n**Emojis:** ${guild.emojis.cache.size}\n**Boosters:** ${guild.premiumSubscriptionCount || 0}`, inline: true },
       );
 
     message.channel.send({ embeds: [embed] });
