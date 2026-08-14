@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { scheduleEnd, endGiveaway } = require('../giveaway/giveaway');
 const voice24 = require('../music/voice24');
+const { refreshAvatarColor } = require('../utils/avatarColor');
 
 const COMMAND_DIRS = [
   'configuration', 'economy', 'fun', 'information', 'lastfm', 'moderation',
@@ -150,6 +151,7 @@ async function loadGuildEmojis() {
 
 client.on('clientReady', async () => {
   console.log(`${client.user.username} is now up and running!`);
+  await refreshAvatarColor(client);
 
   // Sync application emojis first so commands use the bot's current custom emoji IDs.
   const applicationFound = await loadApplicationEmojis().catch(() => 0);

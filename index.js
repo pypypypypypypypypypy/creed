@@ -2,6 +2,7 @@ console.log(`[boot] bored-xd v1.0.0 (commit 4ee9afd) starting at ${new Date().to
 const { default_prefix, color } = require("./config.json");
 const token = process.env.DISCORD_TOKEN || process.env.TOKEN;
 const { Client, Collection, GatewayIntentBits, Partials } = require("discord.js");
+const { installDynamicEmbedColors } = require('./utils/avatarColor');
 
 const client = new Client({
   intents: [
@@ -18,6 +19,8 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   allowedMentions: { parse: ['users', 'roles'], repliedUser: false },
 });
+
+installDynamicEmbedColors(client);
 
 const jointocreate = require("./jointocreate");
 jointocreate(client);
