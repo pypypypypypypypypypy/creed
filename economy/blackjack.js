@@ -1,7 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const { color } = require('../config.json');
 const { warn, approve, deny } = require('../emojis.json');
-const { fmt, getWallet, setWallet, isEnabled, hasAccount, openAccount, parseAmount } = require('./utils');
+const { fmt, getCurrencyEmoji, getWallet, setWallet, isEnabled, hasAccount, openAccount, parseAmount } = require('./utils');
 
 const SUITS = ['♠️', '♥️', '♦️', '♣️'];
 const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -27,6 +27,13 @@ function handValue(hand) {
 
 function displayHand(hand) {
   return hand.map(c => c.display).join(' ');
+}
+
+function customEmojiIconURL(tag) {
+  const match = typeof tag === 'string' && tag.match(/^<a?:[^:>]+:(\d+)>$/);
+  if (!match) return null;
+  const extension = tag.startsWith('<a:') ? 'gif' : 'png';
+  return `https://cdn.discordapp.com/emojis/${match[1]}.${extension}?size=32&quality=lossless`;
 }
 
 module.exports = {
@@ -66,6 +73,9 @@ module.exports = {
     async function buildEmbed(playerH, dealerH, hideDealer = true) {
       const pv = handValue(playerH);
       const dv = hideDealer ? cardValue(dealerH[0]) : handValue(dealerH);
+      const footer = { text: `Bet: ${Number(amount).toLocaleString()}` };
+      const chipIconURL = customEmojiIconURL(getCurrencyEmoji());
+      if (chipIconURL) footer.iconURL = chipIconURL;
       return new EmbedBuilder()
         .setColor(color)
         .setTitle('🃏 Blackjack')
@@ -73,7 +83,7 @@ module.exports = {
           { name: `Your Hand (${pv})`, value: displayHand(playerH), inline: true },
           { name: `Dealer Hand (${hideDealer ? '?' : dv})`, value: hideDealer ? `${dealerH[0].display} 🂠` : displayHand(dealerH), inline: true }
         )
-        .setFooter({ text: `Bet: ${fmt(amount)}` });
+        .setFooter(footer);
     }
 
     const playerVal = handValue(playerHand);

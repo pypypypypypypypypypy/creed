@@ -99,4 +99,4 @@ function formatMs(ms) {
   return `${s}s`;
 }
 
-module.exports = { getScope, isEnabled, fmt, getWallet, setWallet, getBank, setBank, hasAccount, openAccount, parseAmount, cooldownLeft, formatMs };
+module.exports = { getScope, isEnabled, getCurrencyEmoji, fmt, getWallet, setWallet, getBank, setBank, hasAccount, openAccount, parseAmount, cooldownLeft, formatMs };
