@@ -89,7 +89,7 @@ module.exports = {
       if (!alreadyExists('[drown] Harmful Links')) {
         try {
           await guild.autoModerationRules.create({
-            name: '[drown] Harmful Links',
+            name: '[countire] Harmful Links',
             eventType: AutoModerationRuleEventType.MessageSend,
             triggerType: AutoModerationRuleTriggerType.KeywordPreset,
             triggerMetadata: { presets: [1, 2] }, // 1 = Profanity, 2 = SexualContent — use harmful keyword detection

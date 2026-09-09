@@ -72,11 +72,11 @@ function getEmojis() {
 
 function buildInterface(client, prefix) {
   const e = getEmojis();
-  const link = 'https://discord.gg/stain';
+  const link = 'https://discord.gg/4H5aVdKhNx';
 
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: 'bored', iconURL: client.user.displayAvatarURL(), url: link })
+    .setAuthor({ name: 'Creed', iconURL: client.user.displayAvatarURL(), url: link })
     .setThumbnail(client.user.displayAvatarURL({ size: 2048 }))
     .setTitle('VoiceMaster Interface')
     .setDescription('Click the buttons below to control your voice channel')

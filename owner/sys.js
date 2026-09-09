@@ -127,6 +127,7 @@ const SUBCOMMANDS = [
   { name: 'botbanner',      desc: 'Update the bot\'s profile banner',                  usage: 'sys botbanner <attachment | url | remove>' },
   { name: 'zipup',          desc: 'DM full source zip + emoji zip',                    usage: 'sys zipup' },
   { name: 'list',           desc: 'List all sys subcommands',                          usage: 'sys list' },
+  { name: 'reset',          desc: 'Resets the bots Cache',                           usage: 'sys reset' }
 ];
 
 module.exports = {
