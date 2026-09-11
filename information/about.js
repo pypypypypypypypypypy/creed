@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { color } = require('../config.json');
 
 const fmt = (n) => Number(n).toLocaleString('en-US');
@@ -24,13 +24,14 @@ module.exports = {
     const totalUsers = client.guilds.cache.reduce((acc, g) => acc + g.memberCount, 0);
     const totalServers = client.guilds.cache.size;
     const latency = client.ws.ping;
+    const commandCount = client.commands ? client.commands.size : 0;
 
-    const launchedTs = Math.floor((Date.now() - client.uptime) / 1000);
+    const shardCount = client.shard ? client.shard.count : 1;
+    const clusterCount = 1;
+    const clustersOnline = 1;
 
-    const inviteURL = client.generateInvite({
-      scopes: ['bot', 'applications.commands'],
-      permissions: [PermissionsBitField.Flags.Administrator],
-    });
+    const launchedTs = Math.floor(client.readyTimestamp / 1000);
+    const restartedTs = Math.floor(client.readyTimestamp / 1000);
 
     const embed = new EmbedBuilder()
       .setColor(color)
@@ -38,20 +39,25 @@ module.exports = {
         name: client.user.username,
         iconURL: client.user.displayAvatarURL(),
       })
-      .setThumbnail(client.user.displayAvatarURL())
-      .setURL(inviteURL)
-      .setTitle('invite')
-      .setDescription(`<t:${launchedTs}:R>`)
+      .setThumbnail(client.user.displayAvatarURL({ size: 256 }))
+      .setDescription(
+        `Utilizing **${fmt(commandCount)}** commands across **${fmt(shardCount)}** shards on **${fmt(clusterCount)}** clusters`
+      )
       .addFields(
         {
-          name: '__**Client**__',
-          value: `**Latency:** ${latency}\n**Guilds:** ${fmt(totalServers)}`,
-          inline: false,
+          name: 'Bot',
+          value: `**Users:** ${fmt(totalUsers)}\n**Servers:** ${fmt(totalServers)}`,
+          inline: true,
         },
         {
-          name: '__**Statistics**__',
-          value: `**Users:** ${fmt(totalUsers)}`,
-          inline: false,
+          name: 'System',
+          value: `**Latency:** ${latency}ms\n**Launched:** <t:${launchedTs}:R>`,
+          inline: true,
+        },
+        {
+          name: 'Clusters',
+          value: `**Online:** ${clustersOnline}/${clusterCount}\n**Restarted:** <t:${restartedTs}:R>`,
+          inline: true,
         }
       );
 
