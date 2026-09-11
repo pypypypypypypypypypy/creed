@@ -27,7 +27,7 @@ jointocreate(client);
 
 client.commands = new Collection();
 client.aliases = new Collection();
-client.db = require('./db');
+client.db = require('../db');
 
 module.exports = client;
 
@@ -58,7 +58,7 @@ async function gracefulExit(signal) {
   if (shuttingDown) return;
   shuttingDown = true;
   console.log(`[backup] ${signal} received, flushing pending backup...`);
-  try { require('./db').flushSync(); } catch {}
+  try { require('../db').flushSync(); } catch {}
   try {
     await Promise.race([
       backup.flushPending(),
