@@ -90,7 +90,7 @@ module.exports = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${"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"}`,
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
           model: 'openai/gpt-oss-120b',
